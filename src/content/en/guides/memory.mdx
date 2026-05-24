@@ -1,0 +1,180 @@
+# Memory governance
+
+> Memory is useful only when agents know what it means, how fresh it is, and when they are allowed to trust it. AIDEN makes that explicit with scoped memory governance.
+
+**What you'll learn:**
+- The four memory scopes: task, session, project, user
+- How scope precedence resolves conflicts
+- Read/write policies and lifecycle rules
+- How memory governance is injected into agent prompts
+- How to configure memory safely in `.aiden/aiden.config.yaml`
+
+## Why scoped memory?
+
+AI agents need context, but context can become stale. AIDEN treats memory as **contextual hints, not source of truth**. The repository, current files, tests, and explicit user request always win.
+
+Scoped memory gives each agent a clear contract:
+
+| Scope | Lifecycle | Typical content | Default behavior |
+|---|---|---|---|
+| `task` | Ephemeral | Current objective, constraints, temporary decisions | Always read, automatically written |
+| `session` | Session | Workflow progress, handoffs, short-lived context | Contextual read, automatic write |
+| `project` | Persistent | Project conventions, architecture hints, team practices | Contextual read, suggested write, revalidate before use |
+| `user` | Persistent | User preferences and stable personal/team preferences | Contextual read, suggested write |
+
+## Default precedence
+
+When two scopes conflict, AIDEN uses this precedence:
+
+```text
+task > session > project > user
+```
+
+That means the current task overrides the session, the session overrides persistent project memory, and project memory overrides broad user preferences.
+
+Example: if user memory says “prefer Jest”, but project memory says “this repo uses Vitest”, and the current task asks for “no new tests”, the task wins.
+
+## Prompt injection
+
+When `memory.enabled` is true, every agent prompt receives a section like this:
+
+```text
+--- Memory Governance ---
+Workflow Mode: standard
+Memory is governed by explicit scopes. Treat memory as contextual hints, not source of truth.
+Scope precedence: task > session > project > user
+task: read=always, write=automatic, lifecycle=ephemeral, maxSize=small, sensitivity=low, summarization=none
+session: read=contextual, write=automatic, lifecycle=session, maxSize=large, sensitivity=medium, summarization=on_close
+project: read=contextual, write=suggested, lifecycle=persistent, maxSize=medium, sensitivity=medium, summarization=periodic, revalidateBeforeUse=true
+user: read=contextual, write=suggested, lifecycle=persistent, maxSize=small, sensitivity=medium, summarization=on_limit
+```
+
+This is not just documentation. It changes the instructions the agents see during analysis, planning, coding, QA and DocOps.
+
+## Configuration
+
+Memory governance is enabled by default. You can make it explicit in `.aiden/aiden.config.yaml`:
+
+```yaml
+memory:
+  enabled: true
+  scopePrecedence: [task, session, project, user]
+  scopes:
+    task:
+      enabled: true
+      lifecycle: ephemeral
+      readPolicy: always
+      writePolicy: automatic
+      maxSize: small
+      sensitivity: low
+      summarization: none
+    session:
+      enabled: true
+      lifecycle: session
+      readPolicy: contextual
+      writePolicy: automatic
+      maxSize: large
+      sensitivity: medium
+      summarization: on_close
+    project:
+      enabled: true
+      lifecycle: persistent
+      readPolicy: contextual
+      writePolicy: suggested
+      maxSize: medium
+      sensitivity: medium
+      summarization: periodic
+      revalidateBeforeUse: true
+    user:
+      enabled: true
+      lifecycle: persistent
+      readPolicy: contextual
+      writePolicy: suggested
+      maxSize: small
+      sensitivity: medium
+      summarization: on_limit
+```
+
+## Policies reference
+
+### Read policy
+
+| Value | Meaning |
+|---|---|
+| `never` | The scope must not be read. |
+| `explicit` | Read only when explicitly requested. |
+| `contextual` | Read when relevant to the current task. |
+| `always` | Always include/use this scope. |
+
+### Write policy
+
+| Value | Meaning |
+|---|---|
+| `never` | Never write to this scope. |
+| `manual` | Human-controlled writes only. |
+| `suggested` | Agent may suggest a write, but should not silently persist it. |
+| `automatic` | Agent may write automatically when appropriate. |
+
+### Lifecycle
+
+| Value | Meaning |
+|---|---|
+| `ephemeral` | Lives only for the current task. |
+| `session` | Lives for the current workflow/session. |
+| `ttl` | Expires after a configured TTL. |
+| `persistent` | Durable across sessions/projects, subject to scope rules. |
+
+### Summarization
+
+| Value | Meaning |
+|---|---|
+| `none` | Do not summarize. |
+| `periodic` | Summarize regularly. |
+| `on_limit` | Summarize when the scope hits its size limit. |
+| `on_close` | Summarize when the session closes. |
+
+## Safe defaults
+
+AIDEN's defaults are conservative:
+
+- `project.revalidateBeforeUse: true` prevents stale project notes from overriding reality.
+- User and project writes are `suggested`, not automatic.
+- Task memory is low-sensitivity and ephemeral.
+- Session memory can be automatic, because it is short-lived.
+
+## Common patterns
+
+### Disable user memory for a sensitive project
+
+```yaml
+memory:
+  scopes:
+    user:
+      enabled: false
+```
+
+### Force project memory to be explicit only
+
+```yaml
+memory:
+  scopes:
+    project:
+      readPolicy: explicit
+      writePolicy: manual
+```
+
+### Add TTL retention to session memory
+
+```yaml
+memory:
+  scopes:
+    session:
+      lifecycle: ttl
+      retention:
+        ttlMs: 86400000
+        maxEntries: 200
+```
+
+## Next step
+
+See the [configuration reference](/en/reference/config) for the complete schema, or review [agents](/en/guides/agents) to understand how memory governance flows through the pipeline.

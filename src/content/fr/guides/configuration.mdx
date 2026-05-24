@@ -51,6 +51,7 @@ Quand vous etes pret a aller plus loin, voici tout ce que vous pouvez controler 
 | `hooks` | object | {} | Hooks d'evenements |
 | `rules` | array | [] | Liste des fichiers de regles |
 | `pipeline` | object | (voir ci-dessous) | Configuration du pipeline inter-agents |
+| `memory` | object | defauts scopes | Gouvernance memoire : scopes, precedence, politiques read/write |
 
 ### Pipeline
 
@@ -60,6 +61,17 @@ pipeline:
 ```
 
 Cette option controle la quantite de texte d'un agent precedent qui est injectee dans le prompt du suivant. Avec un LLM a grand contexte (200k+), vous pouvez augmenter cette valeur. Reduisez-la si vous atteignez les limites de tokens.
+
+
+### Memoire
+
+```yaml
+memory:
+  enabled: true
+  scopePrecedence: [task, session, project, user]
+```
+
+La gouvernance memoire controle comment les agents traitent les memoires task, session, project et user. Elle est active par defaut et injectee dans chaque prompt agent comme des regles explicites. Voir le [guide memoire](/fr/guides/memory) pour les scopes, la precedence et les patterns de securite.
 
 ## Configuration entreprise : la poupee la plus interne
 
@@ -97,4 +109,4 @@ $ aiden config show
 
 ## Prochaine etape
 
-Apprenez a gerer les [regles et templates](/fr/guides/rules-and-templates).
+Configurez la [gouvernance memoire](/fr/guides/memory) ou apprenez a gerer les [regles et templates](/fr/guides/rules-and-templates).

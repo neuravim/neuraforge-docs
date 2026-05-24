@@ -45,6 +45,7 @@ export function getNavigation(locale: string): NavSection[] {
           ],
         },
         { title: dict.nav.configuration, href: `${l}/guides/configuration` },
+        { title: dict.nav.memory, href: `${l}/guides/memory` },
         { title: dict.nav.rules_templates, href: `${l}/guides/rules-and-templates` },
         { title: dict.nav.skills, href: `${l}/guides/skills` },
         { title: dict.nav.troubleshooting, href: `${l}/guides/troubleshooting` },
