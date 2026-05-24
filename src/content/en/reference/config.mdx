@@ -12,6 +12,20 @@ project: my-project              # (required) Project name
 provider: claude-code            # Default provider
 mode: standard                   # flash | standard | enterprise
 lang: en                         # Artifact language
+activeProfile: wildfly-to-spring-boot  # Optional agent profile / domain playbook
+
+agentProfiles:                   # Optional custom personas for built-in agents
+  wildfly-to-spring-boot:
+    description: "Legacy Java EE migration profile"
+    recommendedMode: enterprise
+    workflowPreset: migration
+    artefacts: [migration-inventory, risk-matrix, migration-plan]
+    agents:
+      analyst:
+        role: "Legacy Java EE Migration Analyst"
+        expertise: [WildFly, Java EE, Spring Boot]
+      dev:
+        role: "Spring Boot Migration Engineer"
 
 providers:                       # Per-provider configuration
   claude-code:
@@ -130,6 +144,20 @@ memory:                          # Scoped memory governance
 | `providers.<name>.apiKey` | string | — | API key for Bearer authentication |
 
 When `baseUrl` is set, AIDEN uses the API adapter (`fetch`) instead of the CLI subprocess. The `command` is ignored.
+
+### Agent profile options
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `activeProfile` | string | — | Activates a named agent profile for the workflow. Can also be set with `--profile`. |
+| `agentProfiles.<name>.description` | string | — | Human-readable profile purpose. |
+| `agentProfiles.<name>.recommendedMode` | string | — | Suggested mode for this profile, usually `enterprise` for migrations. |
+| `agentProfiles.<name>.workflowPreset` | string | — | Optional workflow intent label, for example `migration`. |
+| `agentProfiles.<name>.instructions` | string | — | Profile-level instructions injected with skill instructions. |
+| `agentProfiles.<name>.artefacts` | string[] | — | Expected domain artefacts. |
+| `agentProfiles.<name>.agents.<role>` | object or `false` | — | Persona override for a built-in role, or `false` to disable persona injection for that role. |
+
+See [Agent Profiles & Domain Playbooks](/en/guides/agent-profiles) for the complete WildFly to Spring Boot example.
 
 ### Pipeline options
 

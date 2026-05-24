@@ -1,0 +1,322 @@
+# Agent Profiles & Domain Playbooks
+
+AIDEN supports custom engineering behavior without turning every use case into a new runtime agent.
+
+Use **agent profiles** to specialize the built-in agents, and **domain playbooks** to package skills, rules, hooks and artefacts for a specific domain.
+
+## Why not create new agent roles?
+
+AIDEN already has a stable delivery pipeline:
+
+- **Lead** chooses mode and orchestrates the workflow.
+- **Analyst** discovers requirements, risks and unknowns.
+- **Planner** turns discovery into specs, stories and architecture decisions.
+- **Dev** implements and self-reviews.
+- **QA** validates acceptance criteria, security and quality.
+- **DocOps** documents enterprise-grade outcomes.
+
+Most “custom agent” needs are actually **domain specialization** needs. A WildFly-to-Spring-Boot migration should not bypass Analyst, Planner, Dev, QA and DocOps. It should specialize each of them.
+
+## Concepts
+
+### Agent profile
+
+An agent profile overrides the persona of one or more built-in agents for a named use case.
+
+Example:
+
+```yaml
+activeProfile: wildfly-to-spring-boot
+
+agentProfiles:
+  wildfly-to-spring-boot:
+    description: "Legacy Java EE migration profile"
+    recommendedMode: enterprise
+    workflowPreset: migration
+    instructions: >
+      Treat requests as legacy migration work: discover the current runtime,
+      plan incremental migration, preserve behavior, validate compatibility,
+      and document rollout/rollback.
+    artefacts:
+      - migration-inventory
+      - risk-matrix
+      - migration-plan
+      - compatibility-report
+      - rollback-plan
+    agents:
+      analyst:
+        role: "Legacy Java EE Migration Analyst"
+        traits: ["methodical", "risk-focused", "evidence-driven"]
+        expertise: ["WildFly", "JBoss", "Java EE", "Jakarta EE", "Spring Boot"]
+      planner:
+        role: "Enterprise Migration Architect"
+        expertise: ["incremental migration", "risk slicing", "rollback planning"]
+      dev:
+        role: "Spring Boot Migration Engineer"
+        expertise: ["EJB to services", "JAX-RS to Spring MVC", "JNDI datasource migration"]
+      qa:
+        role: "Migration Compatibility Reviewer"
+        expertise: ["regression testing", "transaction parity", "security parity"]
+      docops:
+        role: "Migration Documentation Specialist"
+        expertise: ["runbooks", "cutover plans", "operational docs"]
+```
+
+Run it with a CLI override:
+
+```bash
+aiden enterprise "Migrate this WildFly application to Spring Boot" --profile wildfly-to-spring-boot
+```
+
+Or keep it active in `.aiden/aiden.config.yaml` with `activeProfile`.
+
+### Domain playbook
+
+A domain playbook is a skill that carries domain instructions, rules, templates, hooks and optional embedded profiles.
+
+Recommended layout:
+
+```text
+.aiden/skills/wildfly-to-spring-boot/
+  skill.yaml
+  instructions.md
+  rules/
+    java-ee-inventory.md
+    migration-mapping.md
+    validation.md
+  templates/
+    migration-inventory.md
+    risk-matrix.md
+    compatibility-report.md
+  hooks/
+    scan-java-ee.sh
+    run-maven-tests.sh
+```
+
+## Complete example: WildFly to Spring Boot
+
+### 1. Create the playbook skeleton
+
+```bash
+aiden skills init wildfly-to-spring-boot
+```
+
+Edit `.aiden/skills/wildfly-to-spring-boot/skill.yaml`:
+
+```yaml
+name: wildfly-to-spring-boot
+version: 1.0.0
+description: "Domain playbook for migrating WildFly/JBoss Java EE apps to Spring Boot"
+author: "Your Team"
+agents: [analyst, planner, dev, qa, docops]
+modes: [enterprise]
+priority: 50
+enabled: true
+artefacts:
+  - migration-inventory
+  - java-ee-to-spring-mapping
+  - risk-matrix
+  - migration-plan
+  - compatibility-report
+  - rollback-plan
+profiles:
+  wildfly-to-spring-boot:
+    description: "Specialize AIDEN for WildFly/JBoss to Spring Boot migrations"
+    recommendedMode: enterprise
+    workflowPreset: migration
+    skills:
+      - wildfly-to-spring-boot
+    instructions: >
+      Execute the workflow as a controlled legacy migration. Prefer incremental,
+      reversible changes. Preserve runtime behavior before modernizing internals.
+      Never delete WildFly-specific configuration until the Spring Boot equivalent
+      is validated.
+    artefacts:
+      - migration-inventory
+      - risk-matrix
+      - migration-plan
+      - compatibility-report
+      - rollback-plan
+    agents:
+      analyst:
+        role: "Legacy Java EE Migration Analyst"
+        traits: ["methodical", "risk-focused", "asks precise questions"]
+        expertise: ["WildFly", "JBoss", "Java EE", "EJB", "JNDI", "JPA", "JAX-RS"]
+      planner:
+        role: "Enterprise Migration Architect"
+        traits: ["incremental", "rollback-aware", "dependency-conscious"]
+        expertise: ["Spring Boot architecture", "migration slicing", "ADR writing"]
+      dev:
+        role: "Spring Boot Migration Engineer"
+        traits: ["conservative", "test-first", "compatibility-focused"]
+        expertise: ["Spring Boot", "Spring MVC", "Spring Security", "Spring Data", "Maven"]
+      qa:
+        role: "Migration Compatibility Reviewer"
+        traits: ["skeptical", "parity-focused", "security-aware"]
+        expertise: ["regression tests", "transaction parity", "security parity"]
+      docops:
+        role: "Migration Documentation Specialist"
+        traits: ["operational", "clear", "audit-ready"]
+        expertise: ["runbooks", "cutover", "rollback", "support handover"]
+hooks:
+  on_feature_created:
+    - command: ./hooks/scan-java-ee.sh
+      onFailure: warn
+      requireApproval: false
+```
+
+### 2. Add domain instructions
+
+Edit `instructions.md`:
+
+```md
+# WildFly to Spring Boot migration playbook
+
+## Discovery checklist
+
+The Analyst must identify:
+
+- Runtime and version: WildFly/JBoss version, Java version, packaging type (`war`, `ear`, modules).
+- Deployment descriptors: `web.xml`, `ejb-jar.xml`, `jboss-web.xml`, `jboss-deployment-structure.xml`.
+- Java EE APIs: EJB, CDI, JAX-RS, JPA, JMS, JTA, Bean Validation, Servlet filters.
+- Container services: JNDI datasources, security realms, transactions, messaging, clustering.
+- External integrations: databases, LDAP/OIDC, queues, batch jobs, file shares.
+- Existing tests and smoke-test entry points.
+
+## Migration strategy
+
+The Planner must produce an incremental plan:
+
+1. Keep behavior stable before modernization.
+2. Move configuration to Spring Boot properties/yaml.
+3. Replace container services with explicit Spring Boot equivalents.
+4. Migrate endpoints and services in small slices.
+5. Add compatibility tests before broad refactors.
+6. Keep rollback instructions for every risky phase.
+
+## Implementation mapping
+
+The Dev should use these default mappings unless the codebase says otherwise:
+
+- `@Stateless` / `@Singleton` EJB → Spring `@Service` / `@Component`.
+- EJB injection → constructor injection.
+- JNDI datasource → Spring `DataSource` config.
+- JTA transaction boundaries → `@Transactional` with explicit propagation notes.
+- JAX-RS resources → Spring MVC `@RestController`.
+- Servlet filters → `FilterRegistrationBean` or Spring Security filter chain.
+- WildFly security realm → Spring Security configuration.
+- WAR/EAR deployment → executable Boot JAR or containerized Boot app.
+
+## QA gates
+
+QA must verify:
+
+- Endpoint parity for critical APIs.
+- Authentication/authorization parity.
+- Transaction rollback parity.
+- Database schema and migration compatibility.
+- No accidental secret capture in docs or generated files.
+- No unvalidated removal of WildFly descriptors.
+```
+
+### 3. Add targeted rules
+
+`rules/migration-mapping.md`:
+
+```md
+# Migration mapping rules
+
+- Do not replace Java EE APIs blindly. First identify current behavior and integration points.
+- Prefer constructor injection in migrated Spring components.
+- Keep transaction semantics explicit when moving from JTA/EJB to Spring transactions.
+- For each migrated endpoint, create or update a compatibility test.
+- Preserve package structure initially unless the Planner explicitly approves a refactor.
+```
+
+`rules/validation.md`:
+
+```md
+# Validation rules
+
+- Every migration slice needs a runnable verification command.
+- If tests cannot run locally, produce a blocking question or a manual validation checklist.
+- Security behavior must be checked before marking the feature complete.
+- Generated documentation must redact secrets, credentials and connection strings.
+```
+
+### 4. Add a lightweight scanner hook
+
+`hooks/scan-java-ee.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT=".aiden/migration-inventory.txt"
+mkdir -p .aiden
+{
+  echo "# Java EE inventory"
+  echo
+  echo "## Deployment descriptors"
+  find . -name 'web.xml' -o -name 'ejb-jar.xml' -o -name 'jboss-*.xml' -o -name 'persistence.xml' | sort
+  echo
+  echo "## Java EE annotations"
+  grep -RIn --include='*.java' -E '@(Stateless|Stateful|Singleton|EJB|Resource|Inject|Path|ApplicationPath|Transactional)' . || true
+  echo
+  echo "## Build files"
+  find . -name 'pom.xml' -o -name 'build.gradle' -o -name 'build.gradle.kts' | sort
+} > "$OUT"
+
+echo "Wrote $OUT"
+```
+
+Then:
+
+```bash
+chmod +x .aiden/skills/wildfly-to-spring-boot/hooks/scan-java-ee.sh
+```
+
+### 5. Activate and run
+
+Project config:
+
+```yaml
+activeProfile: wildfly-to-spring-boot
+```
+
+Or one-off CLI:
+
+```bash
+aiden enterprise "Migrate this WildFly app to Spring Boot 3 while preserving API behavior" \
+  --profile wildfly-to-spring-boot \
+  --trace
+```
+
+## Expected outputs
+
+For this migration profile, expect the workflow to produce:
+
+- **Analyst**: migration inventory, unknowns, risk score, migration blockers.
+- **Planner**: phased migration plan, stories, ADRs, rollback notes.
+- **Dev**: Spring Boot skeleton or migration slice, tests, self-review.
+- **QA**: compatibility report, security notes, retry requests when parity is not proven.
+- **DocOps**: runbook, cutover checklist, rollback procedure, support notes.
+
+## Acceptance criteria
+
+A migration playbook is ready when:
+
+- The profile can be selected with `--profile` or `activeProfile`.
+- The profile changes agent personas without creating new runtime roles.
+- Skill instructions and rules are injected into the relevant agents.
+- Hooks are explicit and auditable.
+- Expected artefacts are listed in the profile.
+- The migration example can run in `enterprise` mode with trace output.
+
+## Design guardrails
+
+- Keep built-in roles stable; specialize them through profiles.
+- Use skills for domain knowledge, rules, templates and hooks.
+- Use profiles for persona and workflow intent.
+- Do not execute untrusted hooks without review.
+- Do not store secrets in rules, profiles, memory or generated artefacts.

@@ -32,6 +32,7 @@ export function getNavigation(locale: string): NavSection[] {
       items: [
         { title: dict.nav.modes, href: `${l}/guides/modes` },
         { title: dict.nav.agents, href: `${l}/guides/agents` },
+        { title: dict.nav.agent_profiles, href: `${l}/guides/agent-profiles` },
         {
           title: dict.nav.providers,
           href: `${l}/guides/providers`,

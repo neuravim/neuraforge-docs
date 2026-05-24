@@ -12,6 +12,20 @@ project: mon-projet              # (requis) Nom du projet
 provider: claude-code            # Provider par defaut
 mode: standard                   # flash | standard | enterprise
 lang: fr                         # Langue des artefacts
+activeProfile: wildfly-to-spring-boot  # Profil agent / playbook metier optionnel
+
+agentProfiles:                   # Personas custom optionnelles pour les agents integres
+  wildfly-to-spring-boot:
+    description: "Profil de migration Java EE legacy"
+    recommendedMode: enterprise
+    workflowPreset: migration
+    artefacts: [migration-inventory, risk-matrix, migration-plan]
+    agents:
+      analyst:
+        role: "Legacy Java EE Migration Analyst"
+        expertise: [WildFly, Java EE, Spring Boot]
+      dev:
+        role: "Spring Boot Migration Engineer"
 
 providers:                       # Configuration par provider
   claude-code:
@@ -131,7 +145,21 @@ memory:                          # Gouvernance memoire par scopes
 
 Quand `baseUrl` est defini, AIDEN utilise l'adapter API (`fetch`) au lieu du subprocess CLI. Le `command` est ignore.
 
-### Options pipeline
+### Options Agent Profile
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `activeProfile` | string | — | Active un profil agent nomme pour le workflow. Peut aussi etre passe via `--profile`. |
+| `agentProfiles.<name>.description` | string | — | Objectif lisible du profil. |
+| `agentProfiles.<name>.recommendedMode` | string | — | Mode conseille pour ce profil, souvent `enterprise` pour les migrations. |
+| `agentProfiles.<name>.workflowPreset` | string | — | Label d'intention workflow optionnel, par exemple `migration`. |
+| `agentProfiles.<name>.instructions` | string | — | Instructions niveau profil injectees avec les instructions de skills. |
+| `agentProfiles.<name>.artefacts` | string[] | — | Artefacts domaine attendus. |
+| `agentProfiles.<name>.agents.<role>` | object ou `false` | — | Surcharge persona pour un role integre, ou `false` pour desactiver l'injection de persona sur ce role. |
+
+Voir [Agent Profiles & Domain Playbooks](/fr/guides/agent-profiles) pour l'exemple complet WildFly vers Spring Boot.
+
+### Options Pipeline
 
 | Cle | Type | Defaut | Description |
 |---|---|---|---|
