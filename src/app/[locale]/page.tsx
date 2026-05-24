@@ -78,7 +78,7 @@ export default async function HomePage({
       {/* Terminal demo */}
       <section>
         <Terminal title={t.terminal_title}>
-          {`$ npm install -g @astrolyn/aiden
+          {`$ npm install -g @neuravim/aiden
 $ cd my-project && aiden init
 AIDEN  Project scanned: node, typescript, react, vitest
 AIDEN  Config created: .aiden/aiden.config.yaml

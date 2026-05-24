@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
 
-const siteUrl = process.env.SITE_URL || 'https://astrolyn.github.io/aiden';
+const siteUrl = process.env.SITE_URL || 'https://aiden.neuravim.tech';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

@@ -112,7 +112,7 @@ export function Header({ locale }: { locale: string }) {
         </button>
 
         <a
-          href="https://github.com/astrolyn-io/aiden-docs"
+          href="https://github.com/neuravim/aiden-docs"
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm no-underline transition-colors"
