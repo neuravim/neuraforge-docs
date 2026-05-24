@@ -1,6 +1,6 @@
 # Gouvernance mémoire
 
-> La mémoire n'est utile que si les agents savent ce qu'elle signifie, si elle est fraîche, et quand ils ont le droit de lui faire confiance. AIDEN rend tout ça explicite avec une gouvernance mémoire par scopes.
+> La mémoire n'est utile que si les agents savent ce qu'elle signifie, si elle est fraîche, et quand ils ont le droit de lui faire confiance. NeuraForge rend tout ça explicite avec une gouvernance mémoire par scopes.
 
 **Ce que vous allez apprendre :**
 - Les quatre scopes mémoire : task, session, project, user
@@ -11,7 +11,7 @@
 
 ## Pourquoi une mémoire par scopes ?
 
-Les agents IA ont besoin de contexte, mais le contexte peut devenir obsolète. AIDEN traite la mémoire comme des **indices contextuels, pas comme une source de vérité**. Le repository, les fichiers actuels, les tests et la demande explicite de l'utilisateur gagnent toujours.
+Les agents IA ont besoin de contexte, mais le contexte peut devenir obsolète. NeuraForge traite la mémoire comme des **indices contextuels, pas comme une source de vérité**. Le repository, les fichiers actuels, les tests et la demande explicite de l'utilisateur gagnent toujours.
 
 La mémoire par scopes donne un contrat clair à chaque agent :
 
@@ -24,7 +24,7 @@ La mémoire par scopes donne un contrat clair à chaque agent :
 
 ## Précédence par défaut
 
-Quand deux scopes se contredisent, AIDEN utilise cette précédence :
+Quand deux scopes se contredisent, NeuraForge utilise cette précédence :
 
 ```text
 task > session > project > user
@@ -135,7 +135,7 @@ memory:
 
 ## Défauts sûrs
 
-Les valeurs par défaut AIDEN sont prudentes :
+Les valeurs par défaut NeuraForge sont prudentes :
 
 - `project.revalidateBeforeUse: true` empêche des notes projet obsolètes d'écraser la réalité.
 - Les écritures user et project sont `suggested`, pas automatiques.

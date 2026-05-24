@@ -1,14 +1,14 @@
 # Quickstart
 
-**5 minutes.** That's all it takes to see AIDEN in action. Not a canned demo, not a video — real code generated in your real project. Ready?
+**5 minutes.** That's all it takes to see NeuraForge in action. Not a canned demo, not a video — real code generated in your real project. Ready?
 
-We're going to create a small Express API, run a command, and watch AIDEN write the code and tests for us. Let's go.
+We're going to create a small Express API, run a command, and watch NeuraForge write the code and tests for us. Let's go.
 
 ---
 
 ## Laying the foundation
 
-First, a dead simple project. Nothing fancy — just enough to give AIDEN something to work with:
+First, a dead simple project. Nothing fancy — just enough to give NeuraForge something to work with:
 
 ```bash
 $ mkdir my-api && cd my-api
@@ -25,13 +25,13 @@ app.get('/', (req, res) => res.json({ status: 'ok' }));
 module.exports = app;
 ```
 
-Three files, one dependency. That's all you need. Now let's plug in AIDEN.
+Three files, one dependency. That's all you need. Now let's plug in NeuraForge.
 
-## Plugging in AIDEN
+## Plugging in NeuraForge
 
 ```bash
-$ aiden init
-AIDEN initialized in .aiden/
+$ neuraforge init
+NeuraForge initialized in .aiden/
   Config: .aiden/aiden.config.yaml
   Rules:  .aiden/rules/coding-standards.md
   Memory: .aiden/memory/
@@ -39,17 +39,17 @@ AIDEN initialized in .aiden/
   PM:     npm
 ```
 
-See `Stack: node, express`? AIDEN scanned your project and figured out what you're using on its own. It will use this to generate code that fits your stack — not generic copy-paste from a tutorial.
+See `Stack: node, express`? NeuraForge scanned your project and figured out what you're using on its own. It will use this to generate code that fits your stack — not generic copy-paste from a tutorial.
 
 ## The moment of truth
 
 This is where it gets interesting. A single command:
 
 ```bash
-$ aiden flash "Add a GET /health endpoint returning {status: healthy}"
+$ neuraforge flash "Add a GET /health endpoint returning {status: healthy}"
 ```
 
-And AIDEN gets to work:
+And NeuraForge gets to work:
 
 ```
 Starting flash workflow for: Add a GET /health endpoint...
@@ -64,10 +64,10 @@ Starting flash workflow for: Add a GET /health endpoint...
 
 ## Verifying everything is in place
 
-Trust but verify. Let's see what AIDEN produced:
+Trust but verify. Let's see what NeuraForge produced:
 
 ```bash
-$ aiden status
+$ neuraforge status
 add-a-get-health-endpoint [completed] (flash)
   Tokens: 1250 | Created: 2026-03-27
 ```
@@ -100,7 +100,7 @@ The Dev modified `index.js` to add the `/health` route and created a test file. 
 Before wrapping up, a quick check on consumption:
 
 ```bash
-$ aiden metrics
+$ neuraforge metrics
 Features: 1 completed
 Tokens:   1250 used
 Cost:     $0.004
@@ -110,19 +110,19 @@ Less than a penny for a complete feature with tests. Not bad, right?
 
 ---
 
-## What AIDEN did behind the scenes
+## What NeuraForge did behind the scenes
 
-OK, you've seen the result. But what's really interesting is what happened under the hood. Because even in flash mode (the fastest), AIDEN doesn't "just" call an AI:
+OK, you've seen the result. But what's really interesting is what happened under the hood. Because even in flash mode (the fastest), NeuraForge doesn't "just" call an AI:
 
 1. **The Lead analyzed your request** — it detected this is a simple task (one endpoint, < 3 files affected) and automatically chose flash mode. If you had asked for a database migration, it would have escalated to standard mode with analysis and planning.
 
 2. **The Dev read your existing code** — it didn't generate a file from scratch. It read `index.js`, understood the structure, and added the route in the right place. It also wrote a test consistent with your stack.
 
-3. **Everything is tracked** — the decision is logged in `.aiden/memory/decisions.jsonl`, the project context is updated in `.aiden/memory/context.yaml`. Next time you run AIDEN, it will know what's already been done.
+3. **Everything is tracked** — the decision is logged in `.aiden/memory/decisions.jsonl`, the project context is updated in `.aiden/memory/context.yaml`. Next time you run NeuraForge, it will know what's already been done.
 
 4. **Budget is monitored** — every token used is accounted for. In enterprise mode, you can set limits per feature, per sprint, per team.
 
-5. **Lessons accumulate** — over time, AIDEN learns from your projects. Lessons learned are re-injected into subsequent agents' prompts.
+5. **Lessons accumulate** — over time, NeuraForge learns from your projects. Lessons learned are re-injected into subsequent agents' prompts.
 
 And that was just flash mode. In standard mode, you'd have had an Analyst breaking down complexity, a Planner creating stories, and a QA reviewing code against acceptance criteria. In enterprise mode, add human approvals between each phase and auto-generated documentation.
 
@@ -133,21 +133,21 @@ And that was just flash mode. In standard mode, you'd have had an Analyst breaki
 You've succeeded if:
 
 - `.aiden/` exists with config and memory
-- `aiden status` shows the completed feature
+- `neuraforge status` shows the completed feature
 - A `change-summary.md` was generated
 - The code contains the `/health` route
 
-Everything checked? Congratulations, you just shipped your first feature with AIDEN.
+Everything checked? Congratulations, you just shipped your first feature with NeuraForge.
 
 ## If it doesn't work
 
 Don't panic, here are the common cases:
 
-- **"AIDEN not initialized"** — Run `aiden init` first. AIDEN needs the `.aiden/` directory to work.
-- **"No provider available"** — Verify that `claude --version` works in your terminal. AIDEN needs at least one accessible AI provider.
+- **"NeuraForge not initialized"** — Run `neuraforge init` first. NeuraForge needs the `.aiden/` directory to work.
+- **"No provider available"** — Verify that `claude --version` works in your terminal. NeuraForge needs at least one accessible AI provider.
 - **Provider timeout** — The first request can be slow (cold start). Simply re-run the command.
-- **The code isn't what you expected** — Try `aiden standard` for more control. You'll get an analysis and planning phase before implementation, plus a QA review at the end.
+- **The code isn't what you expected** — Try `neuraforge standard` for more control. You'll get an analysis and planning phase before implementation, plus a QA review at the end.
 
 ## What's next?
 
-You've tasted flash mode — fast, direct, effective. But AIDEN can do much more. Follow the [First feature](/en/getting-started/first-feature) tutorial to discover the full standard mode: Analyst, Planner, Dev, and QA collaborating on your feature. That's where the real magic happens.
+You've tasted flash mode — fast, direct, effective. But NeuraForge can do much more. Follow the [First feature](/en/getting-started/first-feature) tutorial to discover the full standard mode: Analyst, Planner, Dev, and QA collaborating on your feature. That's where the real magic happens.

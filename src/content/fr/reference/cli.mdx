@@ -6,38 +6,38 @@ La reference complete. Chaque commande, chaque flag, chaque option. Ctrl+F et tr
 
 ## Commandes workflow
 
-### `aiden init`
+### `neuraforge init`
 
-Initialise AIDEN dans le projet courant. Scanne la stack technique, detecte le CI, les bases de donnees et le gestionnaire de paquets.
+Initialise NeuraForge dans le projet courant. Scanne la stack technique, detecte le CI, les bases de donnees et le gestionnaire de paquets.
 
 ```bash
-aiden init [--enterprise]
+neuraforge init [--enterprise]
 ```
 
 - `--enterprise` : inclut les templates et regles enterprise
 
-### `aiden flash <description>`
+### `neuraforge flash <description>`
 
 Lance un workflow flash (rapide). Lead + Dev, sans spec ni review — ideal pour les corrections urgentes.
 
 ```bash
-aiden flash "Fix bug #123" [--dry-run] [--provider <name>]
+neuraforge flash "Fix bug #123" [--dry-run] [--provider <name>]
 ```
 
-### `aiden standard <description>`
+### `neuraforge standard <description>`
 
 Lance un workflow standard. Analyse, planification, developpement et review automatique.
 
 ```bash
-aiden standard "Nouvelle API users" [--dry-run] [--provider <name>]
+neuraforge standard "Nouvelle API users" [--dry-run] [--provider <name>]
 ```
 
-### `aiden enterprise <description>`
+### `neuraforge enterprise <description>`
 
 Lance un workflow enterprise avec approbation humaine entre chaque phase. Documentation et conformite incluses.
 
 ```bash
-aiden enterprise "Migration auth" [--dry-run] [--provider <name>] [--auto-approve]
+neuraforge enterprise "Migration auth" [--dry-run] [--provider <name>] [--auto-approve]
 ```
 
 Options communes aux trois modes :
@@ -49,148 +49,148 @@ Options communes aux trois modes :
 
 ## Commandes de suivi
 
-### `aiden status [feature-slug]`
+### `neuraforge status [feature-slug]`
 
 Affiche le statut des features — etat courant, phase, provider utilise.
 
 ```bash
-aiden status                    # Toutes les features
-aiden status export-csv         # Une feature specifique
+neuraforge status                    # Toutes les features
+neuraforge status export-csv         # Une feature specifique
 ```
 
-### `aiden resume <feature-slug>`
+### `neuraforge resume <feature-slug>`
 
 Reprend une feature en pause ou bloquee. L'orchestrateur redetermine la prochaine etape automatiquement.
 
 ```bash
-aiden resume export-csv
+neuraforge resume export-csv
 ```
 
-### `aiden abort <feature-slug>`
+### `neuraforge abort <feature-slug>`
 
 Abandonne une feature (sauvegarde l'etat avant suppression).
 
 ```bash
-aiden abort export-csv
+neuraforge abort export-csv
 ```
 
 ---
 
 ## Commandes agents et providers
 
-### `aiden agent <name> <prompt>`
+### `neuraforge agent <name> <prompt>`
 
 Invoque un agent directement, en dehors du workflow. Utile pour des analyses ponctuelles ou du debugging.
 
 ```bash
-aiden agent analyst "Analyser le module billing"
-aiden agent qa "Reviewer les changements recents"
+neuraforge agent analyst "Analyser le module billing"
+neuraforge agent qa "Reviewer les changements recents"
 ```
 
 Agents : `analyst`, `planner`, `dev`, `qa`, `docops`.
 
-### `aiden provider`
+### `neuraforge provider`
 
 Gere les providers IA — statut, basculement, couts.
 
 ```bash
-aiden provider status           # Etat des providers
-aiden provider switch gemini    # Changer de provider
-aiden provider cost             # Rapport de couts
+neuraforge provider status           # Etat des providers
+neuraforge provider switch gemini    # Changer de provider
+neuraforge provider cost             # Rapport de couts
 ```
 
 ---
 
 ## Commandes de configuration
 
-### `aiden metrics`
+### `neuraforge metrics`
 
 Affiche les metriques d'utilisation — tokens consommes, couts, nombre d'appels par agent.
 
 ```bash
-aiden metrics                   # Affichage texte
-aiden metrics --export csv      # Export CSV
+neuraforge metrics                   # Affichage texte
+neuraforge metrics --export csv      # Export CSV
 ```
 
-### `aiden config`
+### `neuraforge config`
 
 Gere la configuration du projet.
 
 ```bash
-aiden config show                       # Afficher toute la config
-aiden config get <cle>                  # Obtenir une valeur (notation par point)
-aiden config get providers.claude-code  # Exemple : cle imbriquee
-aiden config set <cle> <valeur>         # Definir une valeur (notation par point)
-aiden config set mode flash             # Exemple : changer le mode
-aiden config set routing.strategy auto  # Exemple : cle imbriquee
+neuraforge config show                       # Afficher toute la config
+neuraforge config get <cle>                  # Obtenir une valeur (notation par point)
+neuraforge config get providers.claude-code  # Exemple : cle imbriquee
+neuraforge config set <cle> <valeur>         # Definir une valeur (notation par point)
+neuraforge config set mode flash             # Exemple : changer le mode
+neuraforge config set routing.strategy auto  # Exemple : cle imbriquee
 ```
 
-### `aiden rules`
+### `neuraforge rules`
 
 Gere les regles d'entreprise injectees dans les prompts agents.
 
 ```bash
-aiden rules list                # Lister
-aiden rules add security.md     # Ajouter
-aiden rules remove security     # Supprimer
+neuraforge rules list                # Lister
+neuraforge rules add security.md     # Ajouter
+neuraforge rules remove security     # Supprimer
 ```
 
-### `aiden skills`
+### `neuraforge skills`
 
 Gere les skills d'extensibilite — des packages declaratifs qui enrichissent le pipeline.
 
 ```bash
-aiden skills list                # Lister les skills installes
-aiden skills init my-skill       # Creer un nouveau skill
-aiden skills add /path/to/skill  # Installer depuis un dossier
-aiden skills remove my-skill     # Supprimer un skill
-aiden skills enable my-skill     # Activer un skill
-aiden skills disable my-skill    # Desactiver un skill
+neuraforge skills list                # Lister les skills installes
+neuraforge skills init my-skill       # Creer un nouveau skill
+neuraforge skills add /path/to/skill  # Installer depuis un dossier
+neuraforge skills remove my-skill     # Supprimer un skill
+neuraforge skills enable my-skill     # Activer un skill
+neuraforge skills disable my-skill    # Desactiver un skill
 ```
 
 Les skills sont des packages declaratifs (YAML + Markdown) dans `.aiden/skills/` qui injectent instructions, regles et hooks dans le pipeline. Voir le [guide skills](/fr/guides/skills) pour plus de details.
 
-### `aiden retex`
+### `neuraforge retex`
 
 Gere les retours d'experience (lessons learned). Les retex pertinents sont automatiquement injectes dans les prompts agents.
 
 ```bash
-aiden retex list                                    # Lister tous les retex
-aiden retex add --title "..." --context tag1,tag2 \
+neuraforge retex list                                    # Lister tous les retex
+neuraforge retex add --title "..." --context tag1,tag2 \
   --outcome success --lesson "..." \
   --recommendation "..."                           # Ajouter un retex
-aiden retex search <tag>                             # Chercher par tag
-aiden retex remove <id>                              # Supprimer un retex
+neuraforge retex search <tag>                             # Chercher par tag
+neuraforge retex remove <id>                              # Supprimer un retex
 ```
 
 Les retex sont stockes dans `.aiden/retex/` en Markdown. Les retex pertinents sont injectes dans les prompts agents sous `--- Lessons Learned ---`.
 
-### `aiden template`
+### `neuraforge template`
 
 Gere les templates d'artefacts.
 
 ```bash
-aiden template list             # Lister
-aiden template customize spec   # Personnaliser
+neuraforge template list             # Lister
+neuraforge template customize spec   # Personnaliser
 ```
 
 ---
 
 ## Slash commands (Claude Code)
 
-AIDEN est aussi disponible en slash commands dans Claude Code — zero installation, meme resultat :
+NeuraForge est aussi disponible en slash commands dans Claude Code — zero installation, meme resultat :
 
 | Slash command | Equivalent CLI |
 |---|---|
 | `/aiden-help` | — |
-| `/aiden-init` | `aiden init` |
-| `/aiden-flash <desc>` | `aiden flash "<desc>"` |
-| `/aiden-standard <desc>` | `aiden standard "<desc>"` |
-| `/aiden-enterprise <desc>` | `aiden enterprise "<desc>"` |
-| `/aiden-status` | `aiden status` |
-| `/aiden-resume <slug>` | `aiden resume <slug>` |
-| `/aiden-agent <nom> <prompt>` | `aiden agent <nom> "<prompt>"` |
-| `/aiden-rules` | `aiden rules list` |
+| `/aiden-init` | `neuraforge init` |
+| `/aiden-flash <desc>` | `neuraforge flash "<desc>"` |
+| `/aiden-standard <desc>` | `neuraforge standard "<desc>"` |
+| `/aiden-enterprise <desc>` | `neuraforge enterprise "<desc>"` |
+| `/aiden-status` | `neuraforge status` |
+| `/aiden-resume <slug>` | `neuraforge resume <slug>` |
+| `/aiden-agent <nom> <prompt>` | `neuraforge agent <nom> "<prompt>"` |
+| `/aiden-rules` | `neuraforge rules list` |
 
 Les deux modes ecrivent dans les memes fichiers `.aiden/` et sont interchangeables.
 

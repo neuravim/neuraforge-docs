@@ -5,8 +5,8 @@ import Fr from '@/content/fr/cookbook/ci-cd.mdx';
 const page = createContentPage({
   content: { en: En, fr: Fr },
   metadata: {
-    en: { title: 'AIDEN in CI/CD — GitHub Actions, GitLab CI, Metrics', description: 'Integrate AIDEN in CI/CD: artefact validation, automatic metrics, non-interactive flash, dashboards.' },
-    fr: { title: 'AIDEN en CI/CD — GitHub Actions, GitLab CI, metriques', description: 'Integrez AIDEN dans vos pipelines CI/CD : validation des artefacts, metriques automatiques.' },
+    en: { title: 'NeuraForge in CI/CD — GitHub Actions, GitLab CI, Metrics', description: 'Integrate NeuraForge in CI/CD: artefact validation, automatic metrics, non-interactive flash, dashboards.' },
+    fr: { title: 'NeuraForge en CI/CD — GitHub Actions, GitLab CI, metriques', description: 'Integrez NeuraForge dans vos pipelines CI/CD : validation des artefacts, metriques automatiques.' },
   },
 });
 

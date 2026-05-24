@@ -5,17 +5,17 @@
 > **Ce que vous allez apprendre**
 > - Installer GitHub CLI et l'extension Copilot
 > - Configurer l'authentification GitHub
-> - Utiliser Copilot comme provider AIDEN
+> - Utiliser Copilot comme provider NeuraForge
 > - Comprendre les limitations
 > - Troubleshooting
 
-GitHub Copilot est un provider CLI natif d'AIDEN. Il s'appuie sur `gh copilot explain` pour traiter les prompts en mode semi-interactif. Son coût est nul — il est inclus dans votre abonnement Copilot — ce qui en fait un excellent fallback ou provider de quick fix.
+GitHub Copilot est un provider CLI natif d'NeuraForge. Il s'appuie sur `gh copilot explain` pour traiter les prompts en mode semi-interactif. Son coût est nul — il est inclus dans votre abonnement Copilot — ce qui en fait un excellent fallback ou provider de quick fix.
 
 ## Prérequis
 
 - **GitHub CLI** (`gh`) installé et à jour
 - **Abonnement GitHub Copilot** actif (Individual, Business ou Enterprise)
-- AIDEN initialisé dans votre projet (`aiden init`)
+- NeuraForge initialisé dans votre projet (`neuraforge init`)
 
 ## Installation
 
@@ -80,7 +80,7 @@ Testez manuellement que Copilot répond :
 $ echo "Explique ce qu'est un closure en JavaScript" | gh copilot explain -
 ```
 
-## Configuration AIDEN
+## Configuration NeuraForge
 
 Ajoutez la section `copilot` dans `.aiden/aiden.config.yaml` :
 
@@ -109,14 +109,14 @@ Paramètres clés :
 Définissez Copilot comme provider actif puis lancez une feature flash :
 
 ```bash
-$ aiden config set provider copilot
-$ aiden flash "Fix le typo dans README"
+$ neuraforge config set provider copilot
+$ neuraforge flash "Fix le typo dans README"
 ```
 
 Vérifiez que le provider est bien détecté :
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   copilot: configured
 ```
@@ -181,7 +181,7 @@ routing:
   fallback: [claude-code, gemini, copilot]
 ```
 
-Avec la stratégie `prefer`, AIDEN utilise `claude-code` en priorité et bascule automatiquement sur `gemini` puis `copilot` si le provider principal est indisponible.
+Avec la stratégie `prefer`, NeuraForge utilise `claude-code` en priorité et bascule automatiquement sur `gemini` puis `copilot` si le provider principal est indisponible.
 
 Pour les quick fixes uniquement, vous pouvez router les tâches légères vers Copilot via la stratégie `auto` :
 
@@ -191,7 +191,7 @@ routing:
   fallback: [claude-code, gemini, copilot]
 ```
 
-En mode `auto`, AIDEN affecte Copilot aux tâches `quick fix` et `PR review`, et réserve les providers plus puissants pour l'analyse et la génération de code.
+En mode `auto`, NeuraForge affecte Copilot aux tâches `quick fix` et `PR review`, et réserve les providers plus puissants pour l'analyse et la génération de code.
 
 ## Troubleshooting
 
@@ -224,18 +224,18 @@ $ gh auth status
 $ gh auth login
 ```
 
-### "copilot: not configured" dans `aiden provider status`
+### "copilot: not configured" dans `neuraforge provider status`
 
 La section `copilot` est absente ou mal formée dans `.aiden/aiden.config.yaml`. Vérifiez que `enabled: true` est présent et que l'indentation YAML est correcte.
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 $ cat .aiden/aiden.config.yaml
 ```
 
 ### Timeout ou réponse vide
 
-`gh copilot explain` peut être lent sur les prompts volumineux. Si AIDEN retourne une erreur de timeout :
+`gh copilot explain` peut être lent sur les prompts volumineux. Si NeuraForge retourne une erreur de timeout :
 
 - Réduisez la taille du contexte passé à l'agent
 - Passez en mode `flash` pour limiter le contexte
@@ -245,7 +245,7 @@ $ cat .aiden/aiden.config.yaml
 $ echo "test" | gh copilot explain -
 ```
 
-Si cette commande échoue, le problème est au niveau de GitHub CLI, pas d'AIDEN.
+Si cette commande échoue, le problème est au niveau de GitHub CLI, pas d'NeuraForge.
 
 ### Abonnement Copilot inactif
 

@@ -1,6 +1,6 @@
 # Configuration
 
-> 4 lignes de YAML. C'est tout ce qu'il faut pour configurer AIDEN. Le reste, c'est du bonus pour les perfectionnistes.
+> 4 lignes de YAML. C'est tout ce qu'il faut pour configurer NeuraForge. Le reste, c'est du bonus pour les perfectionnistes.
 
 **Ce que vous allez apprendre :**
 - Les 5 niveaux de configuration et comment ils s'emboitent
@@ -9,9 +9,9 @@
 
 ## Les 5 niveaux : des poupees russes
 
-Pensez a des poupees russes : chaque niveau de configuration enveloppe le precedent. La plus petite poupee (les defauts AIDEN) est toujours la. Chaque couche que vous ajoutez vient la surcharger, sans jamais casser ce qui est en dessous.
+Pensez a des poupees russes : chaque niveau de configuration enveloppe le precedent. La plus petite poupee (les defauts NeuraForge) est toujours la. Chaque couche que vous ajoutez vient la surcharger, sans jamais casser ce qui est en dessous.
 
-1. **Defauts AIDEN** (built-in) -- la base, toujours presente
+1. **Defauts NeuraForge** (built-in) -- la base, toujours presente
 2. **Enterprise** (`~/.aiden/enterprise.config.yaml`) -- standards de votre organisation
 3. **Projet** (`.aiden/aiden.config.yaml`) -- specifique a ce repo
 4. **Feature** (`.aiden/features/<slug>/.override.yaml`) -- ajustements par feature
@@ -21,7 +21,7 @@ Resultat : vous ne configurez que ce qui change. Tout le reste herite automatiqu
 
 ## Configuration minimale : 4 lignes, c'est parti
 
-Vous n'avez pas besoin de tout comprendre pour demarrer. Creez un fichier, collez 4 lignes, et AIDEN fonctionne :
+Vous n'avez pas besoin de tout comprendre pour demarrer. Creez un fichier, collez 4 lignes, et NeuraForge fonctionne :
 
 ```yaml
 # .aiden/aiden.config.yaml
@@ -33,7 +33,7 @@ lang: fr
 
 4 lignes suffisent pour demarrer.
 
-C'est la poupee russe la plus externe de votre projet. Elle surcharge les defauts AIDEN avec vos choix. Tout ce que vous ne specifiez pas garde sa valeur par defaut.
+C'est la poupee russe la plus externe de votre projet. Elle surcharge les defauts NeuraForge avec vos choix. Tout ce que vous ne specifiez pas garde sa valeur par defaut.
 
 ## Options completes
 
@@ -75,7 +75,7 @@ La gouvernance memoire controle comment les agents traitent les memoires task, s
 
 ## Configuration entreprise : la poupee la plus interne
 
-Voici ou les choses deviennent interessantes pour les equipes. La config enterprise se place dans votre repertoire home et s'applique a **tous** vos projets AIDEN, sur toute la machine. C'est le socle commun de votre organisation.
+Voici ou les choses deviennent interessantes pour les equipes. La config enterprise se place dans votre repertoire home et s'applique a **tous** vos projets NeuraForge, sur toute la machine. C'est le socle commun de votre organisation.
 
 ```yaml
 # ~/.aiden/enterprise.config.yaml
@@ -93,17 +93,17 @@ coding:
   commit_convention: conventional
 ```
 
-Un nouveau dev rejoint l'equipe ? Il installe la config enterprise, et tous les projets AIDEN respectent immediatement les standards. Pas de copier-coller, pas d'oubli.
+Un nouveau dev rejoint l'equipe ? Il installe la config enterprise, et tous les projets NeuraForge respectent immediatement les standards. Pas de copier-coller, pas d'oubli.
 
 ## Modifier via CLI
 
 Pas envie d'editer du YAML a la main ? La CLI fait ca pour vous :
 
 ```bash
-$ aiden config set mode flash
+$ neuraforge config set mode flash
 Set mode = flash
 
-$ aiden config show
+$ neuraforge config show
 { "project": "mon-projet", "mode": "flash", ... }
 ```
 

@@ -1,12 +1,12 @@
 # OpenCode
 
-> Vos donnees ne doivent jamais quitter vos serveurs ? OpenCode + Ollama = un pipeline AIDEN 100% local. Zero API cloud, zero fuite de donnees.
+> Vos donnees ne doivent jamais quitter vos serveurs ? OpenCode + Ollama = un pipeline NeuraForge 100% local. Zero API cloud, zero fuite de donnees.
 
 > **Ce que vous allez apprendre**
 > - Qu'est-ce qu'OpenCode
 > - Installer OpenCode CLI
 > - Configurer un backend LLM
-> - Utiliser OpenCode comme provider AIDEN
+> - Utiliser OpenCode comme provider NeuraForge
 > - Combiner avec un LLM local (Ollama)
 > - Troubleshooting
 
@@ -14,18 +14,18 @@
 
 [OpenCode](https://github.com/opencode-ai/opencode) est un outil CLI agentique open source conçu pour interagir avec n'importe quel backend LLM compatible OpenAI. Contrairement à Claude Code ou Gemini CLI, OpenCode n'est pas lié à un seul fournisseur : il se configure pour pointer vers Anthropic, OpenAI, Ollama, LiteLLM ou tout endpoint OpenAI-compatible.
 
-AIDEN utilise OpenCode via un **subprocess stdin/stdout** : il envoie le prompt sur `stdin`, lit la réponse sur `stdout`, et n'a pas besoin de connaître le backend LLM configuré dans OpenCode. Cela donne une flexibilité maximale sans modifier la configuration AIDEN.
+NeuraForge utilise OpenCode via un **subprocess stdin/stdout** : il envoie le prompt sur `stdin`, lit la réponse sur `stdout`, et n'a pas besoin de connaître le backend LLM configuré dans OpenCode. Cela donne une flexibilité maximale sans modifier la configuration NeuraForge.
 
 **Cas d'usage typiques :**
 - Environnements air-gapped avec LLM on-premise
 - Équipes souhaitant éviter le vendor lock-in
-- Bascule rapide entre plusieurs backends LLM depuis un seul provider AIDEN
+- Bascule rapide entre plusieurs backends LLM depuis un seul provider NeuraForge
 
 ## Prérequis
 
 - Go 1.21+ (pour l'installation via `go install`) **ou** Node.js 20+ (si distribué en npm)
 - Un endpoint LLM accessible : Anthropic API, OpenAI API, Ollama en local, LiteLLM proxy, etc.
-- AIDEN initialisé (`aiden init`)
+- NeuraForge initialisé (`neuraforge init`)
 
 ## Installation
 
@@ -115,9 +115,9 @@ $ echo "Dis bonjour en une phrase." | opencode -p -
 Bonjour ! Je suis prêt à vous aider.
 ```
 
-Si cette commande retourne une réponse, OpenCode est correctement configuré et AIDEN peut l'utiliser.
+Si cette commande retourne une réponse, OpenCode est correctement configuré et NeuraForge peut l'utiliser.
 
-## Configuration AIDEN
+## Configuration NeuraForge
 
 Une fois OpenCode installé et son backend configuré, déclarez-le comme provider dans `.aiden/aiden.config.yaml` :
 
@@ -132,12 +132,12 @@ providers:
     costPer1k: 0.002
 ```
 
-> **Information** : Le champ `model` est utilisé pour les métriques AIDEN. OpenCode utilise le modèle configuré dans son propre fichier de config — les deux sont indépendants.
+> **Information** : Le champ `model` est utilisé pour les métriques NeuraForge. OpenCode utilise le modèle configuré dans son propre fichier de config — les deux sont indépendants.
 
 ### Vérifier la connexion
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   opencode: configured
 ```
@@ -194,7 +194,7 @@ routing:
 
 ## OpenCode + LLM local (Ollama)
 
-Cette combinaison permet un pipeline AIDEN **100% local**, sans aucune donnée envoyée à des services externes. Idéal pour les environnements air-gapped ou les données sensibles.
+Cette combinaison permet un pipeline NeuraForge **100% local**, sans aucune donnée envoyée à des services externes. Idéal pour les environnements air-gapped ou les données sensibles.
 
 ### 1. Installer Ollama
 
@@ -251,7 +251,7 @@ Dans `~/.config/opencode/config.json` :
 $ echo "Write a TypeScript hello world function." | opencode -p -
 ```
 
-### 6. Configurer AIDEN
+### 6. Configurer NeuraForge
 
 ```yaml
 provider: opencode
@@ -276,7 +276,7 @@ sanitize: true
 |---|---|
 | Environnement air-gapped | LLM local via Ollama, aucune donnée externe |
 | On-premise LLM | Pointe vers votre propre endpoint interne |
-| Multi-backend | Changez de LLM sans toucher à la config AIDEN |
+| Multi-backend | Changez de LLM sans toucher à la config NeuraForge |
 | Audit open source | Code source vérifiable, pas de boîte noire |
 | Contrôle des coûts | LLM local = coût infrastructure uniquement |
 | Conformité RGPD | Données traitées localement |
@@ -308,18 +308,18 @@ $ go install github.com/opencode-ai/opencode@latest
 $ opencode --version
 ```
 
-### "No provider available" dans AIDEN
+### "No provider available" dans NeuraForge
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 $ echo "test" | opencode -p -
 ```
 
-Si OpenCode répond mais AIDEN ne le détecte pas, vérifiez que `command: opencode` est correct et que l'exécutable est dans le PATH.
+Si OpenCode répond mais NeuraForge ne le détecte pas, vérifiez que `command: opencode` est correct et que l'exécutable est dans le PATH.
 
 ### Timeout après 120 secondes
 
-Les LLMs locaux (Ollama) peuvent être lents sur du matériel limité. Le timeout par défaut d'AIDEN est 120s. Pour l'augmenter :
+Les LLMs locaux (Ollama) peuvent être lents sur du matériel limité. Le timeout par défaut d'NeuraForge est 120s. Pour l'augmenter :
 
 ```yaml
 providers:
@@ -342,7 +342,7 @@ providers:
     maxTokens: 8000
 ```
 
-> **Information** : En mode flash, les prompts sont plus courts. Commencez par tester AIDEN en mode `flash` avec un LLM local avant de passer en mode `standard`.
+> **Information** : En mode flash, les prompts sont plus courts. Commencez par tester NeuraForge en mode `flash` avec un LLM local avant de passer en mode `standard`.
 
 ### OpenCode retourne une erreur API
 
@@ -361,4 +361,4 @@ Ou le backend configuré dans OpenCode est inaccessible. Vérifiez la configurat
 
 ## Prochaine étape
 
-Consultez la page [Providers](/fr/guides/providers) pour configurer le routage entre plusieurs providers, ou [Troubleshooting](/fr/guides/troubleshooting) pour les problèmes généraux AIDEN.
+Consultez la page [Providers](/fr/guides/providers) pour configurer le routage entre plusieurs providers, ou [Troubleshooting](/fr/guides/troubleshooting) pour les problèmes généraux NeuraForge.

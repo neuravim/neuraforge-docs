@@ -9,7 +9,7 @@ In this tutorial, you'll follow a feature's journey through the 4 agents of stan
 You have an Express API. You want a `/health` endpoint that checks the DB connection. A single command kicks off all 4 agents:
 
 ```bash
-$ aiden standard "Add a GET /health endpoint with DB connection check"
+$ neuraforge standard "Add a GET /health endpoint with DB connection check"
 ```
 
 The assembly line starts. Let's see what happens at each station.
@@ -148,7 +148,7 @@ It's this feedback loop that makes the difference between a tool that generates 
 The assembly line has completed its cycle. Here's the result:
 
 ```bash
-$ aiden status add-a-get-health-endpoint
+$ neuraforge status add-a-get-health-endpoint
 Feature: Add a GET /health endpoint with DB connection check
   State: completed
   Mode: standard
@@ -188,13 +188,13 @@ Enterprise mode adds:
 - **Complete quality report**
 
 ```bash
-$ aiden enterprise "Authentication migration" --auto-approve
+$ neuraforge enterprise "Authentication migration" --auto-approve
 ```
 
 Without `--auto-approve`, each phase requests your validation before continuing.
 
 ## Next step
 
-You've seen flash (1 agent) and standard (4 agents). But how do you choose the right mode for each situation? And what happens when AIDEN detects it needs to switch modes mid-flight?
+You've seen flash (1 agent) and standard (4 agents). But how do you choose the right mode for each situation? And what happens when NeuraForge detects it needs to switch modes mid-flight?
 
-Discover the [3 AIDEN modes](/en/guides/modes) and their routing strategies.
+Discover the [3 NeuraForge modes](/en/guides/modes) and their routing strategies.

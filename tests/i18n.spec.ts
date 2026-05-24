@@ -29,7 +29,7 @@ test.describe('i18n — English (default)', () => {
   test('installation page renders in English', async ({ page }) => {
     await page.goto('/en/getting-started/installation');
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('body')).toContainText('aiden init');
+    await expect(page.locator('body')).toContainText('neuraforge init');
   });
 
   test('guides hub renders in English', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('i18n — English (default)', () => {
   test('reference CLI page renders', async ({ page }) => {
     await page.goto('/en/reference/cli');
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('body')).toContainText('aiden flash');
+    await expect(page.locator('body')).toContainText('neuraforge flash');
   });
 
   test('cookbook brownfield page renders', async ({ page }) => {
@@ -80,7 +80,7 @@ test.describe('i18n — French', () => {
   test('installation page renders in French', async ({ page }) => {
     await page.goto('/fr/getting-started/installation');
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('body')).toContainText('aiden init');
+    await expect(page.locator('body')).toContainText('neuraforge init');
   });
 
   test('modes page renders in French', async ({ page }) => {
@@ -126,7 +126,7 @@ test.describe('Navigation', () => {
   test('breadcrumbs display correctly', async ({ page }) => {
     await page.goto('/en/guides/modes');
     const header = page.locator('header');
-    await expect(header).toContainText('AIDEN');
+    await expect(header).toContainText('NeuraForge');
     await expect(header).toContainText('Guides');
     await expect(header).toContainText('Modes');
   });
@@ -150,7 +150,7 @@ test.describe('SEO', () => {
     await page.goto('/en');
     const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
     expect(jsonLd).toContain('SoftwareApplication');
-    expect(jsonLd).toContain('AIDEN');
+    expect(jsonLd).toContain('NeuraForge');
   });
 });
 

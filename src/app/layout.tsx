@@ -2,18 +2,18 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
 
-const siteUrl = process.env.SITE_URL || 'https://aiden.neuravim.tech';
+const siteUrl = process.env.SITE_URL || 'https://neuraforge.neuravim.tech';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'AIDEN — AI-Driven Engineering CLI Framework',
-    template: '%s | AIDEN Docs',
+    default: 'NeuraForge — AI-Driven Engineering CLI Framework',
+    template: '%s | NeuraForge Docs',
   },
   description:
     'Orchestrate 6 specialized AI agents (Analyst, Planner, Dev, QA...) via CLI. 3 adaptive modes, multi-provider (Claude, Gemini, Copilot), enterprise integration. Open source.',
   keywords: [
-    'AIDEN',
+    'NeuraForge',
     'AI development',
     'CLI framework',
     'AI agents',
@@ -32,14 +32,14 @@ export const metadata: Metadata = {
   creator: 'Astrolyn',
   openGraph: {
     type: 'website',
-    siteName: 'AIDEN Documentation',
-    title: 'AIDEN — AI-Driven Engineering CLI Framework',
+    siteName: 'NeuraForge Documentation',
+    title: 'NeuraForge — AI-Driven Engineering CLI Framework',
     description:
       'Orchestrate 6 specialized AI agents via CLI. From bug fix in 30s to enterprise architecture. Open source, multi-provider.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AIDEN — AI-Driven Engineering CLI',
+    title: 'NeuraForge — AI-Driven Engineering CLI',
     description:
       'Orchestrate 6 specialized AI agents via CLI. From bug fix in 30s to enterprise architecture.',
   },
@@ -73,7 +73,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'SoftwareApplication',
-              name: 'AIDEN',
+              name: 'NeuraForge',
               applicationCategory: 'DeveloperApplication',
               operatingSystem: 'Windows, macOS, Linux',
               description:

@@ -36,7 +36,7 @@ function colorShellLine(line: string): React.ReactNode {
   if (line.startsWith('# ')) {
     return <span style={{ color: V.comment }}>{line}</span>;
   }
-  if (/^AIDEN\s/.test(line)) {
+  if (/^NeuraForge\s/.test(line)) {
     return <span style={{ color: V.aiden }}>{line}</span>;
   }
   if (SHELL_CMDS.test(line.trimStart())) {

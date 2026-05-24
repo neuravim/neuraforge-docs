@@ -1,12 +1,12 @@
-# The 6 AIDEN agents
+# The 6 NeuraForge agents
 
-> Imagine a team of 6 specialized developers, available 24/7, passing work along like a perfectly oiled assembly line. That's exactly what AIDEN does.
+> Imagine a team of 6 specialized developers, available 24/7, passing work along like a perfectly oiled assembly line. That's exactly what NeuraForge does.
 >
 > Each agent has a precise role, a personality, and most importantly: they communicate with each other automatically.
 
 ## Meet the team
 
-Think of AIDEN as an engineering firm. The **Lead** is the project manager, the **Analyst** is the detective, the **Planner** is the architect, the **Dev** is the builder, the **QA** is the inspector, and the **DocOps** is the notary. Each excels in their specialty, and together they deliver a result that no one could produce alone.
+Think of NeuraForge as an engineering firm. The **Lead** is the project manager, the **Analyst** is the detective, the **Planner** is the architect, the **Dev** is the builder, the **QA** is the inspector, and the **DocOps** is the notary. Each excels in their specialty, and together they deliver a result that no one could produce alone.
 
 ### Lead (the project manager)
 
@@ -62,7 +62,7 @@ Need domain-specific behavior without creating new runtime roles? Use [Agent Pro
 Here's what concretely happens when you launch a workflow. Agents don't work in isolation. Each agent receives a `PipelineContext` containing:
 - The original **feature request**
 - The **outputs from all previous agents** (truncated to 8000 chars per agent, configurable)
-- The real **project context** (tech stack, architecture, CI — detected by `aiden init`)
+- The real **project context** (tech stack, architecture, CI — detected by `neuraforge init`)
 - The active **workflow mode** and **memory governance** policy when configured
 
 Imagine a folder circulating from desk to desk. Each agent opens the folder, reads what the previous ones wrote, adds their contribution, and passes the folder along. Nobody works in a vacuum.
@@ -153,12 +153,12 @@ After the **planning** phase: the gate verifies that the spec contains content a
 You can invoke an agent outside of a workflow:
 
 ```bash
-$ aiden agent analyst "Analyze the billing module"
+$ neuraforge agent analyst "Analyze the billing module"
 Invoking agent "analyst" with: "Analyze the billing module"
 ```
 
 ```bash
-$ aiden agent qa "Review the changes from the last commit"
+$ neuraforge agent qa "Review the changes from the last commit"
 ```
 
 > **Tip**: Manual invocation is useful for one-off analyses without creating a feature.

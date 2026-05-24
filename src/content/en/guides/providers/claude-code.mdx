@@ -1,6 +1,6 @@
 # Claude Code
 
-> Claude Code is the Swiss Army knife of AI for code. 200K token context window, deep reasoning, security review — it's AIDEN's default provider for a good reason.
+> Claude Code is the Swiss Army knife of AI for code. 200K token context window, deep reasoning, security review — it's NeuraForge's default provider for a good reason.
 
 ## Prerequisites
 
@@ -8,7 +8,7 @@ Before getting started, make sure you have:
 
 - Node.js 20+
 - An Anthropic account (free plan, Claude Max, Team or Enterprise)
-- AIDEN installed (`npm install -g @anthropic-ai/aiden` or from source)
+- NeuraForge installed (`npm install -g @anthropic-ai/aiden` or from source)
 
 All set? Let's move on to installation.
 
@@ -56,9 +56,9 @@ $ claude -p "Say hello in one sentence"
 # Hello! I'm Claude, how can I help you?
 ```
 
-If you see a response, you're all set. Let's move on to AIDEN configuration.
+If you see a response, you're all set. Let's move on to NeuraForge configuration.
 
-## AIDEN Configuration
+## NeuraForge Configuration
 
 Add Claude Code in `.aiden/aiden.config.yaml` — this is the minimum to get started:
 
@@ -100,41 +100,41 @@ providers:
 
 ## First Usage
 
-The config is in place, it's time to see AIDEN in action. Initialize your project, then launch your first workflow:
+The config is in place, it's time to see NeuraForge in action. Initialize your project, then launch your first workflow:
 
 ```bash
-$ aiden init
+$ neuraforge init
 # Scans the project, detects the stack, creates .aiden/memory/context.yaml
 
-$ aiden flash "Fix bug #123 in the authentication module"
+$ neuraforge flash "Fix bug #123 in the authentication module"
 ```
 
 Here's what the output looks like:
 
 ```
-[AIDEN] Mode: flash  Provider: claude-code
+[NeuraForge] Mode: flash  Provider: claude-code
 [Lead]  Analyzing the request...
 [Dev]   Implementation in progress (claude-code)...
         Files changed: src/auth/token-validator.ts, tests/unit/auth.test.ts
-[AIDEN] Workflow completed in 42s  •  Tokens: 3,847
+[NeuraForge] Workflow completed in 42s  •  Tokens: 3,847
 ```
 
 42 seconds, two files modified, tests included. Not bad for a first run.
 
 ## Slash Commands (Integrated Mode)
 
-AIDEN has an interesting feature: it works in two complementary modes that share the same `.aiden/` directory. This means you can switch between the two without losing your context.
+NeuraForge has an interesting feature: it works in two complementary modes that share the same `.aiden/` directory. This means you can switch between the two without losing your context.
 
-- **CLI mode**: `aiden flash "..."` — AIDEN orchestrates in Node.js, calls `claude` as a subprocess
+- **CLI mode**: `neuraforge flash "..."` — NeuraForge orchestrates in Node.js, calls `claude` as a subprocess
 - **Slash mode**: `/aiden-flash ...` in Claude Code — Claude reads the `.claude/commands/` prompts directly, no Node.js installation required
 
-Slash mode is particularly useful for teams discovering AIDEN or for occasional use directly in the Claude Code interface.
+Slash mode is particularly useful for teams discovering NeuraForge or for occasional use directly in the Claude Code interface.
 
 ### Available Commands
 
 | Command | Description |
 |---|---|
-| `/aiden-init` | Initialize the AIDEN project in the current directory |
+| `/aiden-init` | Initialize the NeuraForge project in the current directory |
 | `/aiden-flash` | Quick workflow: Lead -> Dev (2 agents) |
 | `/aiden-standard` | Full workflow: Lead -> Analyst -> Planner -> Dev -> QA |
 | `/aiden-enterprise` | Enterprise workflow with human approval between each phase |
@@ -162,7 +162,7 @@ Why Claude Code as the default provider? Because it excels where it matters most
 | Reasoning | Ideal for complex architectures and migrations |
 | Security | OWASP review, vulnerability detection |
 
-In `auto` mode, AIDEN leverages these strengths intelligently by automatically routing to Claude Code for analytical tasks:
+In `auto` mode, NeuraForge leverages these strengths intelligently by automatically routing to Claude Code for analytical tasks:
 
 ```yaml
 routing:
@@ -224,14 +224,14 @@ providers:
     command: ""
 ```
 
-When `baseUrl` is set, AIDEN uses the HTTP adapter (`fetch()`) instead of the `claude` subprocess. Compatible with LiteLLM, Cloudflare AI Gateway, and any OpenAI-compatible endpoint. It's transparent for the rest of the pipeline.
+When `baseUrl` is set, NeuraForge uses the HTTP adapter (`fetch()`) instead of the `claude` subprocess. Compatible with LiteLLM, Cloudflare AI Gateway, and any OpenAI-compatible endpoint. It's transparent for the rest of the pipeline.
 
 ### Check Provider Status
 
 Unsure about your configuration? A quick `provider status` to verify everything is in order:
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   claude-code: configured ✓
   gemini: not configured
@@ -297,7 +297,7 @@ agents:
 
 ### Security Filtering Redacts Too Much Content
 
-If AIDEN incorrectly redacts non-sensitive data, you can adjust the sanitizer rules or add your own patterns:
+If NeuraForge incorrectly redacts non-sensitive data, you can adjust the sanitizer rules or add your own patterns:
 
 ```yaml
 sanitize: true
@@ -314,4 +314,4 @@ sanitize: false
 
 ## Next Step
 
-You have Claude Code configured as an AIDEN provider — well done. To go further, explore [multi-provider routing](/en/guides/providers) to leverage multiple providers based on tasks, or check out the [workflow modes](/en/guides/modes) to choose between flash, standard and enterprise.
+You have Claude Code configured as an NeuraForge provider — well done. To go further, explore [multi-provider routing](/en/guides/providers) to leverage multiple providers based on tasks, or check out the [workflow modes](/en/guides/modes) to choose between flash, standard and enterprise.

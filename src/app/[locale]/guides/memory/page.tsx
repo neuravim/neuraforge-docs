@@ -5,8 +5,8 @@ import Fr from '@/content/fr/guides/memory.mdx';
 const page = createContentPage({
   content: { en: En, fr: Fr },
   metadata: {
-    en: { title: 'AIDEN Memory Governance — Scoped Task, Session, Project and User Memory', description: 'Understand AIDEN scoped memory governance: precedence, read/write policies, lifecycles, summarization and safe defaults.' },
-    fr: { title: 'Gouvernance mémoire AIDEN — Scopes task, session, project et user', description: 'Comprendre la gouvernance mémoire AIDEN : précédence, politiques read/write, cycles de vie, summarization et défauts sûrs.' },
+    en: { title: 'NeuraForge Memory Governance — Scoped Task, Session, Project and User Memory', description: 'Understand NeuraForge scoped memory governance: precedence, read/write policies, lifecycles, summarization and safe defaults.' },
+    fr: { title: 'Gouvernance mémoire NeuraForge — Scopes task, session, project et user', description: 'Comprendre la gouvernance mémoire NeuraForge : précédence, politiques read/write, cycles de vie, summarization et défauts sûrs.' },
   },
 });
 

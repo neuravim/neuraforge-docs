@@ -143,7 +143,7 @@ memory:                          # Gouvernance memoire par scopes
 | `providers.<name>.baseUrl` | string | — | Endpoint API OpenAI-compatible (active l'adapter HTTP) |
 | `providers.<name>.apiKey` | string | — | Cle API pour l'authentification Bearer |
 
-Quand `baseUrl` est defini, AIDEN utilise l'adapter API (`fetch`) au lieu du subprocess CLI. Le `command` est ignore.
+Quand `baseUrl` est defini, NeuraForge utilise l'adapter API (`fetch`) au lieu du subprocess CLI. Le `command` est ignore.
 
 ### Options Agent Profile
 
@@ -175,7 +175,7 @@ Voir [Agent Profiles & Domain Playbooks](/fr/guides/agent-profiles) pour l'exemp
 
 ### Options de gouvernance memoire
 
-Quand la memoire est active, AIDEN injecte une section explicite `--- Memory Governance ---` dans les prompts agents. Les agents doivent traiter la memoire comme des indices contextuels, pas comme une source de verite.
+Quand la memoire est active, NeuraForge injecte une section explicite `--- Memory Governance ---` dans les prompts agents. Les agents doivent traiter la memoire comme des indices contextuels, pas comme une source de verite.
 
 | Cle | Type | Defaut | Description |
 |---|---|---|---|
@@ -204,7 +204,7 @@ Les scopes par defaut sont `task`, `session`, `project` et `user`. Le scope `pro
 
 ## Schema projet (context.yaml)
 
-Le scan de `aiden init` genere `.aiden/memory/context.yaml` avec ce schema :
+Le scan de `neuraforge init` genere `.aiden/memory/context.yaml` avec ce schema :
 
 | Cle | Type | Description |
 |---|---|---|

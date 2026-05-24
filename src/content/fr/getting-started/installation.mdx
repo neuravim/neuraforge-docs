@@ -1,12 +1,12 @@
 # Installation
 
-**Vous ecrivez encore vos specs a la main, vous debuggez seul a 23h, et votre backlog ne desemplit jamais ?** AIDEN change la donne — mais d'abord, il faut l'installer. Bonne nouvelle : c'est l'affaire de 3 commandes.
+**Vous ecrivez encore vos specs a la main, vous debuggez seul a 23h, et votre backlog ne desemplit jamais ?** NeuraForge change la donne — mais d'abord, il faut l'installer. Bonne nouvelle : c'est l'affaire de 3 commandes.
 
 > **TL;DR** — Pour les impatients, voici la version express :
 > ```bash
-> pnpm add -g @neuravim/aiden   # 1. Installer
-> aiden init                     # 2. Initialiser dans votre projet
-> aiden flash "Hello world" --dry-run  # 3. Verifier que ca marche
+> pnpm add -g @neuravim/neuraforge   # 1. Installer
+> neuraforge init                     # 2. Initialiser dans votre projet
+> neuraforge flash "Hello world" --dry-run  # 3. Verifier que ca marche
 > ```
 > C'est tout. Si vous voulez comprendre chaque etape (et eviter les pieges), lisez la suite.
 
@@ -14,46 +14,46 @@
 
 ## Prerequis
 
-Avant d'inviter AIDEN dans votre projet, assurez-vous d'avoir le bon environnement. Pensez-y comme les ingredients avant la recette :
+Avant d'inviter NeuraForge dans votre projet, assurez-vous d'avoir le bon environnement. Pensez-y comme les ingredients avant la recette :
 
 - **Node.js 20+** — verifiez avec `node --version`
 - **pnpm** — installez avec `npm install -g pnpm`
 - Au moins un provider IA : Claude Code, Gemini CLI, OpenCode ou GitHub Copilot (ou un proxy API type LiteLLM)
 
-Le provider, c'est le "cerveau" qu'AIDEN va piloter. Sans provider, AIDEN est un chef d'orchestre sans musiciens — il sait quoi faire, mais personne pour jouer la partition.
+Le provider, c'est le "cerveau" qu'NeuraForge va piloter. Sans provider, NeuraForge est un chef d'orchestre sans musiciens — il sait quoi faire, mais personne pour jouer la partition.
 
 Tout est pret ? Parfait, passons a l'installation proprement dite.
 
 ---
 
-## Installer AIDEN
+## Installer NeuraForge
 
 Une seule commande, installation globale :
 
 ```bash
-$ pnpm add -g @neuravim/aiden
+$ pnpm add -g @neuravim/neuraforge
 ```
 
 Verifiez que tout s'est bien passe :
 
 ```bash
-$ aiden --version
+$ neuraforge --version
 0.7.0
 ```
 
 > **Astuce** : Si `command not found`, ajoutez le dossier global pnpm a votre PATH : `export PATH="$(pnpm store path)/../../.pnpm:$PATH"`
 
-Le binaire est la. Maintenant, il faut presenter AIDEN a votre projet — c'est la qu'`aiden init` entre en jeu.
+Le binaire est la. Maintenant, il faut presenter NeuraForge a votre projet — c'est la qu'`neuraforge init` entre en jeu.
 
 ---
 
 ## Initialiser un projet
 
-C'est l'etape ou AIDEN "fait connaissance" avec votre codebase. Dans le repertoire de votre projet :
+C'est l'etape ou NeuraForge "fait connaissance" avec votre codebase. Dans le repertoire de votre projet :
 
 ```bash
-$ aiden init
-AIDEN initialized in .aiden/
+$ neuraforge init
+NeuraForge initialized in .aiden/
   Config: .aiden/aiden.config.yaml
   Rules:  .aiden/rules/coding-standards.md
   Memory: .aiden/memory/
@@ -63,7 +63,7 @@ AIDEN initialized in .aiden/
   PM:     pnpm
 ```
 
-Qu'est-ce qui se passe sous le capot ? AIDEN scanne automatiquement votre projet et detecte tout ce qu'il peut. C'est un peu comme un nouveau developpeur qui lirait votre `package.json`, votre `Dockerfile` et votre CI config le premier jour — sauf qu'il le fait en quelques secondes :
+Qu'est-ce qui se passe sous le capot ? NeuraForge scanne automatiquement votre projet et detecte tout ce qu'il peut. C'est un peu comme un nouveau developpeur qui lirait votre `package.json`, votre `Dockerfile` et votre CI config le premier jour — sauf qu'il le fait en quelques secondes :
 
 - **Tech stack** : Node.js, TypeScript, React, Express, NestJS, Vue, Angular, Python, Go, Rust...
 - **Architecture** : Docker, Docker Compose, Kubernetes
@@ -72,7 +72,7 @@ Qu'est-ce qui se passe sous le capot ? AIDEN scanne automatiquement votre projet
 - **Databases** : PostgreSQL, MySQL, Redis, MongoDB (depuis les deps et docker-compose)
 - **Monorepo** : Turborepo, Nx, Lerna, pnpm workspaces
 
-Ces informations sont injectees dans le contexte de chaque agent pour des resultats plus pertinents. Plus AIDEN connait votre projet, plus ses suggestions sont adaptees.
+Ces informations sont injectees dans le contexte de chaque agent pour des resultats plus pertinents. Plus NeuraForge connait votre projet, plus ses suggestions sont adaptees.
 
 Voici la structure creee dans votre projet :
 
@@ -85,16 +85,16 @@ Voici la structure creee dans votre projet :
   features/          # Features en cours
 ```
 
-Le projet est initialise — reste a s'assurer qu'AIDEN peut parler a votre IA preferee.
+Le projet est initialise — reste a s'assurer qu'NeuraForge peut parler a votre IA preferee.
 
 ---
 
 ## Configurer le provider
 
-Par defaut, AIDEN utilise Claude Code. Si vous preferez un autre provider, un simple changement de config suffit :
+Par defaut, NeuraForge utilise Claude Code. Si vous preferez un autre provider, un simple changement de config suffit :
 
 ```bash
-$ aiden config set provider gemini
+$ neuraforge config set provider gemini
 Set provider = gemini
 ```
 
@@ -103,7 +103,7 @@ Providers disponibles : `claude-code`, `gemini`, `copilot`.
 Pour verifier que votre provider est bien accessible (parce qu'un outil qu'on ne peut pas joindre, ca ne sert pas a grand-chose) :
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   claude-code: configured
   gemini: not found
@@ -116,15 +116,15 @@ Si vous voyez "configured" en face de votre provider, vous etes pret pour le gra
 
 ## Premier test
 
-Avant de lancer AIDEN sur une vraie feature, faisons un test a blanc. Le flag `--dry-run` simule l'execution sans appeler le provider — pratique pour verifier que tout est bien cable :
+Avant de lancer NeuraForge sur une vraie feature, faisons un test a blanc. Le flag `--dry-run` simule l'execution sans appeler le provider — pratique pour verifier que tout est bien cable :
 
 ```bash
-$ aiden flash "Ajouter hello.ts" --dry-run
+$ neuraforge flash "Ajouter hello.ts" --dry-run
 [DRY RUN] Flash workflow: "Ajouter hello.ts"
 Mode: flash | Agents: lead, dev
 ```
 
-Si vous voyez ce resultat, bravo : AIDEN est installe, initialise, et pret a travailler. Le `--dry-run` montre ce qui serait fait sans appeler le provider.
+Si vous voyez ce resultat, bravo : NeuraForge est installe, initialise, et pret a travailler. Le `--dry-run` montre ce qui serait fait sans appeler le provider.
 
 ---
 
@@ -132,7 +132,7 @@ Si vous voyez ce resultat, bravo : AIDEN est installe, initialise, et pret a tra
 
 Si vous utilisez deja Claude Code au quotidien, il y a un raccourci encore plus direct : les slash commands. Zero installation supplementaire, zero config — juste des commandes dans votre session Claude :
 
-- `/aiden-init` — initialiser AIDEN
+- `/aiden-init` — initialiser NeuraForge
 - `/aiden-flash` — mode rapide
 - `/aiden-standard` — mode complet
 - `/aiden-enterprise` — mode enterprise
@@ -147,7 +147,7 @@ Tout ne se passe pas toujours comme prevu. Voici les erreurs classiques et comme
 
 **`command not found: aiden`** — Assurez-vous que le dossier global pnpm est dans votre PATH.
 
-**`AIDEN not initialized`** — Lancez `aiden init` dans le repertoire du projet.
+**`NeuraForge not initialized`** — Lancez `neuraforge init` dans le repertoire du projet.
 
 **`No provider available`** — Installez Claude Code (`npm install -g @anthropic-ai/claude-code`) ou un autre provider.
 

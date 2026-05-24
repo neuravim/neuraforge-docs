@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Chapitre 2 — Mode flash : corriger un bug en 2 minutes avec AIDEN',
-  description: 'Decouvrez le mode flash d\'AIDEN : un agent Lead + un agent Dev, zero overhead. Ajoutez un health check a votre API en une seule commande. Rapide, propre, trace.',
+  title: 'Chapitre 2 — Mode flash : corriger un bug en 2 minutes avec NeuraForge',
+  description: 'Decouvrez le mode flash d\'NeuraForge : un agent Lead + un agent Dev, zero overhead. Ajoutez un health check a votre API en une seule commande. Rapide, propre, trace.',
 };
 
 # Chapitre 2 — Premier reflexe : le mode flash
@@ -29,7 +29,7 @@ Notre todo-api n'a pas de health check. C'est le candidat parfait.
 Une commande. Pas deux. Pas trois. Une.
 
 ```bash
-$ aiden flash "Ajouter un endpoint GET /health qui retourne le status du serveur"
+$ neuraforge flash "Ajouter un endpoint GET /health qui retourne le status du serveur"
 ```
 
 Voici ce qui se passe sous le capot — en temps reel :
@@ -122,12 +122,12 @@ Meme en mode rapide, rien n'est perdu. Chaque decision, chaque token consomme es
 Pas sur de vous ? Le dry run montre ce qui se passerait sans rien executer :
 
 ```bash
-$ aiden flash "Renommer la route / en /api/v1" --dry-run
+$ neuraforge flash "Renommer la route / en /api/v1" --dry-run
 [DRY RUN] Flash workflow: "Renommer la route / en /api/v1"
 Mode: flash | Agents: lead, dev
 ```
 
-Utile quand vous hesitez entre flash et standard. Si AIDEN dit "flash", c'est que c'est simple. Si votre instinct dit "hmm, c'est peut-etre plus complexe que ca", ecoutez votre instinct et passez en standard.
+Utile quand vous hesitez entre flash et standard. Si NeuraForge dit "flash", c'est que c'est simple. Si votre instinct dit "hmm, c'est peut-etre plus complexe que ca", ecoutez votre instinct et passez en standard.
 
 ---
 
@@ -142,7 +142,7 @@ Le flash est addictif. Vous allez vouloir tout faire en flash. Resistez a la ten
 Le flash est un tournevis, pas un marteau. Excellent pour visser, catastrophique pour enfoncer un clou.
 
 <Callout type="tip">
-  AIDEN peut detecter quand un flash est insuffisant. Si le Lead detecte une complexite elevee, il vous suggerera de passer en standard. Faites-lui confiance — il a lu votre codebase.
+  NeuraForge peut detecter quand un flash est insuffisant. Si le Lead detecte une complexite elevee, il vous suggerera de passer en standard. Faites-lui confiance — il a lu votre codebase.
 </Callout>
 
 ---
@@ -152,7 +152,7 @@ Le flash est un tournevis, pas un marteau. Excellent pour visser, catastrophique
 Regardez vos metriques :
 
 ```bash
-$ aiden metrics
+$ neuraforge metrics
 ajouter-un-endpoint-get-health: 1,200 tokens, $0.0036, 1 operations
 ```
 
@@ -182,4 +182,4 @@ Ca, c'est un travail pour le [mode standard](/tutorial/standard). Et la, vous al
 
 ---
 
-*Temps de lecture : ~5 minutes. Tokens consommes par AIDEN : 1 200.*
+*Temps de lecture : ~5 minutes. Tokens consommes par NeuraForge : 1 200.*

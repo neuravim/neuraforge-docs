@@ -1,6 +1,6 @@
 # Providers
 
-> AIDEN ne vous enferme pas. Claude pour l'analyse, Gemini pour le code, Copilot en backup gratuit, Ollama pour le 100% local — mixez comme vous voulez.
+> NeuraForge ne vous enferme pas. Claude pour l'analyse, Gemini pour le code, Copilot en backup gratuit, Ollama pour le 100% local — mixez comme vous voulez.
 
 ## Decision rapide
 
@@ -11,7 +11,7 @@
 
 ## Providers supportes
 
-AIDEN supporte 5 providers CLI nativement et permet de brancher n'importe quel LLM via API :
+NeuraForge supporte 5 providers CLI nativement et permet de brancher n'importe quel LLM via API :
 
 | Provider | Type | Forces | Context | Cout |
 |---|---|---|---|---|
@@ -67,7 +67,7 @@ providers:
 
 ## Routage
 
-Le routage intelligent est ce qui rend AIDEN multi-provider vraiment utile. Au lieu de tout envoyer au meme LLM, chaque tache va au provider le plus adapte — automatiquement.
+Le routage intelligent est ce qui rend NeuraForge multi-provider vraiment utile. Au lieu de tout envoyer au meme LLM, chaque tache va au provider le plus adapte — automatiquement.
 
 4 strategies disponibles :
 
@@ -96,12 +96,12 @@ En mode `auto`, chaque agent recoit le provider optimal :
 Un doute sur quel provider est actif ? Une seule commande :
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 ```
 
 ## Budget tokens
 
-Les tokens, ca chiffre vite. AIDEN vous permet de poser des gardes-fous par feature et par mode, avec une alerte avant le mur.
+Les tokens, ca chiffre vite. NeuraForge vous permet de poser des gardes-fous par feature et par mode, avec une alerte avant le mur.
 
 ```yaml
 budget:
@@ -113,13 +113,13 @@ budget:
     enterprise: 100000
 ```
 
-> **Information** : L'alerte se declenche a 80% du budget. AIDEN bloque les appels si le budget est depasse.
+> **Information** : L'alerte se declenche a 80% du budget. NeuraForge bloque les appels si le budget est depasse.
 
 ## Filtrage securite
 
-Avant chaque appel provider, AIDEN passe le prompt au crible. Les secrets ne sortent jamais de votre machine — meme par accident.
+Avant chaque appel provider, NeuraForge passe le prompt au crible. Les secrets ne sortent jamais de votre machine — meme par accident.
 
-AIDEN filtre automatiquement les donnees sensibles avant de les envoyer aux providers :
+NeuraForge filtre automatiquement les donnees sensibles avant de les envoyer aux providers :
 
 - Bearer tokens
 - API keys (`sk-`, `ghp_`, `github_pat_`)

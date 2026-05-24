@@ -1,12 +1,12 @@
 # Agent Profiles & Domain Playbooks
 
-AIDEN permet de créer des comportements d'ingénierie sur mesure sans transformer chaque cas d'usage en nouveau type d'agent runtime.
+NeuraForge permet de créer des comportements d'ingénierie sur mesure sans transformer chaque cas d'usage en nouveau type d'agent runtime.
 
 Utilisez les **agent profiles** pour spécialiser les agents intégrés, et les **domain playbooks** pour packager skills, règles, hooks et artefacts autour d'un domaine métier.
 
 ## Pourquoi éviter de créer de nouveaux rôles d'agents ?
 
-AIDEN possède déjà un pipeline stable :
+NeuraForge possède déjà un pipeline stable :
 
 - **Lead** choisit le mode et orchestre le workflow.
 - **Analyst** découvre les besoins, risques et inconnues.
@@ -63,7 +63,7 @@ agentProfiles:
 Exécution :
 
 ```bash
-aiden enterprise "Migrer cette application WildFly vers Spring Boot" --profile wildfly-to-spring-boot
+neuraforge enterprise "Migrer cette application WildFly vers Spring Boot" --profile wildfly-to-spring-boot
 ```
 
 Ou activation permanente dans `.aiden/aiden.config.yaml` avec `activeProfile`.
@@ -96,7 +96,7 @@ Structure recommandée :
 ### 1. Créer le squelette du playbook
 
 ```bash
-aiden skills init wildfly-to-spring-boot
+neuraforge skills init wildfly-to-spring-boot
 ```
 
 Modifier `.aiden/skills/wildfly-to-spring-boot/skill.yaml` :
@@ -119,7 +119,7 @@ artefacts:
   - rollback-plan
 profiles:
   wildfly-to-spring-boot:
-    description: "Specialiser AIDEN pour les migrations WildFly/JBoss vers Spring Boot"
+    description: "Specialiser NeuraForge pour les migrations WildFly/JBoss vers Spring Boot"
     recommendedMode: enterprise
     workflowPreset: migration
     skills:
@@ -285,7 +285,7 @@ activeProfile: wildfly-to-spring-boot
 Ou en one-shot CLI :
 
 ```bash
-aiden enterprise "Migrer cette app WildFly vers Spring Boot 3 en preservant le comportement API" \
+neuraforge enterprise "Migrer cette app WildFly vers Spring Boot 3 en preservant le comportement API" \
   --profile wildfly-to-spring-boot \
   --trace
 ```

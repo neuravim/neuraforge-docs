@@ -5,7 +5,7 @@
 > **What you'll learn**
 > - Install Gemini CLI (Google's AI coding assistant)
 > - Configure Google authentication
-> - Use Gemini as an AIDEN provider
+> - Use Gemini as an NeuraForge provider
 > - Connect Gemini via direct API (alternative)
 > - Resolve common issues
 
@@ -15,7 +15,7 @@ Before we get started, make sure you have:
 
 - **Node.js 20+** — verify with `node --version`
 - **Google account** with access to the Gemini API (Google AI Studio or Google Cloud)
-- AIDEN installed and initialized (`aiden init`)
+- NeuraForge installed and initialized (`neuraforge init`)
 
 Nothing more. Let's go.
 
@@ -79,9 +79,9 @@ $ source ~/.zshrc
 
 > **Tip**: Prefer OAuth for local development to avoid storing keys in your shell. Reserve the API key for CI/CD environments where nobody can click on a browser.
 
-## AIDEN Configuration
+## NeuraForge Configuration
 
-Now that we have a working Gemini, let's plug it into AIDEN. Add this to your `.aiden/aiden.config.yaml`:
+Now that we have a working Gemini, let's plug it into NeuraForge. Add this to your `.aiden/aiden.config.yaml`:
 
 ```yaml
 provider: gemini
@@ -95,7 +95,7 @@ providers:
     costPer1k: 0.001
 ```
 
-This is the simplest configuration: Gemini does everything. But AIDEN's real power is multi-provider. You can keep Claude Code for analysis and review, and let Gemini do what it does best — generate code:
+This is the simplest configuration: Gemini does everything. But NeuraForge's real power is multi-provider. You can keep Claude Code for analysis and review, and let Gemini do what it does best — generate code:
 
 ```yaml
 provider: claude-code
@@ -119,35 +119,35 @@ routing:
   fallback: [claude-code, gemini]
 ```
 
-In `auto` mode, AIDEN automatically routes the Dev agent to Gemini for code generation. Each agent uses the provider best suited to its task — without you having to think about it.
+In `auto` mode, NeuraForge automatically routes the Dev agent to Gemini for code generation. Each agent uses the provider best suited to its task — without you having to think about it.
 
 ## First Usage
 
 Set Gemini as the active provider and launch a feature to verify everything works:
 
 ```bash
-$ aiden config set provider gemini
+$ neuraforge config set provider gemini
 Set provider = gemini
 
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   gemini: configured
   claude-code: not found
 
-$ aiden flash "Add CSV export to the reports module"
+$ neuraforge flash "Add CSV export to the reports module"
 ```
 
-A quick `aiden provider status` before launching a long workflow avoids unpleasant surprises:
+A quick `neuraforge provider status` before launching a long workflow avoids unpleasant surprises:
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 ```
 
 ## Alternative: Direct API
 
-Don't want to install the CLI? Running in CI/CD or behind an LLM proxy? AIDEN's HTTP adapter is made for that.
+Don't want to install the CLI? Running in CI/CD or behind an LLM proxy? NeuraForge's HTTP adapter is made for that.
 
-Google exposes an OpenAI-compatible endpoint for Gemini, which means AIDEN can call it directly via `fetch()`:
+Google exposes an OpenAI-compatible endpoint for Gemini, which means NeuraForge can call it directly via `fetch()`:
 
 ```yaml
 providers:
@@ -161,13 +161,13 @@ providers:
     command: ""
 ```
 
-When `baseUrl` is set, AIDEN uses the HTTP adapter instead of the CLI subprocess — no `gemini` binary required. The API key is sent in the `Authorization: Bearer` header.
+When `baseUrl` is set, NeuraForge uses the HTTP adapter instead of the CLI subprocess — no `gemini` binary required. The API key is sent in the `Authorization: Bearer` header.
 
 > **Note**: This approach also works via LiteLLM or Cloudflare AI Gateway if you want to centralize your LLM routing. Check the [Providers](/en/guides/providers) page for more details.
 
 ## Strengths and Use Cases
 
-Why Gemini in an AIDEN pipeline? Here's what makes it interesting:
+Why Gemini in an NeuraForge pipeline? Here's what makes it interesting:
 
 | Characteristic | Detail |
 |---|---|
@@ -249,7 +249,7 @@ providers:
 
 ### Timeout on Large Features
 
-AIDEN's default timeout is 120 seconds. With the 1M token context window, very long prompts can exceed this limit. Increase the timeout in `.aiden/aiden.config.yaml`:
+NeuraForge's default timeout is 120 seconds. With the 1M token context window, very long prompts can exceed this limit. Increase the timeout in `.aiden/aiden.config.yaml`:
 
 ```yaml
 providers:
@@ -262,7 +262,7 @@ providers:
 Verify that the provider is enabled and accessible:
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 $ gemini --version
 ```
 
@@ -270,7 +270,7 @@ If `gemini --version` fails, reinstall the CLI.
 
 ### API Quota Limits
 
-Google AI Studio has requests per minute (RPM) limits. If you hit them, AIDEN will show a `ProviderError`. Three solutions:
+Google AI Studio has requests per minute (RPM) limits. If you hit them, NeuraForge will show a `ProviderError`. Three solutions:
 
 - Switch to a Google Cloud project with billing enabled (higher quotas)
 - Add a delay between features in your workflow

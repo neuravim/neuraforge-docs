@@ -6,7 +6,7 @@ export function AidenLogo({ size = 32 }: { size?: number }) {
       viewBox="0 0 512 512"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="AIDEN logo"
+      aria-label="NeuraForge logo"
     >
       {/* Rounded square — white */}
       <rect width="512" height="512" rx="96" fill="#ffffff" stroke="#e5e7eb" strokeWidth="2" />

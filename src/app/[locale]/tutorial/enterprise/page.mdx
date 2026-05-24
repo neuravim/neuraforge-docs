@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Chapitre 4 — Mode enterprise : securite, approbation humaine et documentation automatique',
-  description: 'Ajoutez l\'authentification JWT a votre API avec le mode enterprise d\'AIDEN. Approbation humaine entre chaque phase, agent DocOps, audit trail complet. Le workflow pour les projets critiques.',
+  description: 'Ajoutez l\'authentification JWT a votre API avec le mode enterprise d\'NeuraForge. Approbation humaine entre chaque phase, agent DocOps, audit trail complet. Le workflow pour les projets critiques.',
 };
 
 # Chapitre 4 — Quand la securite compte : le mode enterprise
@@ -28,7 +28,7 @@ Le mode enterprise ajoute trois garanties que le standard n'a pas :
 ## Lancer l'enterprise
 
 ```bash
-$ aiden enterprise "Ajouter l'authentification JWT avec login, register, et middleware de protection des routes"
+$ neuraforge enterprise "Ajouter l'authentification JWT avec login, register, et middleware de protection des routes"
 ```
 
 Cette fois, l'execution ne defile pas d'un coup. Elle **s'arrete apres chaque phase** pour demander votre feu vert.
@@ -182,7 +182,7 @@ Derniere approbation. `y`.
 Attendre entre chaque phase, c'est bien pour apprendre. Mais quand vous faites confiance au processus :
 
 ```bash
-$ aiden enterprise "Ma feature" --auto-approve
+$ neuraforge enterprise "Ma feature" --auto-approve
 ```
 
 L'enterprise complet tourne sans interruption. Vous gardez le DocOps, les regles, l'ADR, le scan securite — mais sans les pauses. Le meilleur des deux mondes.
@@ -192,7 +192,7 @@ L'enterprise complet tourne sans interruption. Vous gardez le DocOps, les regles
 ## Ce que l'enterprise a produit
 
 ```bash
-$ aiden status ajouter-authentification-jwt
+$ neuraforge status ajouter-authentification-jwt
 Feature: Ajouter l'authentification JWT
   State: completed
   Mode: enterprise
@@ -234,7 +234,7 @@ Apres 3 chapitres, vous avez vu les 3 modes en action. Voici la synthese :
 | **Cas d'usage** | Bug fix, petit endpoint | Feature moyenne | Securite, compliance, archi |
 | **Duree typique** | < 30 secondes | 30s - 2 min | 1 - 5 min |
 
-**La regle d'or** : commencez par flash. Si c'est trop simple pour le flash, passez en standard. Si la securite ou la compliance sont en jeu, passez en enterprise. Et si vous vous trompez, AIDEN peut [changer de mode en cours de route](/guides/modes) sans perdre le travail deja fait.
+**La regle d'or** : commencez par flash. Si c'est trop simple pour le flash, passez en standard. Si la securite ou la compliance sont en jeu, passez en enterprise. Et si vous vous trompez, NeuraForge peut [changer de mode en cours de route](/guides/modes) sans perdre le travail deja fait.
 
 ---
 
@@ -247,10 +247,10 @@ Le mode enterprise, c'est :
 - **Scan securite OWASP** dans le QA
 - **Audit trail complet** — chaque decision tracee
 
-Notre todo-api est maintenant complete : health check, CRUD, authentification JWT. Mais AIDEN, c'est plus que 3 commandes de workflow.
+Notre todo-api est maintenant complete : health check, CRUD, authentification JWT. Mais NeuraForge, c'est plus que 3 commandes de workflow.
 
-Dans le [dernier chapitre](/tutorial/toolbox), on decouvre les outils du quotidien — ceux qui font d'AIDEN un vrai compagnon de developpement.
+Dans le [dernier chapitre](/tutorial/toolbox), on decouvre les outils du quotidien — ceux qui font d'NeuraForge un vrai compagnon de developpement.
 
 ---
 
-*Temps de lecture : ~7 minutes. Tokens consommes par AIDEN : 34 200.*
+*Temps de lecture : ~7 minutes. Tokens consommes par NeuraForge : 34 200.*

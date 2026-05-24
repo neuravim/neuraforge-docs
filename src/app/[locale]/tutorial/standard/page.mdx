@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Chapitre 3 — Mode standard : 4 agents IA construisent votre feature CRUD',
-  description: 'Suivez en direct 4 agents IA (Analyst, Planner, Dev, QA) qui collaborent pour construire un CRUD complet. Quality gates, boucle de feedback, artefacts — le workflow AIDEN standard decortique.',
+  description: 'Suivez en direct 4 agents IA (Analyst, Planner, Dev, QA) qui collaborent pour construire un CRUD complet. Quality gates, boucle de feedback, artefacts — le workflow NeuraForge standard decortique.',
 };
 
 # Chapitre 3 — Construire pour de vrai : le mode standard
@@ -16,7 +16,7 @@ C'est trop gros pour un flash. Plusieurs fichiers, un modele de donnees, des val
 ## Lancer le standard
 
 ```bash
-$ aiden standard "Implementer un CRUD complet pour les taches (todos) avec validation et tests"
+$ neuraforge standard "Implementer un CRUD complet pour les taches (todos) avec validation et tests"
 ```
 
 La chaine de montage demarre. Cinq phases, quatre agents. Accrochez-vous.
@@ -177,11 +177,11 @@ router.get('/', (_req, res) => {
 
 ### Les guardrails du Dev
 
-Le Dev n'est pas en roue libre. AIDEN surveille :
+Le Dev n'est pas en roue libre. NeuraForge surveille :
 
 - **Circuit breaker** : 3 echecs consecutifs → on arrete, on escalade
 - **Alerte fichiers** : plus de 10 fichiers modifies → signal d'alarme
-- **Rappel d'objectif** : toutes les 5 etapes, AIDEN reinjecte l'objectif original pour eviter la derive
+- **Rappel d'objectif** : toutes les 5 etapes, NeuraForge reinjecte l'objectif original pour eviter la derive
 
 ```
 OBJECTIVE REMINDER
@@ -229,7 +229,7 @@ ISSUES: Minor — consider adding pagination for GET /todos
 
 ### Et si le QA refuse ?
 
-C'est la ou AIDEN brille. Si `PASSED: no`, l'orchestrateur ne panique pas. Il lance une **boucle de correction** :
+C'est la ou NeuraForge brille. Si `PASSED: no`, l'orchestrateur ne panique pas. Il lance une **boucle de correction** :
 
 1. Le Dev recoit le feedback precis du QA
 2. Le Dev corrige les points specifiques
@@ -243,7 +243,7 @@ C'est du pair programming automatise. Le QA pointe, le Dev corrige. Pas d'allers
 ## Le resultat final
 
 ```bash
-$ aiden status implementer-un-crud-complet
+$ neuraforge status implementer-un-crud-complet
 Feature: Implementer un CRUD complet pour les taches
   State: completed
   Mode: standard
@@ -272,7 +272,7 @@ Six artefacts. Un CRUD complet. Des tests. Une review. Le tout en 45 secondes et
 
 Vous avez peut-etre remarque que le Dev utilisait **gemini** alors que les autres agents utilisaient **claude-code**. Ce n'est pas un hasard.
 
-AIDEN route chaque agent vers le provider optimal :
+NeuraForge route chaque agent vers le provider optimal :
 
 | Agent | Provider | Pourquoi |
 |-------|----------|----------|
@@ -284,7 +284,7 @@ AIDEN route chaque agent vers le provider optimal :
 Ce routing est configurable. Si vous preferez tout envoyer au meme provider :
 
 ```bash
-$ aiden config set routing.strategy fixed
+$ neuraforge config set routing.strategy fixed
 ```
 
 Mais le mode `auto` est generalement le meilleur choix — il utilise les forces de chaque provider.
@@ -306,4 +306,4 @@ Il nous faut de l'authentification. Et quand la securite est en jeu, on ne se co
 
 ---
 
-*Temps de lecture : ~7 minutes. Tokens consommes par AIDEN : 12 400.*
+*Temps de lecture : ~7 minutes. Tokens consommes par NeuraForge : 12 400.*

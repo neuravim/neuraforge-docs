@@ -19,33 +19,33 @@ $ pnpm bin -g
 
 ---
 
-### "No AIDEN config found"
+### "No NeuraForge config found"
 
-**Symptom**: AIDEN refuses to start and asks for a configuration.
+**Symptom**: NeuraForge refuses to start and asks for a configuration.
 
 **Cause**: The project hasn't been initialized.
 
-**Solution**: Run `aiden init` at the root of your project.
+**Solution**: Run `neuraforge init` at the root of your project.
 
 ---
 
 ### "No provider available"
 
-**Symptom**: AIDEN can't find any provider to execute the task.
+**Symptom**: NeuraForge can't find any provider to execute the task.
 
 **Cause**: No CLI provider is installed or accessible.
 
 **Solution**: Verify the provider is installed and responding:
 ```bash
 $ claude --version   # or gemini --version
-$ aiden provider status
+$ neuraforge provider status
 ```
 
 ---
 
 ### "Budget exceeded"
 
-**Symptom**: AIDEN blocks execution and reports a budget overrun.
+**Symptom**: NeuraForge blocks execution and reports a budget overrun.
 
 **Cause**: The feature's token budget has been exceeded.
 
@@ -59,14 +59,14 @@ $ aiden provider status
 
 **Symptom**: The following message appears:
 ```
-AIDEN Lead > Circuit breaker OPEN for dev: escalating to human
+NeuraForge Lead > Circuit breaker OPEN for dev: escalating to human
 ```
 
-**Cause**: An agent failed 3 times in a row. AIDEN stops and escalates.
+**Cause**: An agent failed 3 times in a row. NeuraForge stops and escalates.
 
 **Solution**: Check the error in the logs, fix the context, then resume:
 ```bash
-$ aiden resume <slug>
+$ neuraforge resume <slug>
 ```
 
 ---
@@ -75,7 +75,7 @@ $ aiden resume <slug>
 
 **Symptom**: The feature shows as `blocked` in the status:
 ```bash
-$ aiden status
+$ neuraforge status
 my-feature [blocked] (standard) - ...
 ```
 
@@ -83,13 +83,13 @@ my-feature [blocked] (standard) - ...
 
 **Solution**: To unblock and resume:
 ```bash
-$ aiden resume my-feature
+$ neuraforge resume my-feature
 Resuming feature: my-feature
 ```
 
 To abandon permanently:
 ```bash
-$ aiden abort my-feature
+$ neuraforge abort my-feature
 Aborting feature: my-feature
 ```
 
@@ -101,7 +101,7 @@ Aborting feature: my-feature
 
 **Cause**: The output directory doesn't exist or the provider isn't responding.
 
-**Solution**: Verify that `.aiden/features/` exists and that `aiden provider status` shows an active provider.
+**Solution**: Verify that `.aiden/features/` exists and that `neuraforge provider status` shows an active provider.
 
 ---
 
@@ -113,7 +113,7 @@ Decisions are in `.aiden/memory/decisions.jsonl` (JSONL, one line per decision).
 Metrics are in `.aiden/memory/metrics.jsonl`.
 
 ```bash
-$ aiden metrics
+$ neuraforge metrics
 export-csv: 3000 tokens, $0.0090, 2 operations
 ```
 

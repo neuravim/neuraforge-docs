@@ -5,8 +5,8 @@ import Fr from '@/content/fr/reference/cli.mdx';
 const page = createContentPage({
   content: { en: En, fr: Fr },
   metadata: {
-    en: { title: 'CLI Reference — All AIDEN Commands', description: 'Complete reference: aiden init, flash, standard, enterprise, status, resume, abort, agent, provider, metrics.' },
-    fr: { title: 'Reference CLI AIDEN — Toutes les commandes', description: 'Reference complete : aiden init, flash, standard, enterprise, status, resume, abort, agent, provider, metrics.' },
+    en: { title: 'CLI Reference — All NeuraForge Commands', description: 'Complete reference: neuraforge init, flash, standard, enterprise, status, resume, abort, agent, provider, metrics.' },
+    fr: { title: 'Reference CLI NeuraForge — Toutes les commandes', description: 'Reference complete : neuraforge init, flash, standard, enterprise, status, resume, abort, agent, provider, metrics.' },
   },
 });
 

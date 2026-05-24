@@ -126,7 +126,7 @@ export function Header({ locale }: { locale: string }) {
 }
 
 function buildBreadcrumbs(pathname: string, locale: string): Array<{ label: string; href: string }> {
-  const crumbs = [{ label: 'AIDEN', href: `/${locale}` }];
+  const crumbs = [{ label: 'NeuraForge', href: `/${locale}` }];
 
   if (pathname === `/${locale}` || pathname === `/${locale}/`) return crumbs;
 

@@ -5,17 +5,17 @@
 > **What you'll learn**
 > - Install GitHub CLI and the Copilot extension
 > - Configure GitHub authentication
-> - Use Copilot as an AIDEN provider
+> - Use Copilot as an NeuraForge provider
 > - Understand the limitations
 > - Troubleshooting
 
-GitHub Copilot is a native AIDEN CLI provider. It relies on `gh copilot explain` to process prompts in semi-interactive mode. Its cost is zero — it's included in your Copilot subscription — making it an excellent fallback or quick fix provider.
+GitHub Copilot is a native NeuraForge CLI provider. It relies on `gh copilot explain` to process prompts in semi-interactive mode. Its cost is zero — it's included in your Copilot subscription — making it an excellent fallback or quick fix provider.
 
 ## Prerequisites
 
 - **GitHub CLI** (`gh`) installed and up to date
 - **Active GitHub Copilot subscription** (Individual, Business or Enterprise)
-- AIDEN initialized in your project (`aiden init`)
+- NeuraForge initialized in your project (`neuraforge init`)
 
 ## Installation
 
@@ -80,7 +80,7 @@ Manually test that Copilot responds:
 $ echo "Explain what a closure is in JavaScript" | gh copilot explain -
 ```
 
-## AIDEN Configuration
+## NeuraForge Configuration
 
 Add the `copilot` section in `.aiden/aiden.config.yaml`:
 
@@ -109,14 +109,14 @@ Key parameters:
 Set Copilot as the active provider then launch a flash feature:
 
 ```bash
-$ aiden config set provider copilot
-$ aiden flash "Fix the typo in README"
+$ neuraforge config set provider copilot
+$ neuraforge flash "Fix the typo in README"
 ```
 
 Verify the provider is detected:
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   copilot: configured
 ```
@@ -181,7 +181,7 @@ routing:
   fallback: [claude-code, gemini, copilot]
 ```
 
-With the `prefer` strategy, AIDEN uses `claude-code` as priority and automatically falls back to `gemini` then `copilot` if the primary provider is unavailable.
+With the `prefer` strategy, NeuraForge uses `claude-code` as priority and automatically falls back to `gemini` then `copilot` if the primary provider is unavailable.
 
 For quick fixes only, you can route lightweight tasks to Copilot via the `auto` strategy:
 
@@ -191,7 +191,7 @@ routing:
   fallback: [claude-code, gemini, copilot]
 ```
 
-In `auto` mode, AIDEN assigns Copilot to `quick fix` and `PR review` tasks, and reserves more powerful providers for analysis and code generation.
+In `auto` mode, NeuraForge assigns Copilot to `quick fix` and `PR review` tasks, and reserves more powerful providers for analysis and code generation.
 
 ## Troubleshooting
 
@@ -224,18 +224,18 @@ $ gh auth status
 $ gh auth login
 ```
 
-### "copilot: not configured" in `aiden provider status`
+### "copilot: not configured" in `neuraforge provider status`
 
 The `copilot` section is missing or malformed in `.aiden/aiden.config.yaml`. Verify that `enabled: true` is present and that the YAML indentation is correct.
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 $ cat .aiden/aiden.config.yaml
 ```
 
 ### Timeout or Empty Response
 
-`gh copilot explain` can be slow on large prompts. If AIDEN returns a timeout error:
+`gh copilot explain` can be slow on large prompts. If NeuraForge returns a timeout error:
 
 - Reduce the context size passed to the agent
 - Switch to `flash` mode to limit context
@@ -245,7 +245,7 @@ $ cat .aiden/aiden.config.yaml
 $ echo "test" | gh copilot explain -
 ```
 
-If this command fails, the problem is at the GitHub CLI level, not AIDEN.
+If this command fails, the problem is at the GitHub CLI level, not NeuraForge.
 
 ### Inactive Copilot Subscription
 

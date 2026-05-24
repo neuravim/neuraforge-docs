@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aiden.neuravim.tech/sitemap.xml
+Sitemap: https://neuraforge.neuravim.tech/sitemap.xml

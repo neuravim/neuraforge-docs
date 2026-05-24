@@ -1,21 +1,21 @@
 # Custom API Provider
 
-> Your company has an internal LLM proxy? Your team uses OpenAI? You have a GPU cluster with vLLM? AIDEN plugs into anything that speaks OpenAI-compatible.
+> Your company has an internal LLM proxy? Your team uses OpenAI? You have a GPU cluster with vLLM? NeuraForge plugs into anything that speaks OpenAI-compatible.
 
 > **What you'll learn**
-> - Connect AIDEN to any LLM via OpenAI-compatible API
+> - Connect NeuraForge to any LLM via OpenAI-compatible API
 > - Configure LiteLLM, Ollama, Azure OpenAI and direct OpenAI
 > - Set up an enterprise proxy with centralized logging
 > - Run an on-premise LLM in an air-gapped environment
 
 ## How It Works
 
-When the `baseUrl` field is set in a provider's configuration, AIDEN automatically switches to the **HTTP adapter** instead of the CLI subprocess. No external binary is required: AIDEN sends prompts via `fetch()` as `POST /chat/completions` in standard OpenAI format.
+When the `baseUrl` field is set in a provider's configuration, NeuraForge automatically switches to the **HTTP adapter** instead of the CLI subprocess. No external binary is required: NeuraForge sends prompts via `fetch()` as `POST /chat/completions` in standard OpenAI format.
 
 ```
 CLI Provider (default)        Custom API Provider
 ─────────────────────         ──────────────────────
-AIDEN                         AIDEN
+NeuraForge                         NeuraForge
   └─ spawn(claude -p -)         └─ fetch(POST /chat/completions)
        ↑ stdin pipe                   ↑ JSON body (OpenAI format)
        claude CLI                     Your endpoint
@@ -47,7 +47,7 @@ To start with multiple models simultaneously, use a LiteLLM configuration file:
 $ litellm --config litellm_config.yaml
 ```
 
-### AIDEN Configuration
+### NeuraForge Configuration
 
 ```yaml
 # .aiden/aiden.config.yaml
@@ -67,7 +67,7 @@ LiteLLM is particularly useful in enterprise settings for:
 - Centralizing API keys (they stay on the proxy, not on each workstation)
 - Logging all LLM calls in an observability tool (Langfuse, Helicone)
 - Applying rate limits and quotas per team
-- Switching models without changing the AIDEN config
+- Switching models without changing the NeuraForge config
 
 ## Ollama — Local LLM
 
@@ -91,7 +91,7 @@ $ curl http://localhost:11434/v1/models
 # Should return the list of downloaded models
 ```
 
-### AIDEN Configuration
+### NeuraForge Configuration
 
 ```yaml
 providers:
@@ -133,7 +133,7 @@ providers:
 
 ## OpenAI — Direct Connection
 
-If your team uses OpenAI, you can connect AIDEN directly to the API without going through a proxy.
+If your team uses OpenAI, you can connect NeuraForge directly to the API without going through a proxy.
 
 ```yaml
 providers:
@@ -149,7 +149,7 @@ providers:
 
 > **Warning**: Never commit your `apiKey` to the Git repository. Use an environment variable or add the `.aiden/aiden.config.yaml` file to `.gitignore`.
 
-To inject the key via environment variable, most LLM proxies (LiteLLM, Cloudflare AI Gateway) accept `OPENAI_API_KEY` directly. On the AIDEN side, you can omit the key from the config and pass it via env.
+To inject the key via environment variable, most LLM proxies (LiteLLM, Cloudflare AI Gateway) accept `OPENAI_API_KEY` directly. On the NeuraForge side, you can omit the key from the config and pass it via env.
 
 ### Choosing the OpenAI Model
 
@@ -207,7 +207,7 @@ This scenario covers the typical enterprise case: all AI requests go through an 
 ```
 Developer workstation      Internal proxy              Cloud LLM
 ──────────────────         ──────────────────         ──────────────
-AIDEN (fetch)    ─────►   ai-proxy.corp/v1   ─────►  OpenAI / Anthropic
+NeuraForge (fetch)    ─────►   ai-proxy.corp/v1   ─────►  OpenAI / Anthropic
                            │
                            ├─ Logging (Langfuse)
                            ├─ Rate limiting per team
@@ -215,7 +215,7 @@ AIDEN (fetch)    ─────►   ai-proxy.corp/v1   ─────►  Ope
                            └─ API key rotation
 ```
 
-### AIDEN Configuration
+### NeuraForge Configuration
 
 ```yaml
 # .aiden/aiden.config.yaml
@@ -317,14 +317,14 @@ providers:
     command: ""
 ```
 
-> **Note**: The AIDEN prompt sanitizer (`sanitize: true`) remains active even with a local LLM. It protects against accidental secret injection in generated artifacts.
+> **Note**: The NeuraForge prompt sanitizer (`sanitize: true`) remains active even with a local LLM. It protects against accidental secret injection in generated artifacts.
 
 ## Verification
 
 After configuring your API provider, verify it's properly recognized:
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   litellm: configured
   openai: configured
@@ -335,11 +335,11 @@ Provider status:
 For a quick end-to-end test:
 
 ```bash
-$ aiden flash "Write a TypeScript function that returns the reverse of a string" \
+$ neuraforge flash "Write a TypeScript function that returns the reverse of a string" \
     --provider litellm
 ```
 
-AIDEN should complete the workflow and write artifacts in `.aiden/features/`.
+NeuraForge should complete the workflow and write artifacts in `.aiden/features/`.
 
 ## Multi-Provider with API and CLI
 
@@ -392,7 +392,7 @@ In `auto` mode, the default routing becomes:
 | QA | claude-code | Code review, long context |
 | DocOps | claude-code | Documentation |
 
-If `claude-code` is unavailable (CI without binary), AIDEN automatically falls back to `litellm` then `local-llm` according to the `fallback` list.
+If `claude-code` is unavailable (CI without binary), NeuraForge automatically falls back to `litellm` then `local-llm` according to the `fallback` list.
 
 ## Troubleshooting
 
@@ -424,7 +424,7 @@ $ curl -H "Authorization: Bearer internal-token" \
 
 ### `model not found` or `404 on /chat/completions`
 
-The model name in AIDEN doesn't match what the server exposes.
+The model name in NeuraForge doesn't match what the server exposes.
 
 ```bash
 # List available models on the server
@@ -432,7 +432,7 @@ $ curl http://localhost:4000/v1/models | python -m json.tool
 # Look for the "id" field for each model
 ```
 
-Adjust the `model` field in your AIDEN config to exactly match the returned identifier.
+Adjust the `model` field in your NeuraForge config to exactly match the returned identifier.
 
 ### High Latency on Long Workflows
 
@@ -474,7 +474,7 @@ To disable the sanitizer on a fully isolated environment (air-gapped, no sensiti
 sanitize: false
 ```
 
-> **Warning**: Disabling the sanitizer in a cloud environment exposes your secrets if code with credentials is analyzed by AIDEN.
+> **Warning**: Disabling the sanitizer in a cloud environment exposes your secrets if code with credentials is analyzed by NeuraForge.
 
 ## Next Step
 

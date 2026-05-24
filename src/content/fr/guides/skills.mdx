@@ -3,14 +3,14 @@
 > Une regle de code review, c'est bien. Un package complet avec instructions, regles, hooks et config qui s'active en une commande ? C'est un skill.
 
 **Ce que vous allez apprendre :**
-- Ce qu'est un skill AIDEN et pourquoi l'utiliser
+- Ce qu'est un skill NeuraForge et pourquoi l'utiliser
 - Quand choisir un skill plutot qu'une simple regle
 - Comment creer, gerer et partager vos propres skills
 - Le format `skill.yaml` et toutes ses options
 
 ## Qu'est-ce qu'un skill ?
 
-Un **skill** est un package declaratif (YAML + Markdown) qui regroupe des instructions, regles et hooks injectables dans le pipeline AIDEN. C'est le mecanisme d'extensibilite principal pour les entreprises.
+Un **skill** est un package declaratif (YAML + Markdown) qui regroupe des instructions, regles et hooks injectables dans le pipeline NeuraForge. C'est le mecanisme d'extensibilite principal pour les entreprises.
 
 ## Quand utiliser un skill vs une simple regle ?
 
@@ -119,7 +119,7 @@ Les fichiers `.md` dans ce dossier sont merges avec les regles du projet (`.aide
 
 ```yaml
 compatibility:
-  aiden: ">=0.9.0"              # Version AIDEN minimum (range semver)
+  aiden: ">=0.9.0"              # Version NeuraForge minimum (range semver)
   skills:                        # Dependances entre skills
     secret-scan: ">=1.0.0"
   conflicts:                     # Skills incompatibles
@@ -142,56 +142,56 @@ compatibility:
 
 | Commande | Description |
 |---|---|
-| `aiden skills list` | Lister tous les skills installes |
-| `aiden skills init <name>` | Creer un nouveau skill depuis le template |
-| `aiden skills add <path>` | Installer depuis un repertoire local |
-| `aiden skills install <source>` | Installer depuis le registry, GitHub, URL ou local |
-| `aiden skills remove <name>` | Supprimer un skill |
-| `aiden skills enable <name>` | Activer un skill |
-| `aiden skills disable <name>` | Desactiver un skill |
-| `aiden skills search <query>` | Chercher dans le registry |
-| `aiden skills info <name>` | Details d'un skill |
-| `aiden skills outdated` | Lister les skills avec une version plus recente |
-| `aiden skills doctor` | Verifier la compatibilite de tous les skills |
-| `aiden skills pack list` | Lister les packs disponibles |
-| `aiden skills pack install <name>` | Installer tous les skills d'un pack |
-| `aiden skills pack create <name> -s <skills>` | Creer un pack custom |
-| `aiden skills pack remove <name>` | Supprimer un pack custom |
+| `neuraforge skills list` | Lister tous les skills installes |
+| `neuraforge skills init <name>` | Creer un nouveau skill depuis le template |
+| `neuraforge skills add <path>` | Installer depuis un repertoire local |
+| `neuraforge skills install <source>` | Installer depuis le registry, GitHub, URL ou local |
+| `neuraforge skills remove <name>` | Supprimer un skill |
+| `neuraforge skills enable <name>` | Activer un skill |
+| `neuraforge skills disable <name>` | Desactiver un skill |
+| `neuraforge skills search <query>` | Chercher dans le registry |
+| `neuraforge skills info <name>` | Details d'un skill |
+| `neuraforge skills outdated` | Lister les skills avec une version plus recente |
+| `neuraforge skills doctor` | Verifier la compatibilite de tous les skills |
+| `neuraforge skills pack list` | Lister les packs disponibles |
+| `neuraforge skills pack install <name>` | Installer tous les skills d'un pack |
+| `neuraforge skills pack create <name> -s <skills>` | Creer un pack custom |
+| `neuraforge skills pack remove <name>` | Supprimer un pack custom |
 
 ## Marketplace de skills
 
-AIDEN fournit un catalogue de skills officiels sur etagere. Installez uniquement ce dont vous avez besoin, quand vous en avez besoin.
+NeuraForge fournit un catalogue de skills officiels sur etagere. Installez uniquement ce dont vous avez besoin, quand vous en avez besoin.
 
 ### Rechercher des skills
 
 ```bash
-$ aiden skills search security
-$ aiden skills search --category compliance
-$ aiden skills search --agent qa
+$ neuraforge skills search security
+$ neuraforge skills search --category compliance
+$ neuraforge skills search --agent qa
 ```
 
 ### Installer un skill
 
 ```bash
-$ aiden skills install owasp-check           # Depuis le registry (derniere version)
-$ aiden skills install owasp-check@2.1.0     # Version specifique
-$ aiden skills install ./mon-skill-local     # Depuis un chemin local
-$ aiden skills install owasp-check --force   # Ecraser un skill existant
+$ neuraforge skills install owasp-check           # Depuis le registry (derniere version)
+$ neuraforge skills install owasp-check@2.1.0     # Version specifique
+$ neuraforge skills install ./mon-skill-local     # Depuis un chemin local
+$ neuraforge skills install owasp-check --force   # Ecraser un skill existant
 ```
 
 ### Verifier les mises a jour
 
 ```bash
-$ aiden skills outdated                      # Lister les skills avec version plus recente
-$ aiden skills info owasp-check              # Details d'un skill
+$ neuraforge skills outdated                      # Lister les skills avec version plus recente
+$ neuraforge skills info owasp-check              # Details d'un skill
 ```
 
 ### Diagnostic de compatibilite
 
 ```bash
-$ aiden skills doctor
+$ neuraforge skills doctor
   ✓ code-review-strict@1.1.0  — compatible
-  ⚠ hipaa-guard@1.0.0          — necessite AIDEN >=1.0.0 (actuel: 0.8.0)
+  ⚠ hipaa-guard@1.0.0          — necessite NeuraForge >=1.0.0 (actuel: 0.8.0)
   ✗ legacy-check@0.3.0         — conflit avec owasp-check
 ```
 
@@ -210,9 +210,9 @@ skills:
 Installez un ensemble complet de skills en une commande :
 
 ```bash
-$ aiden skills pack list                         # Lister les packs
-$ aiden skills pack install backend-essentials   # Installer un pack
-$ aiden skills pack create mon-equipe --skills "code-review-strict,owasp-check,jira-sync"
+$ neuraforge skills pack list                         # Lister les packs
+$ neuraforge skills pack install backend-essentials   # Installer un pack
+$ neuraforge skills pack create mon-equipe --skills "code-review-strict,owasp-check,jira-sync"
 ```
 
 ### Packs officiels
@@ -298,7 +298,7 @@ $ git submodule add https://github.com/org/aiden-skills-common .aiden/skills/com
 ### Copie directe
 
 ```bash
-$ aiden skills add /path/to/shared-skills/compliance-rgpd
+$ neuraforge skills add /path/to/shared-skills/compliance-rgpd
 ```
 
 ### Monorepo

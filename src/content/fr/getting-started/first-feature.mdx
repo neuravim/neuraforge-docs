@@ -9,7 +9,7 @@ Dans ce tutoriel, vous allez suivre en direct le parcours d'une feature a traver
 Vous avez une API Express. Vous voulez un endpoint `/health` qui verifie la connexion DB. Une seule commande suffit pour lancer les 4 agents :
 
 ```bash
-$ aiden standard "Ajouter un endpoint GET /health avec vérification connexion DB"
+$ neuraforge standard "Ajouter un endpoint GET /health avec vérification connexion DB"
 ```
 
 La chaine de montage demarre. Voyons ce qui se passe a chaque poste.
@@ -148,7 +148,7 @@ C'est cette boucle de feedback qui fait la difference entre un outil qui genere 
 La chaine de montage a termine son cycle. Voici le resultat :
 
 ```bash
-$ aiden status ajouter-un-endpoint-get-health
+$ neuraforge status ajouter-un-endpoint-get-health
 Feature: Ajouter un endpoint GET /health avec verification connexion DB
   State: completed
   Mode: standard
@@ -188,13 +188,13 @@ Le mode enterprise ajoute :
 - **Quality report** complet
 
 ```bash
-$ aiden enterprise "Migration authentification" --auto-approve
+$ neuraforge enterprise "Migration authentification" --auto-approve
 ```
 
 Sans `--auto-approve`, chaque phase demande votre validation avant de continuer.
 
 ## Prochaine etape
 
-Vous avez vu flash (1 agent) et standard (4 agents). Mais comment choisir le bon mode pour chaque situation ? Et que se passe-t-il quand AIDEN detecte qu'il faut changer de mode en cours de route ?
+Vous avez vu flash (1 agent) et standard (4 agents). Mais comment choisir le bon mode pour chaque situation ? Et que se passe-t-il quand NeuraForge detecte qu'il faut changer de mode en cours de route ?
 
-Decouvrez les [3 modes de AIDEN](/fr/guides/modes) et leurs strategies de routage.
+Decouvrez les [3 modes de NeuraForge](/fr/guides/modes) et leurs strategies de routage.

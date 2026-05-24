@@ -1,6 +1,6 @@
 # Rules and Templates
 
-> Your team conventions live inside your lead dev's head. Problem: AI agents can't read minds. Solution: write them in Markdown, AIDEN injects them automatically.
+> Your team conventions live inside your lead dev's head. Problem: AI agents can't read minds. Solution: write them in Markdown, NeuraForge injects them automatically.
 
 **What you'll learn:**
 - How to write and add enterprise rules
@@ -14,7 +14,7 @@ Rules are `.md` files in `.aiden/rules/`. They are automatically injected into e
 ### Add a rule
 
 ```bash
-$ aiden rules add coding-standards.md
+$ neuraforge rules add coding-standards.md
 Rule added: coding-standards.md
 ```
 
@@ -40,7 +40,7 @@ Rule added: coding-standards.md
 ### List rules
 
 ```bash
-$ aiden rules list
+$ neuraforge rules list
   coding-standards (.aiden/rules/coding-standards.md)
   security-policy (.aiden/rules/security-policy.md)
 ```
@@ -63,12 +63,12 @@ The difference is immediate: instead of hoping the AI guesses your conventions, 
 
 ## Templates
 
-AIDEN provides 7 default templates (brief, spec, story, review, change-summary, architecture-decision, quality-report).
+NeuraForge provides 7 default templates (brief, spec, story, review, change-summary, architecture-decision, quality-report).
 
 ### Customize a template
 
 ```bash
-$ aiden template customize spec
+$ neuraforge template customize spec
 Template "spec" copied to .aiden/templates/ for customization.
 ```
 

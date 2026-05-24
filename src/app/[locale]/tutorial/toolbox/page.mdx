@@ -1,22 +1,22 @@
 export const metadata = {
-  title: 'Chapitre 5 — Outils AIDEN : status, metriques, retex, skills et plus',
-  description: 'Decouvrez les commandes AIDEN du quotidien : suivre vos features, analyser vos couts, apprendre de vos erreurs, etendre les capacites avec des skills. Le guide complet de la boite a outils.',
+  title: 'Chapitre 5 — Outils NeuraForge : status, metriques, retex, skills et plus',
+  description: 'Decouvrez les commandes NeuraForge du quotidien : suivre vos features, analyser vos couts, apprendre de vos erreurs, etendre les capacites avec des skills. Le guide complet de la boite a outils.',
 };
 
 # Chapitre 5 — La boite a outils du quotidien
 
 > Un bon framework, ce n'est pas juste 3 commandes spectaculaires. C'est aussi les petits outils discrets qu'on utilise 20 fois par jour sans y penser. Ceux qui nous rendent la vie plus facile, tout simplement.
 
-Vous savez lancer flash, standard et enterprise. Felicitations — vous avez 30% d'AIDEN. Les 70% restants, ce sont les outils qu'on decouvre dans ce chapitre. Des outils qui transforment AIDEN d'un "generateur de code" en vrai **compagnon de developpement**.
+Vous savez lancer flash, standard et enterprise. Felicitations — vous avez 30% d'NeuraForge. Les 70% restants, ce sont les outils qu'on decouvre dans ce chapitre. Des outils qui transforment NeuraForge d'un "generateur de code" en vrai **compagnon de developpement**.
 
 ---
 
-## Suivre vos features : `aiden status`
+## Suivre vos features : `neuraforge status`
 
 Vous avez lance 3 features dans ce tutorial. Ou en sont-elles ?
 
 ```bash
-$ aiden status
+$ neuraforge status
 ajouter-un-endpoint-get-health [completed] (flash) - Ajouter un endpoint GET /health
 implementer-un-crud-complet [completed] (standard) - Implementer un CRUD complet
 ajouter-authentification-jwt [completed] (enterprise) - Ajouter l'authentification JWT
@@ -25,7 +25,7 @@ ajouter-authentification-jwt [completed] (enterprise) - Ajouter l'authentificati
 Un coup d'oeil, trois features, leur etat et leur mode. Pour le detail d'une feature specifique :
 
 ```bash
-$ aiden status implementer-un-crud-complet
+$ neuraforge status implementer-un-crud-complet
 Feature: Implementer un CRUD complet pour les taches
   State: completed
   Mode: standard
@@ -38,40 +38,40 @@ Feature: Implementer un CRUD complet pour les taches
 
 ---
 
-## Quand ca coince : `aiden resume` et `aiden abort`
+## Quand ca coince : `neuraforge resume` et `neuraforge abort`
 
 La vie n'est pas toujours un long fleuve tranquille. Parfois une feature se bloque — un provider qui timeout, un quality gate qui refuse de passer, une decision a prendre.
 
 ### Reprendre une feature bloquee
 
 ```bash
-$ aiden resume ma-feature-bloquee
+$ neuraforge resume ma-feature-bloquee
 Resuming feature: "ma-feature-bloquee"...
 Feature "ma-feature-bloquee" resumed (state: in_progress)
 Re-running standard workflow from in_progress...
 ```
 
-AIDEN debloque la feature et relance le workflow depuis l'etat actuel. Pas besoin de tout recommencer. Les artefacts deja produits (brief, spec, stories) sont conserves.
+NeuraForge debloque la feature et relance le workflow depuis l'etat actuel. Pas besoin de tout recommencer. Les artefacts deja produits (brief, spec, stories) sont conserves.
 
 ### Abandonner proprement
 
 Parfois, on change d'avis. Et c'est OK.
 
 ```bash
-$ aiden abort ma-feature-abandonnee
+$ neuraforge abort ma-feature-abandonnee
 Feature "ma-feature-abandonnee" aborted and state saved to decisions log
 ```
 
-AIDEN enregistre l'abandon dans le journal de decisions — meme les echecs sont traces. Ca fait partie de l'historique du projet.
+NeuraForge enregistre l'abandon dans le journal de decisions — meme les echecs sont traces. Ca fait partie de l'historique du projet.
 
 ---
 
-## Comprendre vos couts : `aiden metrics` et `aiden provider cost`
+## Comprendre vos couts : `neuraforge metrics` et `neuraforge provider cost`
 
-Combien coute AIDEN au quotidien ? Pas besoin de deviner.
+Combien coute NeuraForge au quotidien ? Pas besoin de deviner.
 
 ```bash
-$ aiden metrics
+$ neuraforge metrics
 ajouter-un-endpoint-get-health: 1,200 tokens, $0.0036, 1 operations
 implementer-un-crud-complet: 12,400 tokens, $0.0372, 5 operations
 ajouter-authentification-jwt: 34,200 tokens, $0.1026, 7 operations
@@ -82,7 +82,7 @@ Total : 47 800 tokens, environ 14 centimes. Pour un health check, un CRUD comple
 Pour un rapport plus structure :
 
 ```bash
-$ aiden provider cost
+$ neuraforge provider cost
 Cost Report
 ────────────────────────────────────────────────────────
   ajouter-un-endpoint-get-health: 1,200 tokens, $0.0036
@@ -95,7 +95,7 @@ Cost Report
 Et pour exporter en CSV (utile pour les rapports mensuels ou la comptabilite) :
 
 ```bash
-$ aiden metrics --export csv
+$ neuraforge metrics --export csv
 feature,tokens,cost,duration_ms,entries
 ajouter-un-endpoint-get-health,1200,0.0036,8500,1
 implementer-un-crud-complet,12400,0.0372,45000,5
@@ -103,18 +103,18 @@ ajouter-authentification-jwt,34200,0.1026,120000,7
 ```
 
 <Callout type="info">
-  AIDEN plafonne chaque feature : 5 000 tokens en flash, 20 000 en standard, 100 000 en enterprise. Si une feature depasse 80% de son budget, vous recevez une alerte. Pas de mauvaise surprise sur la facture.
+  NeuraForge plafonne chaque feature : 5 000 tokens en flash, 20 000 en standard, 100 000 en enterprise. Si une feature depasse 80% de son budget, vous recevez une alerte. Pas de mauvaise surprise sur la facture.
 </Callout>
 
 ---
 
-## Apprendre de ses erreurs : `aiden retex`
+## Apprendre de ses erreurs : `neuraforge retex`
 
-Le retex (retour d'experience), c'est ce qui differencie un outil qu'on utilise d'un outil qui s'ameliore. AIDEN detecte automatiquement les patterns problematiques et les transforme en lecons.
+Le retex (retour d'experience), c'est ce qui differencie un outil qu'on utilise d'un outil qui s'ameliore. NeuraForge detecte automatiquement les patterns problematiques et les transforme en lecons.
 
 ### Retex automatique
 
-Apres chaque feature (en standard et enterprise), AIDEN analyse le workflow :
+Apres chaque feature (en standard et enterprise), NeuraForge analyse le workflow :
 
 - Le QA a du retenter 2 fois ? → "Investir plus dans la spec avant d'implementer"
 - Le circuit breaker s'est active ? → "Essayer un autre provider pour ce type de tache"
@@ -124,7 +124,7 @@ Apres chaque feature (en standard et enterprise), AIDEN analyse le workflow :
 ### Gerer les retex
 
 ```bash
-$ aiden retex list
+$ neuraforge retex list
 [2026-03-29] Auto-retex: qa-retry on implementer-un-crud-complet
   Lesson: Feature required 1 QA retry. Initial spec was insufficiently precise.
   Recommendation: For similar features, invest more in planning phase.
@@ -133,7 +133,7 @@ $ aiden retex list
 Ajouter un retex manuellement :
 
 ```bash
-$ aiden retex add --title "Les endpoints sans validation posent problème" \
+$ neuraforge retex add --title "Les endpoints sans validation posent problème" \
   --context "typescript,express,validation" \
   --outcome "mixed" \
   --lesson "Toujours ajouter la validation dans la story du Planner"
@@ -142,10 +142,10 @@ $ aiden retex add --title "Les endpoints sans validation posent problème" \
 Chercher des retex par tag :
 
 ```bash
-$ aiden retex search express
+$ neuraforge retex search express
 ```
 
-Le plus beau : les retex correspondant a votre tech stack sont **injectes dans les prompts des agents**. L'Analyst qui travaille sur votre prochain endpoint Express saura deja qu'il faut insister sur la validation. AIDEN apprend de vos projets.
+Le plus beau : les retex correspondant a votre tech stack sont **injectes dans les prompts des agents**. L'Analyst qui travaille sur votre prochain endpoint Express saura deja qu'il faut insister sur la validation. NeuraForge apprend de vos projets.
 
 ---
 
@@ -156,7 +156,7 @@ Les regles d'entreprise, c'est ce qui garantit que chaque agent respecte vos con
 ### Voir les regles actives
 
 ```bash
-$ aiden rules list
+$ neuraforge rules list
 coding-standards.md — Code style, strict mode, interfaces, JSDoc
 ```
 
@@ -180,11 +180,11 @@ Creez un fichier Markdown avec vos conventions :
 Puis :
 
 ```bash
-$ aiden rules add api-guidelines.md
+$ neuraforge rules add api-guidelines.md
 Rule "api-guidelines" added to .aiden/rules/
 ```
 
-Desormais, le Dev et le QA recevront ces regles dans chaque prompt. Le Dev ecrira du code conforme, le QA verifiera la conformite. Pas besoin de rappeler les conventions a chaque PR — AIDEN s'en charge.
+Desormais, le Dev et le QA recevront ces regles dans chaque prompt. Le Dev ecrira du code conforme, le QA verifiera la conformite. Pas besoin de rappeler les conventions a chaque PR — NeuraForge s'en charge.
 
 ---
 
@@ -195,7 +195,7 @@ Les skills sont des "packs de competences" que vous ajoutez aux agents. Conformi
 ### Voir les skills disponibles
 
 ```bash
-$ aiden skills list
+$ neuraforge skills list
 code-review-strict  — Revue de code approfondie avec metriques
 compliance-rgpd     — Verification de conformite RGPD
 adversarial-review  — Revue contradictoire (devil's advocate)
@@ -205,7 +205,7 @@ jira-sync           — Synchronisation avec Jira
 ### Activer un skill
 
 ```bash
-$ aiden skills enable code-review-strict
+$ neuraforge skills enable code-review-strict
 ```
 
 Le QA devient plus exigeant. Il ne se contente plus de "ca passe" — il verifie la complexite cyclomatique, la couverture de tests, les patterns de code. Exactement comme un reviewer senior humain.
@@ -251,7 +251,7 @@ Simple. Puissant. Partageable entre projets.
 Les artefacts generes (brief, spec, stories...) suivent des templates Handlebars. Vous pouvez les personnaliser :
 
 ```bash
-$ aiden template list
+$ neuraforge template list
 Available templates:
   brief
   spec
@@ -262,7 +262,7 @@ Available templates:
   quality-report
   prfaq
 
-$ aiden template customize brief
+$ neuraforge template customize brief
 Template "brief" copied to .aiden/templates/brief.md.hbs for customization.
 ```
 
@@ -275,7 +275,7 @@ Editez `.aiden/templates/brief.md.hbs` pour ajouter vos propres sections — con
 Voir la config actuelle :
 
 ```bash
-$ aiden config show
+$ neuraforge config show
 {
   "project": "todo-api",
   "provider": "claude-code",
@@ -287,13 +287,13 @@ $ aiden config show
 Changer un parametre :
 
 ```bash
-$ aiden config set mode flash
+$ neuraforge config set mode flash
 Set mode = flash
 ```
 
 Le systeme de config est en cascade :
 
-1. **Defauts AIDEN** → valeurs sensibles de base
+1. **Defauts NeuraForge** → valeurs sensibles de base
 2. **Enterprise global** (`~/.aiden/enterprise.config.yaml`) → regles d'entreprise
 3. **Projet** (`.aiden/aiden.config.yaml`) → specifique a ce repo
 4. **Feature** (`.aiden/features/<slug>/.override.yaml`) → override par feature
@@ -309,7 +309,7 @@ En 5 chapitres, vous avez :
 
 | Chapitre | Ce qu'on a fait | Mode | Tokens |
 |----------|----------------|------|--------|
-| 1 — Setup | Installe AIDEN, initialise le projet | — | 0 |
+| 1 — Setup | Installe NeuraForge, initialise le projet | — | 0 |
 | 2 — Flash | Ajoute GET /health | Flash | 1 200 |
 | 3 — Standard | CRUD complet todos | Standard | 12 400 |
 | 4 — Enterprise | Authentification JWT | Enterprise | 34 200 |
@@ -327,9 +327,9 @@ Vous avez les bases. Voici ou aller ensuite :
 - **[Les 6 agents](/guides/agents)** — personnalites, capacites, elicitation techniques
 - **[Les providers](/guides/providers)** — configurer Claude, Gemini, Copilot, ou votre API custom
 - **[Configuration avancee](/guides/configuration)** — profiles d'equipe, routing, budget
-- **[Brownfield](/cookbook/brownfield)** — integrer AIDEN dans un projet existant (pas un projet neuf)
+- **[Brownfield](/cookbook/brownfield)** — integrer NeuraForge dans un projet existant (pas un projet neuf)
 
-AIDEN grandit avec votre projet. Plus vous l'utilisez, plus il apprend (via les retex). Plus vous ajoutez de regles et de skills, plus il respecte vos conventions. C'est un compagnon, pas un outil jetable.
+NeuraForge grandit avec votre projet. Plus vous l'utilisez, plus il apprend (via les retex). Plus vous ajoutez de regles et de skills, plus il respecte vos conventions. C'est un compagnon, pas un outil jetable.
 
 Bienvenue dans le developpement assiste par IA — la version pragmatique.
 

@@ -1,6 +1,6 @@
 # Claude Code
 
-> Claude Code est le couteau suisse de l'IA pour le code. Fenetre de 200K tokens, raisonnement profond, review de securite — c'est le provider par defaut d'AIDEN pour une bonne raison.
+> Claude Code est le couteau suisse de l'IA pour le code. Fenetre de 200K tokens, raisonnement profond, review de securite — c'est le provider par defaut d'NeuraForge pour une bonne raison.
 
 ## Prérequis
 
@@ -8,7 +8,7 @@ Avant de commencer, assurez-vous d'avoir :
 
 - Node.js 20+
 - Un compte Anthropic (plan gratuit, Claude Max, Team ou Enterprise)
-- AIDEN installé (`npm install -g @anthropic-ai/aiden` ou depuis les sources)
+- NeuraForge installé (`npm install -g @anthropic-ai/aiden` ou depuis les sources)
 
 Tout est prêt ? Passons à l'installation.
 
@@ -56,9 +56,9 @@ $ claude -p "Dis bonjour en une phrase"
 # Bonjour ! Je suis Claude, comment puis-je vous aider ?
 ```
 
-Si vous voyez une réponse, vous êtes paré. Passons à la configuration AIDEN.
+Si vous voyez une réponse, vous êtes paré. Passons à la configuration NeuraForge.
 
-## Configuration AIDEN
+## Configuration NeuraForge
 
 Ajoutez Claude Code dans `.aiden/aiden.config.yaml` — c'est le minimum pour démarrer :
 
@@ -100,41 +100,41 @@ providers:
 
 ## Premier usage
 
-La config est en place, il est temps de voir AIDEN en action. Initialisez votre projet, puis lancez votre premier workflow :
+La config est en place, il est temps de voir NeuraForge en action. Initialisez votre projet, puis lancez votre premier workflow :
 
 ```bash
-$ aiden init
+$ neuraforge init
 # Scanne le projet, détecte la stack, crée .aiden/memory/context.yaml
 
-$ aiden flash "Fix le bug #123 dans le module d'authentification"
+$ neuraforge flash "Fix le bug #123 dans le module d'authentification"
 ```
 
 Voici à quoi ressemble la sortie :
 
 ```
-[AIDEN] Mode: flash  Provider: claude-code
+[NeuraForge] Mode: flash  Provider: claude-code
 [Lead]  Analyse de la demande...
 [Dev]   Implémentation en cours (claude-code)...
         Files changed: src/auth/token-validator.ts, tests/unit/auth.test.ts
-[AIDEN] Workflow terminé en 42s  •  Tokens: 3 847
+[NeuraForge] Workflow terminé en 42s  •  Tokens: 3 847
 ```
 
 42 secondes, deux fichiers modifiés, tests inclus. Pas mal pour un premier run.
 
 ## Slash commands (mode intégré)
 
-AIDEN a une particularité intéressante : il fonctionne en deux modes complémentaires qui partagent le même répertoire `.aiden/`. Cela signifie que vous pouvez alterner entre les deux sans perdre votre contexte.
+NeuraForge a une particularité intéressante : il fonctionne en deux modes complémentaires qui partagent le même répertoire `.aiden/`. Cela signifie que vous pouvez alterner entre les deux sans perdre votre contexte.
 
-- **CLI mode** : `aiden flash "..."` — AIDEN orchestre en Node.js, appelle `claude` comme subprocess
+- **CLI mode** : `neuraforge flash "..."` — NeuraForge orchestre en Node.js, appelle `claude` comme subprocess
 - **Slash mode** : `/aiden-flash ...` dans Claude Code — Claude lit les prompts `.claude/commands/` directement, sans installation Node.js requise
 
-Le slash mode est particulièrement utile pour les équipes qui découvrent AIDEN ou pour un usage ponctuel directement dans l'interface Claude Code.
+Le slash mode est particulièrement utile pour les équipes qui découvrent NeuraForge ou pour un usage ponctuel directement dans l'interface Claude Code.
 
 ### Commandes disponibles
 
 | Commande | Description |
 |---|---|
-| `/aiden-init` | Initialise le projet AIDEN dans le répertoire courant |
+| `/aiden-init` | Initialise le projet NeuraForge dans le répertoire courant |
 | `/aiden-flash` | Workflow rapide : Lead → Dev (2 agents) |
 | `/aiden-standard` | Workflow complet : Lead → Analyst → Planner → Dev → QA |
 | `/aiden-enterprise` | Workflow enterprise avec approbation humaine entre chaque phase |
@@ -162,7 +162,7 @@ Pourquoi Claude Code comme provider par défaut ? Parce qu'il excelle là où ç
 | Raisonnement | Idéal pour les architectures complexes et les migrations |
 | Sécurité | Review OWASP, détection de vulnérabilités |
 
-En mode `auto`, AIDEN exploite ces forces intelligemment en routant automatiquement vers Claude Code pour les tâches analytiques :
+En mode `auto`, NeuraForge exploite ces forces intelligemment en routant automatiquement vers Claude Code pour les tâches analytiques :
 
 ```yaml
 routing:
@@ -224,14 +224,14 @@ providers:
     command: ""
 ```
 
-Quand `baseUrl` est défini, AIDEN utilise l'adapter HTTP (`fetch()`) au lieu du subprocess `claude`. Compatible avec LiteLLM, Cloudflare AI Gateway, et tout endpoint OpenAI-compatible. C'est transparent pour le reste du pipeline.
+Quand `baseUrl` est défini, NeuraForge utilise l'adapter HTTP (`fetch()`) au lieu du subprocess `claude`. Compatible avec LiteLLM, Cloudflare AI Gateway, et tout endpoint OpenAI-compatible. C'est transparent pour le reste du pipeline.
 
 ### Vérifier le statut du provider
 
 Un doute sur votre configuration ? Un coup de `provider status` pour vérifier que tout est en ordre :
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   claude-code: configured ✓
   gemini: not configured
@@ -297,7 +297,7 @@ agents:
 
 ### Le filtrage sécurité redacte trop de contenu
 
-Si AIDEN redacte à tort des données non sensibles, vous pouvez ajuster les règles du sanitizer ou ajouter vos propres patterns :
+Si NeuraForge redacte à tort des données non sensibles, vous pouvez ajuster les règles du sanitizer ou ajouter vos propres patterns :
 
 ```yaml
 sanitize: true
@@ -314,4 +314,4 @@ sanitize: false
 
 ## Prochaine étape
 
-Vous avez Claude Code configuré comme provider AIDEN — bravo. Pour aller plus loin, explorez le [routage multi-provider](/fr/guides/providers) pour tirer parti de plusieurs providers selon les tâches, ou consultez les [modes de workflow](/fr/guides/modes) pour choisir entre flash, standard et enterprise.
+Vous avez Claude Code configuré comme provider NeuraForge — bravo. Pour aller plus loin, explorez le [routage multi-provider](/fr/guides/providers) pour tirer parti de plusieurs providers selon les tâches, ou consultez les [modes de workflow](/fr/guides/modes) pour choisir entre flash, standard et enterprise.

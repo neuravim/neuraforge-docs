@@ -19,8 +19,8 @@ export async function generateMetadata({
   const isEn = locale === 'en';
   return {
     title: isEn
-      ? 'AIDEN — Your AI Agents Code, Analyze and Review For You'
-      : 'AIDEN — Vos agents IA codent, analysent et reviewent a votre place',
+      ? 'NeuraForge — Your AI Agents Code, Analyze and Review For You'
+      : 'NeuraForge — Vos agents IA codent, analysent et reviewent a votre place',
     description: isEn
       ? 'Open source CLI framework orchestrating 6 AI agents (Analyst, Planner, Dev, QA, DocOps). Multi-provider: Claude, Gemini, Copilot. From bug fix in 30s to enterprise project.'
       : 'Framework CLI open source orchestrant 6 agents IA. Multi-provider : Claude, Gemini, Copilot. Du bug fix en 30s au projet enterprise.',
@@ -78,17 +78,17 @@ export default async function HomePage({
       {/* Terminal demo */}
       <section>
         <Terminal title={t.terminal_title}>
-          {`$ npm install -g @neuravim/aiden
-$ cd my-project && aiden init
-AIDEN  Project scanned: node, typescript, react, vitest
-AIDEN  Config created: .aiden/aiden.config.yaml
-$ aiden flash "Add a GET /health endpoint that returns { status: ok }"
-AIDEN  Mode: flash (2 agents)
-AIDEN  Lead analyzing request...
-AIDEN  Dev generating code...
-AIDEN  Created: src/routes/health.ts
-AIDEN  Created: tests/health.test.ts
-AIDEN  Feature completed in 28s`}
+          {`$ npm install -g @neuravim/neuraforge
+$ cd my-project && neuraforge init
+NeuraForge  Project scanned: node, typescript, react, vitest
+NeuraForge  Config created: .aiden/aiden.config.yaml
+$ neuraforge flash "Add a GET /health endpoint that returns { status: ok }"
+NeuraForge  Mode: flash (2 agents)
+NeuraForge  Lead analyzing request...
+NeuraForge  Dev generating code...
+NeuraForge  Created: src/routes/health.ts
+NeuraForge  Created: tests/health.test.ts
+NeuraForge  Feature completed in 28s`}
         </Terminal>
       </section>
 

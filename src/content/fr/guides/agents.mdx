@@ -1,12 +1,12 @@
-# Les 6 agents AIDEN
+# Les 6 agents NeuraForge
 
-> Imaginez une equipe de 6 developpeurs specialises, disponibles 24h/24, qui se passent le travail comme une chaine de montage parfaitement huilee. C'est exactement ce que fait AIDEN.
+> Imaginez une equipe de 6 developpeurs specialises, disponibles 24h/24, qui se passent le travail comme une chaine de montage parfaitement huilee. C'est exactement ce que fait NeuraForge.
 >
 > Chaque agent a un role precis, une personnalite, et surtout : ils communiquent entre eux automatiquement.
 
 ## Faites connaissance avec l'equipe
 
-Pensez a AIDEN comme a un cabinet d'ingenierie. Le **Lead** est le chef de projet, l'**Analyst** est le detective, le **Planner** est l'architecte, le **Dev** est le macon, le **QA** est l'inspecteur, et le **DocOps** est le notaire. Chacun excelle dans sa specialite, et ensemble ils livrent un resultat que personne ne pourrait produire seul.
+Pensez a NeuraForge comme a un cabinet d'ingenierie. Le **Lead** est le chef de projet, l'**Analyst** est le detective, le **Planner** est l'architecte, le **Dev** est le macon, le **QA** est l'inspecteur, et le **DocOps** est le notaire. Chacun excelle dans sa specialite, et ensemble ils livrent un resultat que personne ne pourrait produire seul.
 
 ### Lead (le chef de projet)
 
@@ -62,7 +62,7 @@ Besoin d'un comportement domaine sans creer de nouveaux roles runtime ? Utilisez
 Voici ce qui se passe concretement quand vous lancez un workflow. Les agents ne travaillent pas en isolation. Chaque agent recoit un `PipelineContext` contenant :
 - La **feature request** originale
 - Les **outputs de tous les agents precedents** (tronques a 8000 chars par agent, configurable)
-- Le **contexte projet** reel (tech stack, architecture, CI — detectes par `aiden init`)
+- Le **contexte projet** reel (tech stack, architecture, CI — detectes par `neuraforge init`)
 
 Imaginez un dossier qui circule de bureau en bureau. Chaque agent ouvre le dossier, lit ce que les precedents ont ecrit, ajoute sa contribution, et passe le dossier au suivant. Personne ne travaille dans le vide.
 
@@ -152,12 +152,12 @@ Apres la phase **planning** : le gate verifie que la spec contient du contenu et
 Vous pouvez invoquer un agent en dehors d'un workflow :
 
 ```bash
-$ aiden agent analyst "Analyser le module billing"
+$ neuraforge agent analyst "Analyser le module billing"
 Invoking agent "analyst" with: "Analyser le module billing"
 ```
 
 ```bash
-$ aiden agent qa "Reviewer les changements du dernier commit"
+$ neuraforge agent qa "Reviewer les changements du dernier commit"
 ```
 
 > **Astuce** : L'invocation manuelle est utile pour des analyses ponctuelles sans creer de feature.

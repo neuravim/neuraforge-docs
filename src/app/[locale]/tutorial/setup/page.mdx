@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Chapitre 1 — Installer AIDEN et initialiser votre projet',
-  description: 'Installez AIDEN en une commande, initialisez votre projet todo-app, et decouvrez la structure .aiden/ qui pilote tout. Guide pas a pas, zero prerequis.',
+  title: 'Chapitre 1 — Installer NeuraForge et initialiser votre projet',
+  description: 'Installez NeuraForge en une commande, initialisez votre projet todo-app, et decouvrez la structure .aiden/ qui pilote tout. Guide pas a pas, zero prerequis.',
 };
 
 # Chapitre 1 — Le terrain de jeu
@@ -20,29 +20,29 @@ Trois choses, pas une de plus :
 - **Un terminal** — vous allez beaucoup l'utiliser. Autant l'aimer
 
 <Callout type="tip">
-  Pas de provider installe ? Pas de panique. AIDEN fonctionne aussi avec n'importe quel endpoint compatible OpenAI via l'adaptateur API. Un LiteLLM local, un Ollama, ca marche aussi.
+  Pas de provider installe ? Pas de panique. NeuraForge fonctionne aussi avec n'importe quel endpoint compatible OpenAI via l'adaptateur API. Un LiteLLM local, un Ollama, ca marche aussi.
 </Callout>
 
 ---
 
-## Installer AIDEN
+## Installer NeuraForge
 
 Une seule commande. Vraiment.
 
 ```bash
-$ npm install -g @neuravim/aiden
+$ npm install -g @neuravim/neuraforge
 ```
 
 Ou avec pnpm si c'est votre truc :
 
 ```bash
-$ pnpm add -g @neuravim/aiden
+$ pnpm add -g @neuravim/neuraforge
 ```
 
 Verifiez que tout est en place :
 
 ```bash
-$ aiden --version
+$ neuraforge --version
 0.7.0
 ```
 
@@ -82,19 +82,19 @@ app.listen(PORT, () => {
 export default app;
 ```
 
-Rien de spectaculaire. C'est voulu — AIDEN brille sur des projets reels, pas sur des exemples jouets. Ce squelette va grandir avec nous.
+Rien de spectaculaire. C'est voulu — NeuraForge brille sur des projets reels, pas sur des exemples jouets. Ce squelette va grandir avec nous.
 
 ---
 
-## Initialiser AIDEN
+## Initialiser NeuraForge
 
 C'est ici que la magie commence. Une commande qui transforme un projet ordinaire en projet pilote par IA :
 
 ```bash
-$ aiden init
+$ neuraforge init
 ```
 
-AIDEN scanne votre projet et detecte automatiquement :
+NeuraForge scanne votre projet et detecte automatiquement :
 - **Tech stack** : node, typescript, express
 - **Package manager** : npm (depuis le lockfile)
 - **Architecture** : pas de Docker pour l'instant, c'est normal
@@ -117,7 +117,7 @@ todo-api/
 ```
 
 <Callout type="info">
-  Tout vit dans `.aiden/`. Pas de fichiers eparpilles, pas de config cachee. Si vous supprimez ce dossier, AIDEN repart de zero. Simple et previsible.
+  Tout vit dans `.aiden/`. Pas de fichiers eparpilles, pas de config cachee. Si vous supprimez ce dossier, NeuraForge repart de zero. Simple et previsible.
 </Callout>
 
 ---
@@ -133,7 +133,7 @@ mode: standard
 lang: fr
 ```
 
-Quatre lignes. C'est tout ce qu'AIDEN a besoin pour fonctionner. Le reste — budget, routing, regles — a des valeurs par defaut sensibles. On les ajustera plus tard si besoin.
+Quatre lignes. C'est tout ce qu'NeuraForge a besoin pour fonctionner. Le reste — budget, routing, regles — a des valeurs par defaut sensibles. On les ajustera plus tard si besoin.
 
 Maintenant, regardez `.aiden/memory/context.yaml` :
 
@@ -157,7 +157,7 @@ C'est le **context bus** — la memoire partagee entre tous les agents. Chaque a
 Avant de lancer notre premier workflow, assurons-nous que le provider repond :
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   claude-code: enabled (default)
   gemini: enabled
@@ -167,12 +167,12 @@ Provider status:
 Si votre provider prefere est absent ou desactive, vous pouvez changer :
 
 ```bash
-$ aiden provider switch gemini
+$ neuraforge provider switch gemini
 Default provider switched to: gemini
 ```
 
 <Callout type="warning">
-  Le provider doit etre installe et accessible dans votre terminal. Par exemple, Claude Code necessite la CLI `claude`, Gemini necessite `gemini`. AIDEN les appelle en sous-processus — il ne gere pas leur installation.
+  Le provider doit etre installe et accessible dans votre terminal. Par exemple, Claude Code necessite la CLI `claude`, Gemini necessite `gemini`. NeuraForge les appelle en sous-processus — il ne gere pas leur installation.
 </Callout>
 
 ---
@@ -181,9 +181,9 @@ Default provider switched to: gemini
 
 En moins de 5 minutes, vous avez :
 
-1. Installe AIDEN globalement
+1. Installe NeuraForge globalement
 2. Cree un projet Express + TypeScript
-3. Initialise AIDEN qui a scanne votre stack
+3. Initialise NeuraForge qui a scanne votre stack
 4. Decouvert la structure `.aiden/` — config, memoire, regles
 5. Verifie que votre provider IA est pret
 

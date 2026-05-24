@@ -1,20 +1,20 @@
 # Codex CLI
 
-> Prefer OpenAI Codex for repository edits? AIDEN can now route analysis, code generation, review and refinement to the `codex` CLI with the right sandbox for each operation.
+> Prefer OpenAI Codex for repository edits? NeuraForge can now route analysis, code generation, review and refinement to the `codex` CLI with the right sandbox for each operation.
 
 > **What you'll learn**
 > - Install and verify Codex CLI
-> - Configure Codex as an AIDEN provider
-> - Understand the sandbox modes used by AIDEN
+> - Configure Codex as an NeuraForge provider
+> - Understand the sandbox modes used by NeuraForge
 > - Use Codex in a fallback chain
 > - Troubleshoot common setup issues
 
-Codex is a native AIDEN CLI provider. AIDEN invokes `codex exec` as a subprocess, passes the agent prompt on stdin, and runs it from your project directory so the model has the same workspace view as the workflow.
+Codex is a native NeuraForge CLI provider. NeuraForge invokes `codex exec` as a subprocess, passes the agent prompt on stdin, and runs it from your project directory so the model has the same workspace view as the workflow.
 
 ## Prerequisites
 
 - Codex CLI installed and authenticated (`codex --version` must work)
-- AIDEN initialized in your project (`aiden init`)
+- NeuraForge initialized in your project (`neuraforge init`)
 - A project workspace where Codex can read files and, for generation/refinement, write changes
 
 ## Installation check
@@ -25,9 +25,9 @@ Install Codex CLI using the official instructions for your environment, then ver
 $ codex --version
 ```
 
-If this command fails, AIDEN will mark the provider as unavailable and continue through the routing fallback chain.
+If this command fails, NeuraForge will mark the provider as unavailable and continue through the routing fallback chain.
 
-## AIDEN configuration
+## NeuraForge configuration
 
 Codex is included in the default provider map:
 
@@ -47,13 +47,13 @@ Key parameters:
 | Parameter | Value | Description |
 |---|---|---|
 | `command` | `codex` | Codex CLI binary to execute |
-| `model` | `codex-cli` | Internal label used by AIDEN metrics |
+| `model` | `codex-cli` | Internal label used by NeuraForge metrics |
 | `maxTokens` | `200000` | Default context budget used for routing/cost estimates |
 | `costPer1k` | `0.003` | Cost estimate per 1,000 tokens |
 
 ## Sandbox behavior
 
-AIDEN chooses a sandbox according to the agent operation:
+NeuraForge chooses a sandbox according to the agent operation:
 
 | Operation | Codex command | Sandbox |
 |---|---|---|
@@ -78,14 +78,14 @@ This is a practical setup when Claude Code or Gemini is the primary provider, bu
 ## First usage
 
 ```bash
-$ aiden config set provider codex
-$ aiden flash "Add input validation to the signup endpoint"
+$ neuraforge config set provider codex
+$ neuraforge flash "Add input validation to the signup endpoint"
 ```
 
 Then verify detection:
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 ```
 
 ## Strengths and use cases
@@ -109,9 +109,9 @@ $ which codex
 $ codex --version
 ```
 
-### Provider unavailable in `aiden provider status`
+### Provider unavailable in `neuraforge provider status`
 
-AIDEN tests availability with `codex --version`. If that command needs interactive login or fails in CI, authenticate Codex first or use another provider in the fallback chain.
+NeuraForge tests availability with `codex --version`. If that command needs interactive login or fails in CI, authenticate Codex first or use another provider in the fallback chain.
 
 ### Writes are not happening
 

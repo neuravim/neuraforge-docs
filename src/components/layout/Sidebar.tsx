@@ -46,7 +46,7 @@ export function Sidebar({ locale }: { locale: string }) {
             <AidenLogo size={32} />
             <div>
               <span className="font-bold text-sm" style={{ color: 'var(--aiden-text-primary)' }}>
-                AIDEN
+                NeuraForge
               </span>
               <span className="ml-1.5 text-xs" style={{ color: 'var(--aiden-text-muted)' }}>
                 v0.7.0

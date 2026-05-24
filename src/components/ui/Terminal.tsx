@@ -40,7 +40,7 @@ export function Terminal({ children, title }: TerminalProps) {
                   {line.slice(2)}
                 </span>
               </>
-            ) : line.startsWith('AIDEN ') ? (
+            ) : line.startsWith('NeuraForge ') ? (
               <span style={{ color: 'var(--aiden-terminal-aiden)' }}>{line}</span>
             ) : (
               <span style={{ color: 'var(--aiden-terminal-output)' }}>{line || ' '}</span>

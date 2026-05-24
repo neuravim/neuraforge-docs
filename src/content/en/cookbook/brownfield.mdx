@@ -1,19 +1,19 @@
-# Brownfield: Integrating AIDEN into an Existing Project
+# Brownfield: Integrating NeuraForge into an Existing Project
 
-> Your project is 3 years old, has 200K lines of code and conventions that only your lead dev knows. Perfect — that's exactly the terrain where AIDEN excels.
+> Your project is 3 years old, has 200K lines of code and conventions that only your lead dev knows. Perfect — that's exactly the terrain where NeuraForge excels.
 
 **What you'll learn:**
-- Initialize AIDEN in a production project
+- Initialize NeuraForge in a production project
 - Configure rules specific to your codebase
 - Best practices for brownfield
 - Scenarios by stack: Java/Spring, Node/Express, React, Python, monorepo
 
 ## Brownfield Principles
 
-AIDEN is designed for brownfield. Unlike frameworks that require a project from scratch, AIDEN adapts to your existing code:
+NeuraForge is designed for brownfield. Unlike frameworks that require a project from scratch, NeuraForge adapts to your existing code:
 
-1. **`aiden init` scans your project** — detects the stack, architecture, CI/CD
-2. **No overhaul** — AIDEN works feature by feature, without touching the rest
+1. **`neuraforge init` scans your project** — detects the stack, architecture, CI/CD
+2. **No overhaul** — NeuraForge works feature by feature, without touching the rest
 3. **Standard mode by default** — the Analyst scans existing code before proposing changes
 4. **Rules capture your conventions** — codify what's implicit in `.aiden/rules/`
 
@@ -21,10 +21,10 @@ AIDEN is designed for brownfield. Unlike frameworks that require a project from 
 
 ```bash
 $ cd /path/to/my-production-project
-$ aiden init
+$ neuraforge init
 ```
 
-AIDEN automatically detects:
+NeuraForge automatically detects:
 
 | Detection | Sources analyzed |
 |-----------|-------------------|
@@ -43,7 +43,7 @@ Results are injected into each agent's context for more relevant outcomes.
 Create rules that capture the **implicit** conventions of your project. This is the most important step in brownfield.
 
 ```bash
-$ aiden rules add coding-standards.md
+$ neuraforge rules add coding-standards.md
 ```
 
 ### Java/Spring Boot Example
@@ -132,7 +132,7 @@ $ aiden rules add coding-standards.md
 Use **standard** mode for your first brownfield feature. The Analyst will scan existing code and the Planner will produce a spec consistent with the architecture in place.
 
 ```bash
-$ aiden standard "Add pagination to GET /api/users"
+$ neuraforge standard "Add pagination to GET /api/users"
 ```
 
 The Analyst will:
@@ -157,23 +157,23 @@ The QA will:
 
 ## Monorepo
 
-### Option A: AIDEN at the Root
+### Option A: NeuraForge at the Root
 
 ```bash
 $ cd my-monorepo
-$ aiden init
+$ neuraforge init
 ```
 
-AIDEN sees the entire monorepo. Features can potentially touch multiple packages.
+NeuraForge sees the entire monorepo. Features can potentially touch multiple packages.
 
-### Option B: AIDEN per Package
+### Option B: NeuraForge per Package
 
 ```bash
 $ cd my-monorepo/packages/api
-$ aiden init
+$ neuraforge init
 
 $ cd my-monorepo/packages/frontend
-$ aiden init
+$ neuraforge init
 ```
 
 Each package has its own config, its own rules and its own features. Recommended for monorepos with independent teams per package.
@@ -182,7 +182,7 @@ Each package has its own config, its own rules and its own features. Recommended
 
 ```
 my-monorepo/
-  .aiden/                          # Root AIDEN (if Option A)
+  .aiden/                          # Root NeuraForge (if Option A)
     rules/
       shared-standards.md        # Shared rules
   packages/
@@ -201,7 +201,7 @@ my-monorepo/
 ### Do
 
 - **Start with isolated features** — not a cross-cutting overhaul
-- **Document your existing conventions** in `.aiden/rules/` before launching AIDEN
+- **Document your existing conventions** in `.aiden/rules/` before launching NeuraForge
 - **Use standard, not flash** — the Analyst needs to scan existing code
 - **Commit the artifacts** — they document decisions for future devs
 - **Review the first result carefully** — adjust rules if needed
@@ -209,10 +209,10 @@ my-monorepo/
 ### Don't
 
 - **Don't launch enterprise for a small feature** — standard is enough for 80% of cases
-- **Don't skip rules** — without rules, AIDEN doesn't know your conventions
-- **Don't blindly trust** — AIDEN generates code that must be reviewed
+- **Don't skip rules** — without rules, NeuraForge doesn't know your conventions
+- **Don't blindly trust** — NeuraForge generates code that must be reviewed
 - **Don't ignore review.md** — the QA may have identified real issues
 
 ## Next Step
 
-Discover how to use [AIDEN in a team](/en/cookbook/team) to standardize practices.
+Discover how to use [NeuraForge in a team](/en/cookbook/team) to standardize practices.

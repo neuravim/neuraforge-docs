@@ -1,10 +1,10 @@
-# The 3 AIDEN modes: choose your weapon
+# The 3 NeuraForge modes: choose your weapon
 
 > **TL;DR** — Bug fix → flash. Feature → standard. Critical migration → enterprise. When in doubt, standard.
 
-Imagine three tools in front of you. A **Swiss army knife** for everyday emergencies. A **full workshop** for building something solid. And a **certified construction site** with blueprints, inspections, and sign-offs at every step. AIDEN works exactly like that — three modes tailored to the scope of your task.
+Imagine three tools in front of you. A **Swiss army knife** for everyday emergencies. A **full workshop** for building something solid. And a **certified construction site** with blueprints, inspections, and sign-offs at every step. NeuraForge works exactly like that — three modes tailored to the scope of your task.
 
-This guide will show you how to choose the right mode, and more importantly, how AIDEN can do it for you.
+This guide will show you how to choose the right mode, and more importantly, how NeuraForge can do it for you.
 
 ## At a glance
 
@@ -24,7 +24,7 @@ Let's look at each mode in detail.
 Flash mode is pure responsiveness. Got a bug, a small refactoring, a quick tweak? Two agents (Lead + Dev), zero paperwork, and it's done.
 
 ```bash
-$ aiden flash "Fix bug #123"
+$ neuraforge flash "Fix bug #123"
 ```
 
 It's the right choice when:
@@ -39,7 +39,7 @@ Think of it as a 30-minute sprint: get in, fix it, get out.
 Now we're getting serious. Standard mode mobilizes five agents — analysis, planning, implementation, review — to produce a structured and tested result.
 
 ```bash
-$ aiden standard "New users API"
+$ neuraforge standard "New users API"
 ```
 
 It's the right choice when:
@@ -54,7 +54,7 @@ The majority of your features will go through this mode. It's the sweet spot bet
 When the slightest misstep can be costly — data migration, GDPR compliance, architecture overhaul — Enterprise mode adds DocOps and, most importantly, **human approval between each phase**.
 
 ```bash
-$ aiden enterprise "Authentication migration"
+$ neuraforge enterprise "Authentication migration"
 ```
 
 It's the right choice when:
@@ -78,7 +78,7 @@ If you answer `n`, the workflow is aborted with the status `aborted`.
 To bypass approvals (for example in CI/CD):
 
 ```bash
-$ aiden enterprise "Auth migration" --auto-approve
+$ neuraforge enterprise "Auth migration" --auto-approve
 ```
 
 > **Warning**: `--auto-approve` disables all human validation. Use only in automated pipelines.
@@ -91,16 +91,16 @@ Good news: you don't have to. The Lead analyzes your feature description using h
 - `"Add new REST API with OAuth"` → **standard** (new API, external dependency)
 - `"Migrate monolith to microservices with GDPR compliance"` → **enterprise** (new architecture, compliance)
 
-The detection also takes project context into account (number of technologies, architecture). In short, the more complex your project, the more cautious AIDEN will be.
+The detection also takes project context into account (number of technologies, architecture). In short, the more complex your project, the more cautious NeuraForge will be.
 
 ## Dynamic switching: shifting gears without stopping
 
-Here's where it gets really clever. AIDEN can switch modes mid-flight **without losing work** and by executing the missing phases:
+Here's where it gets really clever. NeuraForge can switch modes mid-flight **without losing work** and by executing the missing phases:
 
 ```bash
 # Starts in flash, switches to standard if complexity detected
-$ aiden flash "CSV export"
-AIDEN Lead > Complexity detected (5 files). Switch to standard? [Y/n]
+$ neuraforge flash "CSV export"
+NeuraForge Lead > Complexity detected (5 files). Switch to standard? [Y/n]
 ```
 
 When you switch from flash to standard, `switchMode()`:
@@ -114,4 +114,4 @@ It's like switching from a screwdriver to a power drill mid-project: you keep th
 
 ## What's next
 
-Now that you know when to use each mode, it's time to meet the ones doing the real work. Discover the [AIDEN agents](/en/guides/agents) — Lead, Analyst, Planner, Dev, QA, DocOps — and how they collaborate in the pipeline.
+Now that you know when to use each mode, it's time to meet the ones doing the real work. Discover the [NeuraForge agents](/en/guides/agents) — Lead, Analyst, Planner, Dev, QA, DocOps — and how they collaborate in the pipeline.

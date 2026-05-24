@@ -1,12 +1,12 @@
 # Agent Profiles & Domain Playbooks
 
-AIDEN supports custom engineering behavior without turning every use case into a new runtime agent.
+NeuraForge supports custom engineering behavior without turning every use case into a new runtime agent.
 
 Use **agent profiles** to specialize the built-in agents, and **domain playbooks** to package skills, rules, hooks and artefacts for a specific domain.
 
 ## Why not create new agent roles?
 
-AIDEN already has a stable delivery pipeline:
+NeuraForge already has a stable delivery pipeline:
 
 - **Lead** chooses mode and orchestrates the workflow.
 - **Analyst** discovers requirements, risks and unknowns.
@@ -65,7 +65,7 @@ agentProfiles:
 Run it with a CLI override:
 
 ```bash
-aiden enterprise "Migrate this WildFly application to Spring Boot" --profile wildfly-to-spring-boot
+neuraforge enterprise "Migrate this WildFly application to Spring Boot" --profile wildfly-to-spring-boot
 ```
 
 Or keep it active in `.aiden/aiden.config.yaml` with `activeProfile`.
@@ -98,7 +98,7 @@ Recommended layout:
 ### 1. Create the playbook skeleton
 
 ```bash
-aiden skills init wildfly-to-spring-boot
+neuraforge skills init wildfly-to-spring-boot
 ```
 
 Edit `.aiden/skills/wildfly-to-spring-boot/skill.yaml`:
@@ -121,7 +121,7 @@ artefacts:
   - rollback-plan
 profiles:
   wildfly-to-spring-boot:
-    description: "Specialize AIDEN for WildFly/JBoss to Spring Boot migrations"
+    description: "Specialize NeuraForge for WildFly/JBoss to Spring Boot migrations"
     recommendedMode: enterprise
     workflowPreset: migration
     skills:
@@ -287,7 +287,7 @@ activeProfile: wildfly-to-spring-boot
 Or one-off CLI:
 
 ```bash
-aiden enterprise "Migrate this WildFly app to Spring Boot 3 while preserving API behavior" \
+neuraforge enterprise "Migrate this WildFly app to Spring Boot 3 while preserving API behavior" \
   --profile wildfly-to-spring-boot \
   --trace
 ```

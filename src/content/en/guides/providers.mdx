@@ -1,6 +1,6 @@
 # Providers
 
-> AIDEN doesn't lock you in. Claude for analysis, Gemini for code, Copilot as a free backup, Ollama for 100% local — mix and match as you like.
+> NeuraForge doesn't lock you in. Claude for analysis, Gemini for code, Copilot as a free backup, Ollama for 100% local — mix and match as you like.
 
 ## Quick decision
 
@@ -11,7 +11,7 @@
 
 ## Supported providers
 
-AIDEN natively supports 5 CLI providers and lets you plug in any LLM via API:
+NeuraForge natively supports 5 CLI providers and lets you plug in any LLM via API:
 
 | Provider | Type | Strengths | Context | Cost |
 |---|---|---|---|---|
@@ -67,7 +67,7 @@ providers:
 
 ## Routing
 
-Intelligent routing is what makes AIDEN's multi-provider setup truly useful. Instead of sending everything to the same LLM, each task goes to the best-suited provider — automatically.
+Intelligent routing is what makes NeuraForge's multi-provider setup truly useful. Instead of sending everything to the same LLM, each task goes to the best-suited provider — automatically.
 
 4 strategies available:
 
@@ -96,12 +96,12 @@ In `auto` mode, each agent receives the optimal provider:
 Not sure which provider is active? One command:
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 ```
 
 ## Token budget
 
-Tokens add up fast. AIDEN lets you set guardrails per feature and per mode, with an alert before you hit the wall.
+Tokens add up fast. NeuraForge lets you set guardrails per feature and per mode, with an alert before you hit the wall.
 
 ```yaml
 budget:
@@ -113,13 +113,13 @@ budget:
     enterprise: 100000
 ```
 
-> **Note**: The alert triggers at 80% of the budget. AIDEN blocks calls if the budget is exceeded.
+> **Note**: The alert triggers at 80% of the budget. NeuraForge blocks calls if the budget is exceeded.
 
 ## Security filtering
 
-Before every provider call, AIDEN scrubs the prompt. Secrets never leave your machine — not even by accident.
+Before every provider call, NeuraForge scrubs the prompt. Secrets never leave your machine — not even by accident.
 
-AIDEN automatically filters sensitive data before sending it to providers:
+NeuraForge automatically filters sensitive data before sending it to providers:
 
 - Bearer tokens
 - API keys (`sk-`, `ghp_`, `github_pat_`)

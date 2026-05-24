@@ -1,27 +1,27 @@
 # Integration CI/CD
 
-> AIDEN tourne sur le poste du dev, pas dans la CI. Mais la CI peut verifier que les artefacts existent, bloquer les PRs sans review, et collecter les metriques. Voici comment.
+> NeuraForge tourne sur le poste du dev, pas dans la CI. Mais la CI peut verifier que les artefacts existent, bloquer les PRs sans review, et collecter les metriques. Voici comment.
 
 **Ce que vous allez apprendre :**
-- Valider les artefacts AIDEN dans la CI
-- Automatiser les checks AIDEN dans les pipelines
-- Integrer les metriques AIDEN dans vos dashboards
+- Valider les artefacts NeuraForge dans la CI
+- Automatiser les checks NeuraForge dans les pipelines
+- Integrer les metriques NeuraForge dans vos dashboards
 
 ## Principe
 
-AIDEN s'execute **sur le poste du developpeur**, pas dans la CI. Mais la CI peut :
-1. **Verifier** que les artefacts AIDEN existent et sont coherents
+NeuraForge s'execute **sur le poste du developpeur**, pas dans la CI. Mais la CI peut :
+1. **Verifier** que les artefacts NeuraForge existent et sont coherents
 2. **Bloquer** les PRs sans artefacts (si votre politique l'exige)
 3. **Collecter** les metriques pour le dashboard d'equipe
 4. **Executer** des flash non-interactifs pour les fix automatiques
 
 ## GitHub Actions
 
-### Verifier les artefacts AIDEN sur une PR
+### Verifier les artefacts NeuraForge sur une PR
 
 ```yaml
 # .github/workflows/aiden-check.yml
-name: AIDEN Artefacts Check
+name: NeuraForge Artefacts Check
 
 on:
   pull_request:
@@ -33,10 +33,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check AIDEN initialized
+      - name: Check NeuraForge initialized
         run: |
           if [ ! -f .aiden/aiden.config.yaml ]; then
-            echo "::warning::AIDEN not initialized in this project"
+            echo "::warning::NeuraForge not initialized in this project"
             exit 0
           fi
 
@@ -65,11 +65,11 @@ jobs:
           fi
 ```
 
-### Collecter les metriques AIDEN
+### Collecter les metriques NeuraForge
 
 ```yaml
 # .github/workflows/aiden-metrics.yml
-name: AIDEN Metrics
+name: NeuraForge Metrics
 
 on:
   push:
@@ -81,10 +81,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract AIDEN metrics
+      - name: Extract NeuraForge metrics
         run: |
           if [ -f .aiden/memory/metrics.jsonl ]; then
-            echo "## AIDEN Metrics" >> $GITHUB_STEP_SUMMARY
+            echo "## NeuraForge Metrics" >> $GITHUB_STEP_SUMMARY
 
             total_tokens=$(cat .aiden/memory/metrics.jsonl | \
               python3 -c "import sys,json; print(sum(json.loads(l)['tokensUsed'] for l in sys.stdin))")
@@ -112,7 +112,7 @@ aiden-check:
   script:
     - |
       if [ ! -f .aiden/aiden.config.yaml ]; then
-        echo "AIDEN not initialized — skipping"
+        echo "NeuraForge not initialized — skipping"
         exit 0
       fi
 
@@ -130,10 +130,10 @@ aiden-check:
 
 ## Mode non-interactif
 
-Pour les taches automatisees (fix de lint, updates de deps), AIDEN peut tourner en CI :
+Pour les taches automatisees (fix de lint, updates de deps), NeuraForge peut tourner en CI :
 
 ```bash
-$ aiden flash "Fix lint errors" --non-interactive --auto-approve
+$ neuraforge flash "Fix lint errors" --non-interactive --auto-approve
 ```
 
 Le `--non-interactive` desactive les prompts. Le `--auto-approve` skip les approbations enterprise.
@@ -151,7 +151,7 @@ Verifier que les artefacts sont commites avec le code :
 if git diff --cached --name-only | grep -q "^\.aiden/features/"; then
   if ! git diff --cached --name-only | grep -q "decisions.jsonl"; then
     echo "WARNING: Feature artefacts modifies sans decisions log."
-    echo "Avez-vous utilise AIDEN pour generer ces artefacts ?"
+    echo "Avez-vous utilise NeuraForge pour generer ces artefacts ?"
   fi
 fi
 ```
@@ -161,7 +161,7 @@ fi
 ### Export pour Grafana / PowerBI
 
 ```bash
-$ aiden metrics --export csv > aiden-metrics.csv
+$ neuraforge metrics --export csv > aiden-metrics.csv
 # Colonnes: timestamp, feature, agent, provider, tokensUsed, durationMs, cost
 ```
 
@@ -179,7 +179,7 @@ $ aiden metrics --export csv > aiden-metrics.csv
 ## Rapport de couts
 
 ```bash
-$ aiden provider cost
+$ neuraforge provider cost
 Provider cost report:
   claude-code: 45000 tokens ($0.135)
   gemini:      120000 tokens ($0.120)

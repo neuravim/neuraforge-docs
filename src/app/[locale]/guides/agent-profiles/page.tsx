@@ -6,11 +6,11 @@ const page = createContentPage({
   content: { en: En, fr: Fr },
   metadata: {
     en: {
-      title: 'Agent Profiles & Domain Playbooks — Custom AIDEN agents without a new runtime',
+      title: 'Agent Profiles & Domain Playbooks — Custom NeuraForge agents without a new runtime',
       description: 'Create custom agent profiles and domain playbooks, with a complete WildFly to Spring Boot migration example.',
     },
     fr: {
-      title: 'Agent Profiles & Domain Playbooks — Agents AIDEN sur mesure sans nouveau runtime',
+      title: 'Agent Profiles & Domain Playbooks — Agents NeuraForge sur mesure sans nouveau runtime',
       description: 'Creer des profils agents et playbooks metier, avec un exemple complet de migration WildFly vers Spring Boot.',
     },
   },

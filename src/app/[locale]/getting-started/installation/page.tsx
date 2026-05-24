@@ -5,8 +5,8 @@ import Fr from '@/content/fr/getting-started/installation.mdx';
 const page = createContentPage({
   content: { en: En, fr: Fr },
   metadata: {
-    en: { title: 'Install AIDEN — Complete Guide in 3 Steps', description: 'Install AIDEN CLI in 3 minutes: Node.js 20+, AI provider, and aiden init. Guide with troubleshooting.' },
-    fr: { title: 'Installation AIDEN — Guide complet en 3 etapes', description: 'Installez AIDEN CLI en 3 minutes : Node.js 20+, provider IA, et aiden init. Guide avec troubleshooting.' },
+    en: { title: 'Install NeuraForge — Complete Guide in 3 Steps', description: 'Install NeuraForge CLI in 3 minutes: Node.js 20+, AI provider, and neuraforge init. Guide with troubleshooting.' },
+    fr: { title: 'Installation NeuraForge — Guide complet en 3 etapes', description: 'Installez NeuraForge CLI en 3 minutes : Node.js 20+, provider IA, et neuraforge init. Guide avec troubleshooting.' },
   },
 });
 

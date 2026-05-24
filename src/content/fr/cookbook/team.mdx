@@ -1,11 +1,11 @@
-# AIDEN en equipe
+# NeuraForge en equipe
 
-> Un dev avec AIDEN, c'est bien. Une equipe entiere avec les memes regles, le meme workflow et un onboarding de 30 minutes ? C'est la que ca devient vraiment puissant.
+> Un dev avec NeuraForge, c'est bien. Une equipe entiere avec les memes regles, le meme workflow et un onboarding de 30 minutes ? C'est la que ca devient vraiment puissant.
 
 **Ce que vous allez apprendre :**
-- Configurer AIDEN pour une equipe de 5 a 50+ developpeurs
+- Configurer NeuraForge pour une equipe de 5 a 50+ developpeurs
 - Partager les regles, conventions et templates
-- Workflow Git avec AIDEN
+- Workflow Git avec NeuraForge
 - Onboarding d'un nouveau membre en 30 minutes
 
 ## Configuration equipe
@@ -78,14 +78,14 @@ profiles:
     mode: standard
 ```
 
-## Workflow Git avec AIDEN
+## Workflow Git avec NeuraForge
 
 ### Workflow recommande
 
 ```
 1. Creer une branche       git checkout -b feature/export-csv
-2. Lancer AIDEN              aiden standard "Ajouter export CSV des rapports"
-3. AIDEN genere              code + tests + artefacts dans .aiden/features/
+2. Lancer NeuraForge              neuraforge standard "Ajouter export CSV des rapports"
+3. NeuraForge genere              code + tests + artefacts dans .aiden/features/
 4. Review humaine          Le reviewer lit review.md + spec.md + le diff
 5. Commiter                git add -A && git commit -m "feat: export CSV"
 6. Push + PR               Les artefacts aident le reviewer
@@ -94,13 +94,13 @@ profiles:
 
 ### Convention de branches
 
-| Type de branche | Mode AIDEN recommande |
+| Type de branche | Mode NeuraForge recommande |
 |----------------|---------------------|
-| `fix/<slug>` | `aiden flash` |
-| `feature/<slug>` | `aiden standard` |
-| `refactor/<slug>` | `aiden standard` |
-| `release/<slug>` | `aiden enterprise` |
-| `hotfix/<slug>` | `aiden flash` |
+| `fix/<slug>` | `neuraforge flash` |
+| `feature/<slug>` | `neuraforge standard` |
+| `refactor/<slug>` | `neuraforge standard` |
+| `release/<slug>` | `neuraforge enterprise` |
+| `hotfix/<slug>` | `neuraforge flash` |
 
 ### Que commiter dans Git ?
 
@@ -117,15 +117,15 @@ profiles:
 ### .gitignore recommande
 
 ```gitignore
-# AIDEN — garder les artefacts, ignorer les fichiers temporaires
+# NeuraForge — garder les artefacts, ignorer les fichiers temporaires
 .aiden/memory/*.lock
 ```
 
-## Politique de review avec AIDEN
+## Politique de review avec NeuraForge
 
 ### Review basee sur les artefacts
 
-Quand un developpeur ouvre une PR apres un `aiden standard`, le reviewer dispose de :
+Quand un developpeur ouvre une PR apres un `neuraforge standard`, le reviewer dispose de :
 
 | Artefact | Ce que le reviewer verifie |
 |----------|---------------------------|
@@ -151,18 +151,18 @@ Le reviewer humain se concentre sur la **coherence metier** et les **choix d'arc
 
 ```
 5 min   Installer Node 20+ et pnpm
-2 min   pnpm add -g @neuravim/aiden
+2 min   pnpm add -g @neuravim/neuraforge
 1 min   Copier ~/.aiden/enterprise.config.yaml (via provisioning)
 2 min   Cloner le repo (les regles sont incluses dans .aiden/rules/)
-1 min   aiden provider status  — verifier le provider
-5 min   aiden flash "Ajouter un log info au demarrage"  — premier flash
-5 min   aiden status + explorer les artefacts generes
+1 min   neuraforge provider status  — verifier le provider
+5 min   neuraforge flash "Ajouter un log info au demarrage"  — premier flash
+5 min   neuraforge status + explorer les artefacts generes
 10 min  Lire les artefacts d'une feature existante dans .aiden/features/
 ```
 
 ### Valeur onboarding des artefacts
 
-Les artefacts AIDEN dans `.aiden/features/` sont des **documents d'onboarding vivants**. Un nouveau membre peut lire :
+Les artefacts NeuraForge dans `.aiden/features/` sont des **documents d'onboarding vivants**. Un nouveau membre peut lire :
 
 - Le `brief.md` pour comprendre **pourquoi** une feature existe
 - Le `spec.md` pour comprendre **comment** elle a ete concue
@@ -177,21 +177,21 @@ Les **retex** (retours d'experience) permettent a l'equipe de capitaliser les le
 
 ```bash
 # Apres une feature reussie
-$ aiden retex add --title "Migration ORM incrementale" \
+$ neuraforge retex add --title "Migration ORM incrementale" \
   --context prisma,drizzle,migration \
   --outcome success \
   --lesson "Migrer table par table est plus sur qu'un big bang" \
   --recommendation "Garder les deux ORMs en parallele pendant la migration"
 
 # Apres un echec
-$ aiden retex add --title "Cache Redis sans TTL" \
+$ neuraforge retex add --title "Cache Redis sans TTL" \
   --context redis,cache,bug \
   --outcome failure \
   --lesson "Un cache sans TTL a cause un OOM en production" \
   --recommendation "Toujours definir un TTL sur les cles Redis"
 
 # Consulter les retex pertinents
-$ aiden retex search migration
+$ neuraforge retex search migration
 ```
 
 Les retex pertinents sont automatiquement injectes dans les prompts des agents. L'equipe apprend collectivement de ses experiences.
@@ -202,17 +202,17 @@ Les retex pertinents sont automatiquement injectes dans les prompts des agents. 
 
 ```bash
 # Metriques globales
-$ aiden metrics
+$ neuraforge metrics
 
 # Export CSV pour dashboard
-$ aiden metrics --export csv > metriques-equipe-mars.csv
+$ neuraforge metrics --export csv > metriques-equipe-mars.csv
 ```
 
 ### KPI equipe
 
 | Metrique | Cible | Comment |
 |----------|-------|---------|
-| % devs actifs sur AIDEN | > 70% | metrics.jsonl par agent unique |
+| % devs actifs sur NeuraForge | > 70% | metrics.jsonl par agent unique |
 | Features standard vs flash | > 30% standard | decisions.jsonl type=mode_selection |
 | Cout moyen par dev/mois | < $80 | metrics.jsonl agrege |
 | Taux circuit breaker | < 10% | decisions.jsonl type=circuit_breaker |
@@ -221,7 +221,7 @@ $ aiden metrics --export csv > metriques-equipe-mars.csv
 
 | Anti-pattern | Pourquoi c'est un probleme | Solution |
 |-------------|---------------------------|----------|
-| Forcer AIDEN sur toute l'equipe d'un coup | Rejet et frustration | Adopter progressivement : pilote -> equipes -> general |
+| Forcer NeuraForge sur toute l'equipe d'un coup | Rejet et frustration | Adopter progressivement : pilote -> equipes -> general |
 | Utiliser enterprise pour tout | Sur-ingenierie, lenteur | Flash pour les fix, standard pour les features, enterprise pour les projets critiques |
 | Ne pas commiter les artefacts | Perte de tracabilite et d'onboarding | Toujours commiter `.aiden/features/` avec le code |
 | Ignorer le review.md | Perdre la valeur du QA automatique | Le reviewer humain doit lire le review.md en premier |
@@ -229,4 +229,4 @@ $ aiden metrics --export csv > metriques-equipe-mars.csv
 
 ## Prochaine etape
 
-Integrez AIDEN dans vos [pipelines CI/CD](/fr/cookbook/ci-cd) pour automatiser les verifications.
+Integrez NeuraForge dans vos [pipelines CI/CD](/fr/cookbook/ci-cd) pour automatiser les verifications.

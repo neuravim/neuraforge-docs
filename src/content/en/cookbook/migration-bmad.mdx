@@ -1,15 +1,15 @@
 # Migration from BMAD
 
-> BMAD: 12-16h before the first code, ~31K tokens per workflow. AIDEN: 30 min, less than 8K tokens. Same multi-agent philosophy, radically different execution.
+> BMAD: 12-16h before the first code, ~31K tokens per workflow. NeuraForge: 30 min, less than 8K tokens. Same multi-agent philosophy, radically different execution.
 
 **What you'll learn:**
-- The differences between BMAD and AIDEN
+- The differences between BMAD and NeuraForge
 - How to migrate a BMAD project
 - Equivalence table
 
 ## Why Migrate?
 
-| Criterion | BMAD | AIDEN |
+| Criterion | BMAD | NeuraForge |
 |---|---|---|
 | Time to first code | 12-16h | 30 min - 2h |
 | Learning curve | ~2 months | 1-3 days |
@@ -20,7 +20,7 @@
 
 ## Equivalences
 
-| BMAD | AIDEN |
+| BMAD | NeuraForge |
 |---|---|
 | Business Analyst agent | Analyst agent |
 | PM agent | Planner agent (merges PM + Architect) |
@@ -34,10 +34,10 @@
 
 ## Migration Steps
 
-### 1. Initialize AIDEN
+### 1. Initialize NeuraForge
 
 ```bash
-$ aiden init
+$ neuraforge init
 ```
 
 ### 2. Convert Rules
@@ -54,12 +54,12 @@ Copy your BMAD rules into `.aiden/rules/` in Markdown format.
 
 The `.bmad/` files are no longer used. You can archive them.
 
-> **Warning**: AIDEN does not resume BMAD sessions in progress. Finish your BMAD features before migrating.
+> **Warning**: NeuraForge does not resume BMAD sessions in progress. Finish your BMAD features before migrating.
 
 ## FAQ
 
 **Can I use both in parallel?** Yes, but not recommended. They write to different folders.
 
-**Do my BMAD templates work?** No, AIDEN uses Handlebars. Convert them with `aiden template customize`.
+**Do my BMAD templates work?** No, NeuraForge uses Handlebars. Convert them with `neuraforge template customize`.
 
 **What does the Context Bus replace?** It replaces the isolated memory of each BMAD agent with a shared context.

@@ -1,6 +1,6 @@
 # Memory governance
 
-> Memory is useful only when agents know what it means, how fresh it is, and when they are allowed to trust it. AIDEN makes that explicit with scoped memory governance.
+> Memory is useful only when agents know what it means, how fresh it is, and when they are allowed to trust it. NeuraForge makes that explicit with scoped memory governance.
 
 **What you'll learn:**
 - The four memory scopes: task, session, project, user
@@ -11,7 +11,7 @@
 
 ## Why scoped memory?
 
-AI agents need context, but context can become stale. AIDEN treats memory as **contextual hints, not source of truth**. The repository, current files, tests, and explicit user request always win.
+AI agents need context, but context can become stale. NeuraForge treats memory as **contextual hints, not source of truth**. The repository, current files, tests, and explicit user request always win.
 
 Scoped memory gives each agent a clear contract:
 
@@ -24,7 +24,7 @@ Scoped memory gives each agent a clear contract:
 
 ## Default precedence
 
-When two scopes conflict, AIDEN uses this precedence:
+When two scopes conflict, NeuraForge uses this precedence:
 
 ```text
 task > session > project > user
@@ -135,7 +135,7 @@ memory:
 
 ## Safe defaults
 
-AIDEN's defaults are conservative:
+NeuraForge's defaults are conservative:
 
 - `project.revalidateBeforeUse: true` prevents stale project notes from overriding reality.
 - User and project writes are `suggested`, not automatic.

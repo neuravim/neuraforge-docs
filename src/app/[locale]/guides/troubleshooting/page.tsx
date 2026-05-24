@@ -5,8 +5,8 @@ import Fr from '@/content/fr/guides/troubleshooting.mdx';
 const page = createContentPage({
   content: { en: En, fr: Fr },
   metadata: {
-    en: { title: 'Troubleshooting AIDEN — Quick Fixes for Common Issues', description: 'Quick solutions: command not found, no provider, budget exceeded, circuit breaker, blocked feature.' },
-    fr: { title: 'Troubleshooting AIDEN — Solutions rapides aux problemes courants', description: 'Solutions rapides : command not found, no provider, budget exceeded, circuit breaker, feature bloquee.' },
+    en: { title: 'Troubleshooting NeuraForge — Quick Fixes for Common Issues', description: 'Quick solutions: command not found, no provider, budget exceeded, circuit breaker, blocked feature.' },
+    fr: { title: 'Troubleshooting NeuraForge — Solutions rapides aux problemes courants', description: 'Solutions rapides : command not found, no provider, budget exceeded, circuit breaker, feature bloquee.' },
   },
 });
 

@@ -1,12 +1,12 @@
 # OpenCode
 
-> Your data must never leave your servers? OpenCode + Ollama = a 100% local AIDEN pipeline. Zero cloud API, zero data leaks.
+> Your data must never leave your servers? OpenCode + Ollama = a 100% local NeuraForge pipeline. Zero cloud API, zero data leaks.
 
 > **What you'll learn**
 > - What is OpenCode
 > - Install OpenCode CLI
 > - Configure an LLM backend
-> - Use OpenCode as an AIDEN provider
+> - Use OpenCode as an NeuraForge provider
 > - Combine with a local LLM (Ollama)
 > - Troubleshooting
 
@@ -14,18 +14,18 @@
 
 [OpenCode](https://github.com/opencode-ai/opencode) is an open source agentic CLI tool designed to interact with any OpenAI-compatible LLM backend. Unlike Claude Code or Gemini CLI, OpenCode is not tied to a single vendor: it can be configured to point to Anthropic, OpenAI, Ollama, LiteLLM or any OpenAI-compatible endpoint.
 
-AIDEN uses OpenCode via a **stdin/stdout subprocess**: it sends the prompt on `stdin`, reads the response on `stdout`, and doesn't need to know which LLM backend is configured in OpenCode. This provides maximum flexibility without modifying the AIDEN configuration.
+NeuraForge uses OpenCode via a **stdin/stdout subprocess**: it sends the prompt on `stdin`, reads the response on `stdout`, and doesn't need to know which LLM backend is configured in OpenCode. This provides maximum flexibility without modifying the NeuraForge configuration.
 
 **Typical use cases:**
 - Air-gapped environments with on-premise LLM
 - Teams wanting to avoid vendor lock-in
-- Quick switching between multiple LLM backends from a single AIDEN provider
+- Quick switching between multiple LLM backends from a single NeuraForge provider
 
 ## Prerequisites
 
 - Go 1.21+ (for installation via `go install`) **or** Node.js 20+ (if distributed via npm)
 - An accessible LLM endpoint: Anthropic API, OpenAI API, local Ollama, LiteLLM proxy, etc.
-- AIDEN initialized (`aiden init`)
+- NeuraForge initialized (`neuraforge init`)
 
 ## Installation
 
@@ -115,9 +115,9 @@ $ echo "Say hello in one sentence." | opencode -p -
 Hello! I'm ready to help you.
 ```
 
-If this command returns a response, OpenCode is correctly configured and AIDEN can use it.
+If this command returns a response, OpenCode is correctly configured and NeuraForge can use it.
 
-## AIDEN Configuration
+## NeuraForge Configuration
 
 Once OpenCode is installed and its backend configured, declare it as a provider in `.aiden/aiden.config.yaml`:
 
@@ -132,12 +132,12 @@ providers:
     costPer1k: 0.002
 ```
 
-> **Note**: The `model` field is used for AIDEN metrics. OpenCode uses the model configured in its own config file — the two are independent.
+> **Note**: The `model` field is used for NeuraForge metrics. OpenCode uses the model configured in its own config file — the two are independent.
 
 ### Verify the Connection
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 Provider status:
   opencode: configured
 ```
@@ -194,7 +194,7 @@ routing:
 
 ## OpenCode + Local LLM (Ollama)
 
-This combination enables a **100% local** AIDEN pipeline, with no data sent to external services. Ideal for air-gapped environments or sensitive data.
+This combination enables a **100% local** NeuraForge pipeline, with no data sent to external services. Ideal for air-gapped environments or sensitive data.
 
 ### 1. Install Ollama
 
@@ -251,7 +251,7 @@ In `~/.config/opencode/config.json`:
 $ echo "Write a TypeScript hello world function." | opencode -p -
 ```
 
-### 6. Configure AIDEN
+### 6. Configure NeuraForge
 
 ```yaml
 provider: opencode
@@ -276,7 +276,7 @@ sanitize: true
 |---|---|
 | Air-gapped environment | Local LLM via Ollama, no external data |
 | On-premise LLM | Points to your own internal endpoint |
-| Multi-backend | Switch LLMs without touching the AIDEN config |
+| Multi-backend | Switch LLMs without touching the NeuraForge config |
 | Open source audit | Verifiable source code, no black box |
 | Cost control | Local LLM = infrastructure cost only |
 | GDPR compliance | Data processed locally |
@@ -308,18 +308,18 @@ $ go install github.com/opencode-ai/opencode@latest
 $ opencode --version
 ```
 
-### "No provider available" in AIDEN
+### "No provider available" in NeuraForge
 
 ```bash
-$ aiden provider status
+$ neuraforge provider status
 $ echo "test" | opencode -p -
 ```
 
-If OpenCode responds but AIDEN doesn't detect it, verify that `command: opencode` is correct and that the executable is in the PATH.
+If OpenCode responds but NeuraForge doesn't detect it, verify that `command: opencode` is correct and that the executable is in the PATH.
 
 ### Timeout After 120 Seconds
 
-Local LLMs (Ollama) can be slow on limited hardware. AIDEN's default timeout is 120s. To increase it:
+Local LLMs (Ollama) can be slow on limited hardware. NeuraForge's default timeout is 120s. To increase it:
 
 ```yaml
 providers:
@@ -342,7 +342,7 @@ providers:
     maxTokens: 8000
 ```
 
-> **Note**: In flash mode, prompts are shorter. Start by testing AIDEN in `flash` mode with a local LLM before switching to `standard` mode.
+> **Note**: In flash mode, prompts are shorter. Start by testing NeuraForge in `flash` mode with a local LLM before switching to `standard` mode.
 
 ### OpenCode Returns an API Error
 
@@ -361,4 +361,4 @@ Or the backend configured in OpenCode is unreachable. Check the configuration in
 
 ## Next Step
 
-Check the [Providers](/en/guides/providers) page to configure routing between multiple providers, or [Troubleshooting](/en/guides/troubleshooting) for general AIDEN issues.
+Check the [Providers](/en/guides/providers) page to configure routing between multiple providers, or [Troubleshooting](/en/guides/troubleshooting) for general NeuraForge issues.
