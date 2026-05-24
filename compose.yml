@@ -1,0 +1,19 @@
+services:
+  aiden-docs:
+    container_name: aiden-docs
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aiden-docs:latest
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      reverse-proxy:
+        aliases:
+          - aiden-docs
+
+networks:
+  reverse-proxy:
+    external: true
+    name: reverse-proxy
