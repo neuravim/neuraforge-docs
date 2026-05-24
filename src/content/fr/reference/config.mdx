@@ -32,6 +32,12 @@ providers:                       # Configuration par provider
     model: opencode
     maxTokens: 200000
     costPer1k: 0.002
+  codex:
+    enabled: true
+    command: codex
+    model: codex-cli
+    maxTokens: 200000
+    costPer1k: 0.003
   copilot:
     enabled: true
     command: gh
@@ -50,7 +56,7 @@ providers:                       # Configuration par provider
 
 routing:                         # Strategie de routage
   strategy: prefer               # auto | prefer | fixed | cost-optimized
-  fallback: [claude-code, gemini, opencode, copilot]
+  fallback: [claude-code, gemini, opencode, codex, copilot]
 
 budget:                          # Budget tokens
   monthlyLimit: 500000
@@ -67,6 +73,44 @@ pipeline:                        # Configuration du pipeline inter-agents
   maxOutputCharsPerAgent: 8000   # Troncature outputs (defaut: 8000)
 
 sanitize: true                   # Filtrage donnees sensibles (defaut: true)
+
+memory:                          # Gouvernance memoire par scopes
+  enabled: true
+  scopePrecedence: [task, session, project, user]
+  scopes:
+    user:
+      enabled: true
+      maxSize: small
+      lifecycle: persistent
+      writePolicy: suggested
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: on_limit
+    project:
+      enabled: true
+      maxSize: medium
+      lifecycle: persistent
+      writePolicy: suggested
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: periodic
+      revalidateBeforeUse: true
+    session:
+      enabled: true
+      maxSize: large
+      lifecycle: session
+      writePolicy: automatic
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: on_close
+    task:
+      enabled: true
+      maxSize: small
+      lifecycle: ephemeral
+      writePolicy: automatic
+      readPolicy: always
+      sensitivity: low
+      summarization: none
 ```
 
 ---
@@ -98,7 +142,29 @@ Quand `baseUrl` est defini, AIDEN utilise l'adapter API (`fetch`) au lieu du sub
 | Cle | Type | Defaut | Description |
 |---|---|---|---|
 | `routing.strategy` | string | `prefer` | Strategie : `fixed`, `prefer`, `auto`, `cost-optimized`. En mode `auto`, chaque agent recoit le provider optimal. |
-| `routing.fallback` | string[] | `[claude-code, gemini, opencode, copilot]` | Chaine de fallback si le provider prefere est indisponible. |
+| `routing.fallback` | string[] | `[claude-code, gemini, opencode, codex, copilot]` | Chaine de fallback si le provider prefere est indisponible. |
+
+
+### Options de gouvernance memoire
+
+Quand la memoire est active, AIDEN injecte une section explicite `--- Memory Governance ---` dans les prompts agents. Les agents doivent traiter la memoire comme des indices contextuels, pas comme une source de verite.
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `memory.enabled` | boolean | `true` | Active l'injection de gouvernance memoire par scopes. |
+| `memory.scopePrecedence` | MemoryScope[] | `[task, session, project, user]` | Ordre utilise quand des scopes se contredisent. |
+| `memory.scopes.<scope>.enabled` | boolean | `true` | Active un scope. |
+| `memory.scopes.<scope>.maxSize` | `small`/`medium`/`large`/number | selon scope | Budget taille du scope. |
+| `memory.scopes.<scope>.lifecycle` | `ephemeral`/`session`/`ttl`/`persistent` | selon scope | Cycle de retention. |
+| `memory.scopes.<scope>.writePolicy` | `never`/`manual`/`suggested`/`automatic` | selon scope | Autorise l'ecriture ou la suggestion d'ecriture. |
+| `memory.scopes.<scope>.readPolicy` | `never`/`explicit`/`contextual`/`always` | selon scope | Niveau de lecture du scope. |
+| `memory.scopes.<scope>.sensitivity` | `low`/`medium`/`high` | selon scope | Classification sensibilite. |
+| `memory.scopes.<scope>.summarization` | `none`/`periodic`/`on_limit`/`on_close` | selon scope | Quand la memoire doit etre resumee. |
+| `memory.scopes.<scope>.revalidateBeforeUse` | boolean | `false` | Force une verification avant d'utiliser ce scope comme contexte. |
+| `memory.scopes.<scope>.retention.ttlMs` | number | — | TTL optionnel pour le lifecycle `ttl`. |
+| `memory.scopes.<scope>.retention.maxEntries` | number | — | Nombre max optionnel d'entrees du scope. |
+
+Les scopes par defaut sont `task`, `session`, `project` et `user`. Le scope `project` definit `revalidateBeforeUse: true` pour verifier la memoire projet avant qu'elle influence le comportement agent.
 
 ### Options securite
 

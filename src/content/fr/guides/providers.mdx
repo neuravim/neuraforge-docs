@@ -11,13 +11,14 @@
 
 ## Providers supportes
 
-AIDEN supporte 4 providers CLI nativement et permet de brancher n'importe quel LLM via API :
+AIDEN supporte 5 providers CLI nativement et permet de brancher n'importe quel LLM via API :
 
 | Provider | Type | Forces | Context | Cout |
 |---|---|---|---|---|
 | [Claude Code](/fr/guides/providers/claude-code) | CLI | Analyse, review, long contexte | 200k | $$$ |
 | [Gemini CLI](/fr/guides/providers/gemini) | CLI | Generation code, multi-fichier | 1M | $ |
 | [OpenCode](/fr/guides/providers/opencode) | CLI | Open source, multi-backend | Variable | Variable |
+| [Codex CLI](/fr/guides/providers/codex) | CLI | Generation multi-fichier, review, refinement | 200k | $$ |
 | [GitHub Copilot](/fr/guides/providers/copilot) | CLI | Quick fix, completion | 50k | Gratuit |
 | [API custom](/fr/guides/providers/custom-api) | HTTP | N'importe quel LLM | Variable | Variable |
 
@@ -28,6 +29,8 @@ AIDEN supporte 4 providers CLI nativement et permet de brancher n'importe quel L
 **Vous voulez optimiser les couts ?** Combinez Claude Code (analyse) + [Gemini](/fr/guides/providers/gemini) (generation) avec le routage `auto`.
 
 **Vous avez des contraintes de securite ?** Utilisez [OpenCode](/fr/guides/providers/opencode) + Ollama pour un pipeline 100% local.
+
+**Vous preferez Codex pour les edits repository ?** Ajoutez [Codex CLI](/fr/guides/providers/codex) comme provider generation/review conscient du workspace.
 
 **Vous avez deja GitHub Copilot ?** Ajoutez-le comme [fallback gratuit](/fr/guides/providers/copilot) dans votre config multi-provider.
 
@@ -52,6 +55,12 @@ providers:
     model: gemini-2.5-pro
     maxTokens: 1000000
     costPer1k: 0.001
+  codex:
+    enabled: true
+    command: codex
+    model: codex-cli
+    maxTokens: 200000
+    costPer1k: 0.003
 ```
 
 > **Information** : Consultez le guide de chaque provider pour les instructions d'installation et d'authentification.
@@ -70,7 +79,7 @@ Le routage intelligent est ce qui rend AIDEN multi-provider vraiment utile. Au l
 ```yaml
 routing:
   strategy: auto
-  fallback: [claude-code, gemini, opencode, copilot]
+  fallback: [claude-code, gemini, opencode, codex, copilot]
 ```
 
 En mode `auto`, chaque agent recoit le provider optimal :
@@ -79,6 +88,7 @@ En mode `auto`, chaque agent recoit le provider optimal :
 |---|---|
 | Analyse, Planning, Documentation | claude-code |
 | Generation code, Tests | gemini |
+| Generation multi-fichier / fallback review | codex |
 | Quick fix, PR review | copilot |
 
 ## Verifier le statut
@@ -129,5 +139,6 @@ sanitize: false
 - [Claude Code](/fr/guides/providers/claude-code) — Installation, authentification, slash commands
 - [Gemini CLI](/fr/guides/providers/gemini) — Installation, auth Google, API directe
 - [OpenCode](/fr/guides/providers/opencode) — Setup multi-backend, LLM local
+- [Codex CLI](/fr/guides/providers/codex) — Generation, review, refinement sandboxes et conscients du workspace
 - [GitHub Copilot](/fr/guides/providers/copilot) — GitHub CLI, limitations
 - [Provider API custom](/fr/guides/providers/custom-api) — LiteLLM, Ollama, Azure, proxy entreprise

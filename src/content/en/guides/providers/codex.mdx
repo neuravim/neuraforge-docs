@@ -1,0 +1,122 @@
+# Codex CLI
+
+> Prefer OpenAI Codex for repository edits? AIDEN can now route analysis, code generation, review and refinement to the `codex` CLI with the right sandbox for each operation.
+
+> **What you'll learn**
+> - Install and verify Codex CLI
+> - Configure Codex as an AIDEN provider
+> - Understand the sandbox modes used by AIDEN
+> - Use Codex in a fallback chain
+> - Troubleshoot common setup issues
+
+Codex is a native AIDEN CLI provider. AIDEN invokes `codex exec` as a subprocess, passes the agent prompt on stdin, and runs it from your project directory so the model has the same workspace view as the workflow.
+
+## Prerequisites
+
+- Codex CLI installed and authenticated (`codex --version` must work)
+- AIDEN initialized in your project (`aiden init`)
+- A project workspace where Codex can read files and, for generation/refinement, write changes
+
+## Installation check
+
+Install Codex CLI using the official instructions for your environment, then verify it is available on the PATH:
+
+```bash
+$ codex --version
+```
+
+If this command fails, AIDEN will mark the provider as unavailable and continue through the routing fallback chain.
+
+## AIDEN configuration
+
+Codex is included in the default provider map:
+
+```yaml
+provider: codex
+providers:
+  codex:
+    enabled: true
+    command: codex
+    model: codex-cli
+    maxTokens: 200000
+    costPer1k: 0.003
+```
+
+Key parameters:
+
+| Parameter | Value | Description |
+|---|---|---|
+| `command` | `codex` | Codex CLI binary to execute |
+| `model` | `codex-cli` | Internal label used by AIDEN metrics |
+| `maxTokens` | `200000` | Default context budget used for routing/cost estimates |
+| `costPer1k` | `0.003` | Cost estimate per 1,000 tokens |
+
+## Sandbox behavior
+
+AIDEN chooses a sandbox according to the agent operation:
+
+| Operation | Codex command | Sandbox |
+|---|---|---|
+| Generate | `codex exec --sandbox workspace-write -` | Can edit files in the workspace |
+| Review | `codex exec --sandbox read-only -` | Read-only review, no writes |
+| Refine | `codex exec --sandbox workspace-write -` | Can update the artefact/code based on feedback |
+
+Generation has a 10-minute timeout. Review/refinement have a 5-minute timeout.
+
+## Use Codex as fallback
+
+The default fallback chain now includes Codex before Copilot:
+
+```yaml
+routing:
+  strategy: prefer
+  fallback: [claude-code, gemini, opencode, codex, copilot]
+```
+
+This is a practical setup when Claude Code or Gemini is the primary provider, but you want Codex available for multi-file code generation and code review before falling back to Copilot.
+
+## First usage
+
+```bash
+$ aiden config set provider codex
+$ aiden flash "Add input validation to the signup endpoint"
+```
+
+Then verify detection:
+
+```bash
+$ aiden provider status
+```
+
+## Strengths and use cases
+
+| Use case | Relevance |
+|---|---|
+| Multi-file code generation | Excellent |
+| Repository-aware refactoring | Excellent |
+| Code review with read-only guardrails | Good |
+| Fallback after Claude/Gemini/OpenCode | Excellent |
+| Environments without Codex authentication | Not suitable |
+
+## Troubleshooting
+
+### "codex: command not found"
+
+Codex CLI is not installed or not on your PATH. Install it, restart your shell, and check:
+
+```bash
+$ which codex
+$ codex --version
+```
+
+### Provider unavailable in `aiden provider status`
+
+AIDEN tests availability with `codex --version`. If that command needs interactive login or fails in CI, authenticate Codex first or use another provider in the fallback chain.
+
+### Writes are not happening
+
+Reviews intentionally run with `--sandbox read-only`. Generation and refinement use `--sandbox workspace-write`; make sure your project directory is writable and not blocked by OS-level permissions.
+
+## Next step
+
+Add Codex to your multi-provider setup, then tune [routing](/en/guides/providers) so each agent gets the best model for its task.

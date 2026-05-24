@@ -1,0 +1,122 @@
+# Codex CLI
+
+> Vous preferez OpenAI Codex pour les edits de repository ? AIDEN peut maintenant router analyse, generation de code, review et refinement vers le CLI `codex`, avec le bon sandbox selon l'operation.
+
+> **Ce que vous allez apprendre**
+> - Installer et verifier Codex CLI
+> - Configurer Codex comme provider AIDEN
+> - Comprendre les modes sandbox utilises par AIDEN
+> - Utiliser Codex dans une chaine de fallback
+> - Diagnostiquer les problemes courants
+
+Codex est un provider CLI natif AIDEN. AIDEN lance `codex exec` comme subprocess, envoie le prompt agent sur stdin, et l'execute depuis le dossier du projet pour donner au modele la meme vue workspace que le workflow.
+
+## Prerequis
+
+- Codex CLI installe et authentifie (`codex --version` doit fonctionner)
+- AIDEN initialise dans le projet (`aiden init`)
+- Un workspace ou Codex peut lire les fichiers et, pour generation/refinement, ecrire les changements
+
+## Verification installation
+
+Installez Codex CLI avec les instructions officielles de votre environnement, puis verifiez qu'il est disponible dans le PATH :
+
+```bash
+$ codex --version
+```
+
+Si cette commande echoue, AIDEN marque le provider comme indisponible et continue via la chaine de fallback.
+
+## Configuration AIDEN
+
+Codex est inclus dans la configuration providers par defaut :
+
+```yaml
+provider: codex
+providers:
+  codex:
+    enabled: true
+    command: codex
+    model: codex-cli
+    maxTokens: 200000
+    costPer1k: 0.003
+```
+
+Parametres cles :
+
+| Parametre | Valeur | Description |
+|---|---|---|
+| `command` | `codex` | Binaire Codex CLI a executer |
+| `model` | `codex-cli` | Label interne utilise par les metriques AIDEN |
+| `maxTokens` | `200000` | Budget contexte par defaut pour routage/estimation cout |
+| `costPer1k` | `0.003` | Estimation cout par 1 000 tokens |
+
+## Comportement sandbox
+
+AIDEN choisit un sandbox selon l'operation agent :
+
+| Operation | Commande Codex | Sandbox |
+|---|---|---|
+| Generation | `codex exec --sandbox workspace-write -` | Peut modifier les fichiers du workspace |
+| Review | `codex exec --sandbox read-only -` | Review en lecture seule, sans ecriture |
+| Refinement | `codex exec --sandbox workspace-write -` | Peut mettre a jour l'artefact/code selon le feedback |
+
+La generation a un timeout de 10 minutes. Review/refinement ont un timeout de 5 minutes.
+
+## Utiliser Codex en fallback
+
+La chaine de fallback par defaut inclut maintenant Codex avant Copilot :
+
+```yaml
+routing:
+  strategy: prefer
+  fallback: [claude-code, gemini, opencode, codex, copilot]
+```
+
+C'est pratique quand Claude Code ou Gemini reste le provider principal, mais que vous voulez Codex disponible pour generation multi-fichier et review avant de tomber sur Copilot.
+
+## Premiere utilisation
+
+```bash
+$ aiden config set provider codex
+$ aiden flash "Add input validation to the signup endpoint"
+```
+
+Puis verifiez la detection :
+
+```bash
+$ aiden provider status
+```
+
+## Forces et cas d'usage
+
+| Cas d'usage | Pertinence |
+|---|---|
+| Generation de code multi-fichier | Excellente |
+| Refactoring conscient du repository | Excellente |
+| Review avec garde-fou read-only | Bonne |
+| Fallback apres Claude/Gemini/OpenCode | Excellente |
+| Environnements sans auth Codex | Non adapte |
+
+## Troubleshooting
+
+### "codex: command not found"
+
+Codex CLI n'est pas installe ou pas dans le PATH. Installez-le, redemarrez le shell, puis verifiez :
+
+```bash
+$ which codex
+$ codex --version
+```
+
+### Provider indisponible dans `aiden provider status`
+
+AIDEN teste la disponibilite avec `codex --version`. Si cette commande demande un login interactif ou echoue en CI, authentifiez Codex d'abord ou utilisez un autre provider dans la chaine de fallback.
+
+### Les modifications ne s'appliquent pas
+
+Les reviews tournent volontairement avec `--sandbox read-only`. Generation et refinement utilisent `--sandbox workspace-write`; verifiez que le dossier projet est writable et pas bloque par les permissions OS.
+
+## Prochaine etape
+
+Ajoutez Codex a votre setup multi-provider, puis ajustez le [routage](/fr/guides/providers) pour donner a chaque agent le meilleur modele pour sa tache.

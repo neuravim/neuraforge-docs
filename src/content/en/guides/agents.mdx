@@ -61,6 +61,7 @@ Here's what concretely happens when you launch a workflow. Agents don't work in 
 - The original **feature request**
 - The **outputs from all previous agents** (truncated to 8000 chars per agent, configurable)
 - The real **project context** (tech stack, architecture, CI — detected by `aiden init`)
+- The active **workflow mode** and **memory governance** policy when configured
 
 Imagine a folder circulating from desk to desk. Each agent opens the folder, reads what the previous ones wrote, adds their contribution, and passes the folder along. Nobody works in a vacuum.
 
@@ -75,6 +76,19 @@ Dev receives [ANALYST]: + [PLANNER]: → implements according to stories
     ↓
 QA receives [ANALYST]: + [PLANNER]: + [DEV]: → reviews the Dev's code
 ```
+
+
+### Scoped memory governance
+
+When `memory.enabled` is true, the orchestrator passes the configured memory policy to every agent. The base prompt includes a `--- Memory Governance ---` section with:
+
+- The current workflow mode (`flash`, `standard`, or `enterprise`)
+- Scope precedence: `task > session > project > user` by default
+- Read/write policies per scope (`never`, `explicit`, `contextual`, `always`; `manual`, `suggested`, `automatic`)
+- Lifecycle, max size, sensitivity and summarization rules
+- `revalidateBeforeUse` when a scope must be checked before use
+
+This keeps memory useful without letting stale context override the current repository state. Agents must treat memory as contextual hints, not source of truth.
 
 ### Structured outputs
 

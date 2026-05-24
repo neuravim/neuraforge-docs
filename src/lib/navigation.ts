@@ -39,6 +39,7 @@ export function getNavigation(locale: string): NavSection[] {
             { title: dict.nav.claude_code, href: `${l}/guides/providers/claude-code` },
             { title: dict.nav.gemini_cli, href: `${l}/guides/providers/gemini` },
             { title: dict.nav.opencode, href: `${l}/guides/providers/opencode` },
+            { title: dict.nav.codex, href: `${l}/guides/providers/codex` },
             { title: dict.nav.copilot, href: `${l}/guides/providers/copilot` },
             { title: dict.nav.custom_api, href: `${l}/guides/providers/custom-api` },
           ],

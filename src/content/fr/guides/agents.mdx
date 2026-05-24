@@ -76,6 +76,19 @@ Dev recoit [ANALYST]: + [PLANNER]: → implemente selon les stories
 QA recoit [ANALYST]: + [PLANNER]: + [DEV]: → review le code du Dev
 ```
 
+
+### Gouvernance memoire par scopes
+
+Quand `memory.enabled` vaut true, l'orchestrateur transmet la politique memoire configuree a chaque agent. Le prompt de base inclut une section `--- Memory Governance ---` avec :
+
+- Le mode workflow courant (`flash`, `standard` ou `enterprise`)
+- La precedence des scopes : `task > session > project > user` par defaut
+- Les politiques read/write par scope (`never`, `explicit`, `contextual`, `always`; `manual`, `suggested`, `automatic`)
+- Lifecycle, taille max, sensibilite et regles de summarization
+- `revalidateBeforeUse` quand un scope doit etre verifie avant usage
+
+Cela rend la memoire utile sans laisser un contexte obsolete ecraser l'etat reel du repository. Les agents doivent traiter la memoire comme des indices contextuels, pas comme une source de verite.
+
 ### Outputs structures
 
 Chaque agent retourne des donnees typees dans `output.structured` :
