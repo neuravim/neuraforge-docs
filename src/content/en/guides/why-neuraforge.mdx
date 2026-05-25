@@ -59,6 +59,14 @@ neuraforge trace <feature>
 
 This avoids a common trap: forcing a heavy workflow onto every ticket, or treating a critical migration like a simple code generation prompt.
 
+### Standard vs Enterprise: the real difference
+
+The difference is not just the number of agents. **Standard** is about controlled feature delivery: a product request becomes a real change with analysis, plan, tests, security review and QA. It is the right level when the team wants to move fast without losing the link between intent, acceptance criteria and modified code.
+
+**Enterprise** is about governed delivery: the change must stand in front of a CTO, a security team, operations or business stakeholders. The workflow adds operational documentation, runbooks, human approval, auditability and production readiness. It is the natural level for a WildFly to Spring Boot migration, authentication change, compliance constraint or critical system.
+
+In short: Standard prevents fragile features. Enterprise prevents critical changes that cannot be defended in production.
+
 ## What changes in practice
 
 ### Delivery control

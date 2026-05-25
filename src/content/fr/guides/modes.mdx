@@ -42,6 +42,8 @@ Bon cas d'usage :
 - refactoring moyen ;
 - travail qui bénéficie d'un plan et d'une revue.
 
+Standard répond à un besoin simple : livrer une feature fiable sans transformer chaque ticket en programme de gouvernance. Le workflow garde ensemble l'analyse, le plan, l'implémentation, les tests, la revue sécurité et la QA, afin que l'équipe puisse vérifier que la demande produit est réellement devenue un changement exploitable.
+
 ## Enterprise
 
 Utilisez Enterprise quand la qualité de livraison compte autant que la vitesse.
@@ -59,6 +61,30 @@ Bon cas d'usage :
 - runbook, rollback et transfert support attendus.
 
 Enterprise évite un problème fréquent des outils de code IA : confondre une réponse convaincante ou un prototype local avec un livrable réellement prêt pour la production.
+
+## Standard vs Enterprise
+
+La différence ne se limite pas aux agents activés. Elle concerne surtout le niveau de garantie attendu autour du livrable.
+
+### Standard : feature maîtrisée
+
+Standard convient quand vous voulez une livraison structurée dans un repo réel : analyse, plan, code, tests, revue et critères d'acceptation restent connectés. C'est le bon choix pour une API, une intégration, une évolution produit ou un refactoring qui doit être vérifié, sans exiger toute la gouvernance d'un changement critique.
+
+### Enterprise : livraison gouvernée
+
+Enterprise convient quand l'échec coûte cher : production, sécurité, conformité, migration, dette legacy ou validation métier. Ce mode ajoute les éléments attendus dans un contexte grand compte : documentation opérationnelle, runbook, logique de rollback, validation humaine, auditabilité et readiness production.
+
+| Dimension | Standard | Enterprise |
+|---|---|---|
+| Objectif | Livrer une feature fiable | Livrer un changement critique et défendable |
+| Cas typique | API, feature produit, intégration, refactoring moyen | Migration, authentification, sécurité, conformité, production |
+| Documentation | Utile mais légère | Attendue : docs, runbook, rollback, transfert support |
+| Validation humaine | Optionnelle selon l'équipe | Attendue ou obligatoire |
+| Sécurité et QA | Revue standard et critères vérifiés | Contrôles renforcés et readiness production |
+| Traçabilité | Artefacts de feature | Artefacts, décisions, validations et audit trail |
+| Public cible | Équipe produit et engineering | CTO, sécurité, ops, compliance, grands comptes |
+
+En résumé : **Standard** structure la livraison d'une feature sérieuse. **Enterprise** ajoute la gouvernance nécessaire quand la feature doit être exploitable, documentée, auditable et acceptable pour une organisation à fort niveau d'exigence.
 
 ## Changer de niveau quand le périmètre évolue
 

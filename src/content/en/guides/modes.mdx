@@ -42,6 +42,8 @@ Good fit:
 - medium refactor;
 - work that benefits from a plan and review.
 
+Standard answers a practical need: deliver a reliable feature without turning every ticket into a governance program. The workflow keeps analysis, planning, implementation, tests, security review and QA connected, so the team can verify that the product request actually became a usable change.
+
 ## Enterprise
 
 Use Enterprise when delivery quality matters as much as speed.
@@ -59,6 +61,30 @@ Good fit:
 - runbooks, rollback and support handover expected.
 
 Enterprise mode is designed to avoid a common failure mode of AI coding tools: confusing a convincing answer or local prototype with a production-ready deliverable.
+
+## Standard vs Enterprise
+
+The difference is not only which agents are active. It is mainly the level of assurance expected around the deliverable.
+
+### Standard: controlled feature delivery
+
+Use Standard when you want structured delivery inside a real repository: analysis, plan, code, tests, review and acceptance criteria stay connected. It is the right fit for an API, an integration, a product change or a medium refactor that must be verified without requiring the full governance of a critical change.
+
+### Enterprise: governed delivery
+
+Use Enterprise when failure is expensive: production impact, security, compliance, migration, legacy debt or business approval. This mode adds what large organizations expect: operational documentation, runbook, rollback thinking, human approval, auditability and production readiness.
+
+| Dimension | Standard | Enterprise |
+|---|---|---|
+| Goal | Deliver a reliable feature | Deliver a critical and defensible change |
+| Typical use | API, product feature, integration, medium refactor | Migration, authentication, security, compliance, production |
+| Documentation | Useful but lightweight | Expected: docs, runbook, rollback, support handover |
+| Human approval | Optional, depending on the team | Expected or required |
+| Security and QA | Standard review and verified criteria | Stronger controls and production readiness |
+| Traceability | Feature artifacts | Artifacts, decisions, approvals and audit trail |
+| Audience | Product and engineering teams | CTO, security, ops, compliance, large enterprises |
+
+In short: **Standard** structures the delivery of a serious feature. **Enterprise** adds the governance needed when the feature must be operable, documented, auditable and acceptable for an organization with a high bar.
 
 ## Switching when the scope changes
 
