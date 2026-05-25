@@ -95,7 +95,7 @@ const dictionaries = {
         title: 'Guides',
         description: 'You know how to install NeuraForge. Now learn to get the most out of it. Each guide answers a specific question.',
         cards: [
-          { title: 'Why NeuraForge', description: 'A guide for CTOs and product leaders, featuring WildFly to Spring Boot migration: usage, hidden costs and BMAD differences.', icon: '\u{1F9ED}' },
+          { title: 'Why NeuraForge', description: 'A practical guide to usage, hidden coordination costs, WildFly to Spring Boot migration and BMAD differences.', icon: '\u{1F9ED}' },
           { title: 'Modes', description: 'Flash, Standard or Enterprise? How to choose — and how to switch mid-flight without losing anything.', icon: '\u{1F504}' },
           { title: 'Agents', description: '7 specialized AI agents collaborating like a dev team, including a Security Reviewer gate. Who does what, and how they pass the baton.', icon: '\u{1F916}' },
           { title: 'Providers', description: 'Claude, Gemini, Copilot, local Ollama... Connect your favorite LLM and let NeuraForge route intelligently.', icon: '\u{1F50C}' },
@@ -224,7 +224,7 @@ const dictionaries = {
         title: 'Guides',
         description: "Vous savez installer NeuraForge. Maintenant, apprenez a en tirer le maximum. Chaque guide repond a une question concrete.",
         cards: [
-          { title: 'Pourquoi NeuraForge', description: "Guide pour CTO et produit, avec cas vedette WildFly vers Spring Boot : usage, couts caches, differences avec BMAD.", icon: '\u{1F9ED}' },
+          { title: 'Pourquoi NeuraForge', description: "Guide concret : usage, couts caches de coordination, migration WildFly vers Spring Boot et differences avec BMAD.", icon: '\u{1F9ED}' },
           { title: 'Modes', description: "Flash, Standard ou Enterprise ? Comment choisir — et comment changer en cours de route sans rien perdre.", icon: '\u{1F504}' },
           { title: 'Agents', description: "7 agents IA specialises qui collaborent comme une equipe dev, dont un gate Security Reviewer. Qui fait quoi, et comment ils se passent le relais.", icon: '\u{1F916}' },
           { title: 'Providers', description: "Claude, Gemini, Copilot, Ollama local... Connectez votre LLM prefere et laissez NeuraForge router intelligemment.", icon: '\u{1F50C}' },

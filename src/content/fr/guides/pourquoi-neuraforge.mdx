@@ -1,14 +1,14 @@
 # Pourquoi NeuraForge
 
-> Cette page explique comment utiliser NeuraForge et pourquoi il intéresse les équipes techniques, produit et management. Elle reste volontairement orientée usage et décision, pas implémentation interne.
+> Un guide concret pour utiliser NeuraForge, comprendre le problème qu'il résout et décider quand un workflow IA contrôlé mérite plus de structure.
 
 ## En une phrase
 
-NeuraForge aide une équipe produit et engineering à passer d'une demande fonctionnelle à une livraison vérifiée, avec des agents IA spécialisés qui travaillent dans un cadre contrôlé.
+NeuraForge aide les organisations produit et engineering à passer d'une demande fonctionnelle à une livraison vérifiée, avec des agents IA spécialisés qui travaillent dans un cadre contrôlé.
 
 Pas un chatbot de plus. Pas un dossier de prompts à maintenir. Un outil CLI qui s'intègre dans un repo existant et qui met de l'ordre dans le travail des agents.
 
-## Pourquoi les CTO et responsables produit regardent ce sujet
+## Le problème : une sortie d'agent n'est pas une livraison
 
 Les agents IA savent produire du code. Le vrai sujet, pour une organisation, c'est le contrôle :
 
@@ -16,7 +16,8 @@ Les agents IA savent produire du code. Le vrai sujet, pour une organisation, c'e
 - comprendre ce qui a été décidé ;
 - vérifier que le code a réellement changé ;
 - éviter les livraisons "démo locale" ;
-- garder une trace exploitable pour la QA, la sécurité, le produit et le management ;
+- vérifier qualité, sécurité et critères d'acceptation ;
+- garder une trace exploitable pour relire les décisions ;
 - réduire le temps passé à coordonner analyse, dev, review, documentation et relance.
 
 NeuraForge se place à cet endroit : entre l'intention produit et le delivery. Il ne remplace pas l'équipe. Il évite qu'elle perde du temps à piloter manuellement un réseau d'agents qui part dans tous les sens.
@@ -60,34 +61,34 @@ Ce découpage évite un piège fréquent : appliquer un workflow lourd à chaque
 
 ## Ce que NeuraForge change dans la pratique
 
-### Pour l'équipe technique
+### Contrôle du delivery
 
-- Moins de coordination manuelle entre agents.
-- Des rôles plus clairs : analyse, plan, code, sécurité, QA, documentation.
-- Des gates qui empêchent de confondre "réponse convaincante" et "livrable terminé".
-- Une meilleure intégration dans les projets existants.
+- Les demandes, décisions et sorties restent connectées.
+- Les responsabilités sont séparées : analyse, plan, code, sécurité, QA, documentation.
+- Les gates limitent le risque de confondre "réponse convaincante" et "livrable terminé".
+- Les projets existants peuvent adopter le workflow sans devenir des prototypes locaux.
 
-### Pour le produit
+### Clarté produit
 
-- Les critères d'acceptation restent visibles.
+- Les critères d'acceptation restent visibles pendant le workflow.
 - Les livrables sont attachés à une feature, pas perdus dans une conversation.
 - Les arbitrages sont plus faciles à relire.
-- Les demandes peuvent être traitées avec le bon niveau de rigueur.
+- Chaque demande peut recevoir le bon niveau de rigueur sans ralentir les petites corrections.
 
-### Pour le management
+### Visibilité opérationnelle
 
-- Plus de visibilité sur les coûts, les cycles et les blocages.
-- Une adoption IA moins artisanale.
-- Un cadre plus défendable pour industrialiser l'usage des agents.
-- Un moyen de réduire le temps caché : relances, relectures, documentation oubliée, corrections tardives.
+- L'avancement, les blocages et les signaux de coût sont plus faciles à inspecter.
+- L'adoption IA devient moins artisanale et plus standardisable.
+- Le coût caché de coordination diminue : contexte répété, reviews floues, documentation oubliée, corrections tardives.
+- Les changements sensibles peuvent porter la documentation et les validations attendues pour une livraison production.
 
-Et pour les cost killers : NeuraForge ne promet pas de magie. Il attaque surtout les coûts invisibles. Les minutes perdues à remettre du contexte. Les reviews refaites parce que les critères étaient flous. Les agents payés à tourner sur des prompts trop longs. Les features qui semblent finies puis reviennent deux jours plus tard.
+NeuraForge ne promet pas de magie. Il attaque surtout les coûts invisibles : le contexte répété, les reviews refaites parce que les critères étaient flous, les agents payés à tourner sur des prompts trop longs, et les features qui semblent finies puis reviennent deux jours plus tard.
 
 ## Cas mis en vedette : migrer WildFly vers Spring Boot
 
-Un exemple parlant pour les grands groupes : la migration d'applications WildFly/JBoss ou Java EE vers Spring Boot.
+Un exemple parlant pour les grandes organisations : la migration d'applications WildFly/JBoss ou Java EE vers Spring Boot.
 
-C'est le genre de chantier que les banques, assurances, opérateurs et groupes du CAC40 connaissent bien : applications critiques, dépendances historiques, serveurs d'application coûteux à maintenir, tests parfois incomplets, documentation dispersée, pression de modernisation cloud et sécurité.
+Le schéma est connu : applications critiques, dépendances historiques, serveurs d'application coûteux à maintenir, tests parfois incomplets, documentation dispersée, pression de modernisation cloud et sécurité.
 
 NeuraForge est intéressant ici parce que le problème n'est pas seulement de "convertir du code". Il faut garder le comportement métier, identifier les risques, produire un plan de migration, modifier les bons fichiers, remplacer les tests serveur par des tests Spring Boot, vérifier les endpoints et documenter ce qui a changé.
 
@@ -97,7 +98,7 @@ Un workflow typique :
 neuraforge enterprise "Migrer le module clients WildFly vers Spring Boot avec tests, smoke tests et runbook d'exploitation"
 ```
 
-Ce cas parle autant aux CTO qu'aux responsables produit : la modernisation avance par incréments vérifiables, sans demander à l'équipe de traiter toute la plateforme d'un coup. Et côté coûts, le gain potentiel est concret : moins de dette d'exploitation, moins de dépendance à un runtime legacy, moins de temps passé à reconstituer le contexte technique à chaque migration.
+La valeur est concrète : la modernisation avance par incréments vérifiables au lieu de demander une réécriture complète de plateforme. Cela signifie moins de dette d'exploitation, moins de dépendance à un runtime legacy et moins de temps passé à reconstituer le contexte technique à chaque migration.
 
 ## NeuraForge vs BMAD
 
@@ -112,8 +113,8 @@ BMAD a popularisé une façon structurée de penser le travail multi-agents. Neu
 | Agents | Forte logique de rôles et de documents | Rôles reliés à des sorties vérifiables |
 | Qualité | Dépend beaucoup de la discipline d'exécution | Gates intégrés pour bloquer les livraisons faibles |
 | Coûts IA | Peut consommer beaucoup de contexte | Routage, scopes et compression pour limiter le gaspillage |
-| Management | Bon support de réflexion | Meilleure visibilité sur avancement, blocages et coûts |
-| Produit | Utile pour cadrer | Utile pour suivre une feature jusqu'à une sortie exploitable |
+| Visibilité | Bon support de réflexion | Signaux plus clairs sur avancement, blocages et coûts |
+| Livraison produit | Utile pour cadrer | Utile pour suivre une feature jusqu'à une sortie exploitable |
 
 ## Le point important
 
@@ -121,4 +122,4 @@ NeuraForge n'a pas besoin d'être vendu comme une révolution. Les équipes tech
 
 NeuraForge sert à réduire cet écart.
 
-Il donne aux CTO, engineering managers et responsables produit un cadre plus propre pour utiliser l'IA dans le delivery : assez simple pour être adopté, assez strict pour éviter les faux positifs, assez traçable pour être défendable en interne.
+Il donne aux organisations un cadre plus propre pour utiliser l'IA dans le delivery logiciel : assez simple pour être adopté, assez strict pour éviter les faux positifs, assez traçable pour être défendable en interne.

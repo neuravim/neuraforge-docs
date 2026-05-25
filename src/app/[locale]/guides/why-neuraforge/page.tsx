@@ -8,12 +8,12 @@ const page = createContentPage({
     en: {
       title: 'Why NeuraForge — Usage, Control and WildFly Migration',
       description:
-        'A practical guide for CTOs and product leaders: how to use NeuraForge, where it reduces hidden costs, and why WildFly to Spring Boot migration is a strong enterprise use case.',
+        'A practical guide to using NeuraForge, reducing hidden coordination costs, and understanding why WildFly to Spring Boot migration is a strong enterprise use case.',
     },
     fr: {
       title: 'Pourquoi NeuraForge — Usage, controle et migration WildFly',
       description:
-        "Un guide concret pour CTO et responsables produit : utiliser NeuraForge, reduire les couts caches et comprendre le cas enterprise WildFly vers Spring Boot.",
+        "Un guide concret pour utiliser NeuraForge, reduire les couts caches de coordination et comprendre le cas enterprise WildFly vers Spring Boot.",
     },
   },
 });
