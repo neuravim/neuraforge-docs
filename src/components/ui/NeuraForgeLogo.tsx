@@ -9,34 +9,41 @@ export function NeuraForgeLogo({ size = 32 }: { size?: number }) {
       aria-label="NeuraForge logo"
     >
       <defs>
-        <linearGradient id="nf-bg" x1="80" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#111827" />
-          <stop offset="1" stopColor="#020617" />
+        <linearGradient id="nf-mark" x1="104" y1="96" x2="408" y2="416" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#38bdf8" />
+          <stop offset="0.48" stopColor="#8b5cf6" />
+          <stop offset="1" stopColor="#f97316" />
         </linearGradient>
-        <linearGradient id="nf-forge" x1="136" y1="88" x2="384" y2="424" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#fbbf24" />
-          <stop offset="0.48" stopColor="#f97316" />
-          <stop offset="1" stopColor="#dc2626" />
+        <linearGradient id="nf-core" x1="196" y1="156" x2="316" y2="356" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#f8fafc" />
+          <stop offset="1" stopColor="#cbd5e1" />
         </linearGradient>
-        <filter id="nf-glow" x="72" y="48" width="368" height="416" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feGaussianBlur stdDeviation="10" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
       </defs>
-      <rect width="512" height="512" rx="104" fill="url(#nf-bg)" />
-      <path d="M96 384h320l-28 56H124l-28-56Z" fill="#1f2937" stroke="#475569" strokeWidth="10" strokeLinejoin="round" />
-      <path d="M154 392h204l34-70H120l34 70Z" fill="#334155" stroke="#64748b" strokeWidth="10" strokeLinejoin="round" />
-      <g filter="url(#nf-glow)">
-        <path d="M144 330V124h58l108 136V124h58v206h-58L202 194v136h-58Z" fill="url(#nf-forge)" />
-        <path d="M144 330V124h58l108 136V124h58v206h-58L202 194v136h-58Z" stroke="#fed7aa" strokeOpacity="0.75" strokeWidth="10" strokeLinejoin="round" />
-      </g>
-      <path d="M256 54l15 34 37 4-28 24 8 36-32-19-32 19 8-36-28-24 37-4 15-34Z" fill="#fbbf24" />
-      <circle cx="406" cy="126" r="12" fill="#fb923c" />
-      <circle cx="112" cy="176" r="9" fill="#f97316" />
-      <path d="M395 201l28-18M103 273l-31 8M357 78l18-30M156 78l-18-30" stroke="#fb923c" strokeWidth="12" strokeLinecap="round" />
+      <rect width="512" height="512" rx="112" fill="#0f172a" />
+      <path
+        d="M256 72 414 164v184L256 440 98 348V164L256 72Z"
+        fill="#111827"
+        stroke="url(#nf-mark)"
+        strokeWidth="28"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M176 342V170h46l116 172h-48L222 240v102h-46Z"
+        fill="url(#nf-core)"
+      />
+      <path
+        d="M290 170h46v172h-46V170Z"
+        fill="url(#nf-core)"
+      />
+      <path
+        d="M120 164 256 244l136-80M256 244v156"
+        stroke="url(#nf-mark)"
+        strokeWidth="18"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.9"
+      />
+      <circle cx="256" cy="244" r="22" fill="#0f172a" stroke="#f8fafc" strokeWidth="10" />
     </svg>
   );
 }
