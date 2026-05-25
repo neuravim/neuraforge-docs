@@ -1,112 +1,66 @@
 # Configuration
 
-> 4 lines of YAML. That's all it takes to configure NeuraForge. The rest is a bonus for perfectionists.
+> NeuraForge works with a small project configuration and lets teams add standards when they need them.
 
-**What you'll learn:**
-- The 5 configuration levels and how they nest together
-- The available options to fine-tune every aspect
-- Enterprise configuration to standardize across your teams
+## Minimal configuration
 
-## The 5 levels: Russian nesting dolls
-
-Think of Russian nesting dolls: each configuration level wraps the previous one. The smallest doll (NeuraForge defaults) is always there. Each layer you add overrides it, without ever breaking what's underneath.
-
-1. **NeuraForge defaults** (built-in) -- the base, always present
-2. **Enterprise** (`~/.neuraforge/enterprise.config.yaml`) -- your organization's standards
-3. **Project** (`.neuraforge/neuraforge.config.yaml`) -- specific to this repo
-4. **Feature** (`.neuraforge/features/<slug>/.override.yaml`) -- per-feature adjustments
-5. **CLI flags** (`--mode`, `--provider`, etc.) -- one-off override, highest priority
-
-Result: you only configure what changes. Everything else automatically inherits from the level above.
-
-## Minimal configuration: 4 lines, let's go
-
-You don't need to understand everything to get started. Create a file, paste 4 lines, and NeuraForge works:
+For most projects, you only need to declare the project, preferred provider, mode and language.
 
 ```yaml
-# .neuraforge/neuraforge.config.yaml
 project: my-project
 provider: claude-code
 mode: standard
 lang: en
 ```
 
-4 lines are enough to get started.
+This keeps setup lightweight while still allowing teams to grow into stronger governance later.
 
-It's the outermost Russian doll for your project. It overrides NeuraForge defaults with your choices. Anything you don't specify keeps its default value.
+## Configuration levels
 
-## Full options
+NeuraForge supports several levels of configuration so personal, project and enterprise preferences do not fight each other:
 
-When you're ready to go further, here's everything you can control:
+1. product defaults;
+2. organization standards;
+3. project settings;
+4. feature-level adjustments;
+5. command-line overrides.
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `project` | string | (required) | Project name |
-| `provider` | string | `claude-code` | Default provider |
-| `mode` | enum | `standard` | flash, standard, enterprise |
-| `lang` | string | `fr` | Artifact language |
-| `providers` | object | (built-in) | Per-provider config |
-| `routing` | object | prefer | Routing strategy |
-| `budget` | object | (built-in) | Token budget |
-| `hooks` | object | {} | Event hooks |
-| `rules` | array | [] | List of rule files |
-| `pipeline` | object | (see below) | Inter-agent pipeline configuration |
-| `memory` | object | scoped defaults | Memory governance: scopes, precedence, read/write policies |
+The exact merge behavior and internal schema are implementation details. As a user, the rule is simple: local and explicit choices take priority over broad defaults.
 
-### Pipeline
+## What you can customize
 
-```yaml
-pipeline:
-  maxOutputCharsPerAgent: 8000  # Agent output truncation (default: 8000)
-```
+Publicly supported customization areas include:
 
-This option controls how much text from a previous agent is injected into the next agent's prompt. With a large-context LLM (200k+), you can increase this value. Reduce it if you're hitting token limits.
+- default AI provider;
+- workflow mode;
+- language for generated artifacts;
+- team rules;
+- provider preferences;
+- budget and safety preferences;
+- memory behavior;
+- enterprise approval expectations.
 
+## Enterprise configuration
 
-### Memory
+Teams can define shared standards once and reuse them across repositories. Typical enterprise standards include:
 
-```yaml
-memory:
-  enabled: true
-  scopePrecedence: [task, session, project, user]
-```
-
-Memory governance controls how agents treat task, session, project and user memory. It is enabled by default and injected into every agent prompt as explicit rules. See the [memory guide](/en/guides/memory) for scopes, precedence and safety patterns.
-
-## Enterprise configuration: the innermost doll
-
-Here's where things get interesting for teams. The enterprise config lives in your home directory and applies to **all** your NeuraForge projects on the entire machine. It's the common foundation for your organization.
-
-```yaml
-# ~/.neuraforge/enterprise.config.yaml
-company: my-company
-defaults:
-  mode: standard
-  lang: en
-  provider: claude-code
-  require_approval: true
-security:
-  no_secrets_in_artefacts: true
-  scan_dependencies: true
-coding:
-  test_coverage_min: 80
-  commit_convention: conventional
-```
-
-A new dev joins the team? They install the enterprise config, and all NeuraForge projects immediately follow the standards. No copy-pasting, no forgetting.
+- preferred provider;
+- default workflow mode;
+- approval expectations;
+- security rules;
+- test coverage targets;
+- commit conventions;
+- documentation requirements.
 
 ## Modify via CLI
 
-Don't feel like editing YAML by hand? The CLI does it for you:
-
 ```bash
-$ neuraforge config set mode flash
-Set mode = flash
-
-$ neuraforge config show
-{ "project": "my-project", "mode": "flash", ... }
+neuraforge config set mode flash
+neuraforge config show
 ```
+
+Use the CLI for everyday configuration. Keep organization-wide standards in the internal team setup guide.
 
 ## Next step
 
-Learn how to configure [memory governance](/en/guides/memory) or manage [rules and templates](/en/guides/rules-and-templates).
+Learn how to manage [rules and templates](/en/guides/rules-and-templates) or read about [memory governance](/en/guides/memory).

@@ -1,0 +1,81 @@
+# Rules and Templates
+
+> Your team conventions live inside your lead dev's head. Problem: AI agents can't read minds. Solution: write them in Markdown, NeuraForge injects them automatically.
+
+**What you'll learn:**
+- How to write and add enterprise rules
+- How to customize artifact templates
+- How rules concretely transform agent prompts
+
+## Enterprise rules
+
+Rules are `.md` files in `.neuraforge/rules/`. They are automatically injected into every agent's context. No API to configure, no plugin to install: Markdown, that's it.
+
+### Add a rule
+
+```bash
+$ neuraforge rules add coding-standards.md
+Rule added: coding-standards.md
+```
+
+### Example rule
+
+```markdown
+# Coding Standards
+
+## TypeScript
+- Strict mode required
+- No `any` without justification
+- Interfaces for all public types
+
+## Tests
+- Minimum coverage: 80%
+- Unit tests for all business logic
+
+## Git
+- Conventional Commits
+- PR: max 400 lines
+```
+
+### List rules
+
+```bash
+$ neuraforge rules list
+  coding-standards (.neuraforge/rules/coding-standards.md)
+  security-policy (.neuraforge/rules/security-policy.md)
+```
+
+## Rule injection: before / after
+
+Without rules, a Dev agent receives a generic prompt. It produces code that works, but may not follow your conventions. With rules, the agent's prompt explicitly contains your standards, and the generated code respects them from the first iteration.
+
+**Without rules**: the Dev agent generates valid code, but uses `any`, forgets public interfaces, and creates commits without a convention.
+
+**With `coding-standards.md`**: the Dev agent receives your standards in its prompt under `--- Enterprise Rules ---`. It produces strict TypeScript, with interfaces, and conventional commits.
+
+Rules are filtered by agent to avoid noise:
+- **Dev** receives: coding-standards, security-policy
+- **QA** receives: coding-standards, security-policy
+- **Planner** receives: coding-standards, architecture-principles
+- Custom rules are always sent to all agents
+
+The difference is immediate: instead of hoping the AI guesses your conventions, you give them in black and white.
+
+## Templates
+
+NeuraForge provides 7 default templates (brief, spec, story, review, change-summary, architecture-decision, quality-report).
+
+### Customize a template
+
+```bash
+$ neuraforge template customize spec
+Template "spec" copied to .neuraforge/templates/ for customization.
+```
+
+The copied template uses Handlebars. Available variables: `feature_name`, `provider`, `mode`, `date`, etc.
+
+Want every generated spec to include a "GDPR Impact" section? Edit the template, and all agents that produce specs will include it automatically.
+
+## Next step
+
+See the [troubleshooting](/en/guides/troubleshooting) guide.

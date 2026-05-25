@@ -1,0 +1,180 @@
+# Les 7 agents NeuraForge
+
+> Imaginez une equipe de 7 developpeurs specialises, disponibles 24h/24, qui se passent le travail comme une chaine de montage parfaitement huilee. C'est exactement ce que fait NeuraForge.
+>
+> Chaque agent a un role precis, une personnalite, et surtout : ils communiquent entre eux automatiquement.
+
+## Faites connaissance avec l'equipe
+
+Pensez a NeuraForge comme a un cabinet d'ingenierie. Le **Lead** est le chef de projet, l'**Analyst** est le detective, le **Planner** est l'architecte, le **Dev** est le macon, le **Security Reviewer** est le gate applicatif adversarial, le **QA** est l'inspecteur, et le **DocOps** est le notaire. Chacun excelle dans sa specialite, et ensemble ils livrent un resultat que personne ne pourrait produire seul.
+
+### Lead (le chef de projet)
+
+Toujours aux commandes. C'est lui qui recoit votre demande, jauge la situation en une fraction de seconde, et decide qui va travailler et dans quel ordre. Il surveille tout : quality gates, circuit breakers, budget tokens. Rien ne lui echappe.
+
+Toujours actif. Analyse la demande, choisit le mode, orchestre les agents, applique les quality gates et circuit breakers.
+
+### Analyst (le detective)
+
+Avant de coder quoi que ce soit, l'Analyst mene l'enquete. Il fouille votre codebase, identifie les zones a risque, pose les bonnes questions (3 a 5, pas plus), et livre un brief clair avec un score de complexite. Sans lui, on coderait a l'aveugle.
+
+Actif en standard et enterprise. Scanne le code, pose 3-5 questions, cree le brief, estime la complexite.
+
+### Planner (l'architecte)
+
+L'Analyst a pose le diagnostic, le Planner dessine les plans. Il produit une spec allegee (1-2 pages, pas un roman), decoupe le travail en stories actionnables, et redige les ADR si l'architecture l'exige. C'est la feuille de route que tout le monde suit.
+
+Actif en standard et enterprise. Cree la spec allegee (1-2 pages), decompose en stories, ecrit les ADR si necessaire.
+
+### Dev (le macon)
+
+Le Dev, c'est celui qui pose les briques. Il recoit les plans du Planner, implemente le code, ecrit les tests, et fait un self-review avant de passer la main. Il a ses garde-fous : rappel de l'objectif toutes les 5 etapes, max 10 fichiers par passe, circuit breaker si ca deraille.
+
+Toujours actif. Implemente le code, ecrit les tests, fait un self-review. Guardrails : rappel objectif toutes les 5 etapes, max 10 fichiers, circuit breaker.
+
+### Security Reviewer (le gate appsec)
+
+Le Security Reviewer part du principe que les utilisateurs authentifies peuvent etre malveillants. Il relit le plan et l'implementation pour chercher des chemins d'exploitation concrets : BOLA/IDOR, absence d'autorisation au niveau ressource, fuite d'isolation multi-tenant, `userId` / `tenantId` controles par le client, exposition de donnees, injection, XSS, execution de commandes, secrets hardcodes et decisions de workflow dangereuses.
+
+Actif en standard et enterprise. Il passe apres Dev et avant QA. Il retourne `approved`, `warning` ou `blocked`, journalise les findings avec severite/evidence/recommandation, et liste les tests securite requis. Les risques critiques d'autorisation ou d'exposition de donnees bloquent le workflow.
+
+### QA (l'inspecteur)
+
+L'inspecteur ne laisse rien passer. Il ne fait pas une review generique — il verifie chaque critere d'acceptation defini par le Planner, ligne par ligne. Scan securite OWASP inclus. Si le travail du Dev ne passe pas, on recommence (jusqu'a 2 fois).
+
+Actif en standard et enterprise. Review du code, verification des criteres d'acceptation, scan securite OWASP basique, rapport qualite.
+
+### DocOps (le notaire)
+
+Le dernier maillon, mais pas le moindre. Le DocOps officialise tout : documentation, changelog, conformite, runbooks. Dans un contexte enterprise, rien ne part en production sans sa signature.
+
+Actif en enterprise uniquement. Genere la documentation, changelog, verifie la conformite, cree les runbooks.
+
+## Activation par mode
+
+Besoin d'un comportement domaine sans creer de nouveaux roles runtime ? Utilisez [Agent Profiles & Domain Playbooks](/fr/guides/agent-profiles) pour specialiser les agents integres, par exemple pour une migration WildFly vers Spring Boot.
+
+| Agent | Flash | Standard | Enterprise |
+|---|---|---|---|
+| Lead | Oui | Oui | Oui |
+| Analyst | — | Oui | Oui |
+| Planner | — | Oui | Oui |
+| Dev | Oui | Oui | Oui |
+| Security Reviewer | — | Oui | Oui |
+| QA | — | Oui | Oui |
+| DocOps | — | — | Oui |
+
+## Comment les agents communiquent (Pipeline)
+
+Voici ce qui se passe concretement quand vous lancez un workflow. Les agents ne travaillent pas en isolation. Chaque agent recoit un `PipelineContext` contenant :
+- La **feature request** originale
+- Les **outputs de tous les agents precedents** (tronques a 8000 chars par agent, configurable)
+- Le **contexte projet** reel (tech stack, architecture, CI — detectes par `neuraforge init`)
+
+Imaginez un dossier qui circule de bureau en bureau. Chaque agent ouvre le dossier, lit ce que les precedents ont ecrit, ajoute sa contribution, et passe le dossier au suivant. Personne ne travaille dans le vide.
+
+Flux concret en mode standard :
+
+```
+Analyst execute() → output.content + output.structured
+    ↓
+Planner recoit [ANALYST]: dans son prompt → output.content + structured.stories
+    ↓
+Dev recoit [ANALYST]: + [PLANNER]: → implemente selon les stories
+    ↓
+Security recoit [PLANNER]: + [DEV]: → execute le gate de securite applicative
+    ↓
+QA recoit [ANALYST]: + [PLANNER]: + [DEV]: + [SECURITY]: → review le code du Dev
+```
+
+
+### Gouvernance memoire par scopes
+
+Quand `memory.enabled` vaut true, l'orchestrateur transmet la politique memoire configuree a chaque agent. Le prompt de base inclut une section `--- Memory Governance ---` avec :
+
+- Le mode workflow courant (`flash`, `standard` ou `enterprise`)
+- La precedence des scopes : `task > session > project > user` par defaut
+- Les politiques read/write par scope (`never`, `explicit`, `contextual`, `always`; `manual`, `suggested`, `automatic`)
+- Lifecycle, taille max, sensibilite et regles de summarization
+- `revalidateBeforeUse` quand un scope doit etre verifie avant usage
+
+Cela rend la memoire utile sans laisser un contexte obsolete ecraser l'etat reel du repository. Les agents doivent traiter la memoire comme des indices contextuels, pas comme une source de verite.
+
+### Outputs structures
+
+Chaque agent retourne des donnees typees dans `output.structured` :
+
+| Agent | Champs structures |
+|-------|------------------|
+| Analyst | `complexity` (1-5), `risks` (string[]), `questions` (string[]) |
+| Planner | `stories` (array of id/title/description/acceptanceCriteria), `estimatedTokens` (number) |
+| Dev | `filesChanged` (string[]), `testsGenerated` (string[]) |
+| Security Reviewer | `status` (`approved`/`warning`/`blocked`), `passed` (boolean), `findings` (array), `requiredSecurityTests` (string[]) |
+| QA | `passed` (boolean), `score` (1-10), `issues` (array of severity/message), `criteriaResults` (array of story/criterion/passed/reason) |
+| DocOps | `docsGenerated` (string[]) |
+
+L'orchestrateur utilise ces champs pour les quality gates et le feedback loop.
+
+### Verification croisee QA / Planner
+
+Le QA ne fait pas une review generique. Il extrait les stories et criteres d'acceptation de l'output du Planner (`structured.stories`) et les inclut explicitement dans sa review :
+
+```
+--- ACCEPTANCE CRITERIA TO VERIFY ---
+Story: Setup Database
+  - Tables are created
+  - Migrations run successfully
+
+For each criterion: PASS or FAIL with reason.
+```
+
+Le QA retourne `structured.criteriaResults` avec le resultat de chaque critere, permettant un suivi precis de la couverture fonctionnelle.
+
+### Routage multi-provider par agent
+
+Chaque agent recoit le provider optimal pour sa tache via le router :
+
+| Agent | TaskType | Provider par defaut (auto) |
+|-------|----------|---------------------------|
+| Analyst | analysis | claude-code |
+| Planner | planning | claude-code |
+| Dev | code_gen | gemini |
+| Security Reviewer | security_review | claude-code |
+| QA | code_review | claude-code |
+| DocOps | documentation | claude-code |
+
+L'orchestrateur appelle `router.route(taskType)` avant chaque execution. Si le provider prefere est indisponible, le fallback prend le relais.
+
+### Feedback loop QA -> Dev
+
+Si le QA echoue (`structured.passed = false`), l'orchestrateur :
+1. Relance le Dev avec le feedback du QA dans `previousOutputs`
+2. Relance le QA sur le nouveau code
+3. Repete max 2 fois. Si toujours en echec, le workflow continue.
+
+### Quality gates
+
+Apres la phase **discovery** : le gate verifie que l'output de l'Analyst contient du contenu et une complexite detectee. Sinon, la feature est bloquee.
+
+Apres la phase **planning** : le gate verifie que la spec contient du contenu et au moins une story. Sinon, blocage.
+
+En mode **enterprise**, un dernier gate `enterprise_production_readiness` s'execute apres Security, QA et DocOps. Il bloque la feature si l'implementation n'a pas de fichiers modifies, pas de tests, une review securite non approuvee ou avec findings, un QA score inferieur a 9/10, des criteres d'acceptation manquants/en echec, ou des artefacts DocOps incomplets (`runbook`, `rollback`, `deployment`).
+
+## Invocation manuelle
+
+Vous pouvez invoquer un agent en dehors d'un workflow :
+
+```bash
+$ neuraforge agent analyst "Analyser le module billing"
+Invoking agent "analyst" with: "Analyser le module billing"
+```
+
+```bash
+$ neuraforge agent qa "Reviewer les changements du dernier commit"
+```
+
+> **Astuce** : L'invocation manuelle est utile pour des analyses ponctuelles sans creer de feature.
+
+## Prochaine etape
+
+Vous connaissez maintenant les 7 agents et leur facon de collaborer. Mais une equipe, aussi talentueuse soit-elle, a besoin des bons outils. Decouvrez comment connecter et configurer vos [providers IA](/fr/guides/providers) pour donner a chaque agent le moteur qu'il merite.

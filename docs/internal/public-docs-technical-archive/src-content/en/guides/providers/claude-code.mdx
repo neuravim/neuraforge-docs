@@ -1,0 +1,317 @@
+# Claude Code
+
+> Claude Code is the Swiss Army knife of AI for code. 200K token context window, deep reasoning, security review — it's NeuraForge's default provider for a good reason.
+
+## Prerequisites
+
+Before getting started, make sure you have:
+
+- Node.js 20+
+- An Anthropic account (free plan, Claude Max, Team or Enterprise)
+- NeuraForge installed (`npm install -g @anthropic-ai/neuraforge` or from source)
+
+All set? Let's move on to installation.
+
+## Installation
+
+Claude Code is available on npm as a global package. Two commands and you're good to go:
+
+```bash
+$ npm install -g @anthropic-ai/claude-code
+$ claude --version
+```
+
+Verify the installation is correct — the `claude` command must be accessible in your PATH. If it's not, head to the [Troubleshooting](#troubleshooting) section below.
+
+## Authentication
+
+Now that Claude Code is installed, you need to give it access to your Anthropic account. Two options are available.
+
+### Method 1: OAuth (recommended)
+
+This is the simplest method and the one we recommend for local development. Run `claude` without arguments and follow the prompts:
+
+```bash
+$ claude
+# Opens the browser for Anthropic OAuth login
+# Select your account and authorize access
+```
+
+OAuth credentials are stored locally and renewed automatically. No need to manage an API key — everything happens behind the scenes.
+
+### Method 2: API key
+
+For non-interactive environments (CI/CD, headless servers), the API key is the way to go:
+
+```bash
+$ export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Add this line to your `~/.bashrc` or `~/.zshrc` to make it permanent.
+
+In both cases, verify that authentication works with a quick test:
+
+```bash
+$ claude -p "Say hello in one sentence"
+# Hello! I'm Claude, how can I help you?
+```
+
+If you see a response, you're all set. Let's move on to NeuraForge configuration.
+
+## NeuraForge Configuration
+
+Add Claude Code in `.neuraforge/neuraforge.config.yaml` — this is the minimum to get started:
+
+```yaml
+provider: claude-code
+
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+```
+
+Want more resilience? Add fallback providers so the workflow never stops:
+
+```yaml
+provider: claude-code
+
+routing:
+  strategy: prefer
+  fallback: [claude-code, gemini, opencode]
+
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+  gemini:
+    enabled: true
+    command: gemini
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+```
+
+## First Usage
+
+The config is in place, it's time to see NeuraForge in action. Initialize your project, then launch your first workflow:
+
+```bash
+$ neuraforge init
+# Scans the project, detects the stack, creates .neuraforge/memory/context.yaml
+
+$ neuraforge flash "Fix bug #123 in the authentication module"
+```
+
+Here's what the output looks like:
+
+```
+[NeuraForge] Mode: flash  Provider: claude-code
+[Lead]  Analyzing the request...
+[Dev]   Implementation in progress (claude-code)...
+        Files changed: src/auth/token-validator.ts, tests/unit/auth.test.ts
+[NeuraForge] Workflow completed in 42s  •  Tokens: 3,847
+```
+
+42 seconds, two files modified, tests included. Not bad for a first run.
+
+## Slash Commands (Integrated Mode)
+
+NeuraForge has an interesting feature: it works in two complementary modes that share the same `.neuraforge/` directory. This means you can switch between the two without losing your context.
+
+- **CLI mode**: `neuraforge flash "..."` — NeuraForge orchestrates in Node.js, calls `claude` as a subprocess
+- **Slash mode**: `/neuraforge-flash ...` in Claude Code — Claude reads the `.claude/commands/` prompts directly, no Node.js installation required
+
+Slash mode is particularly useful for teams discovering NeuraForge or for occasional use directly in the Claude Code interface.
+
+### Available Commands
+
+| Command | Description |
+|---|---|
+| `/neuraforge-init` | Initialize the NeuraForge project in the current directory |
+| `/neuraforge-flash` | Quick workflow: Lead -> Dev (2 agents) |
+| `/neuraforge-standard` | Full workflow: Lead -> Analyst -> Planner -> Dev -> QA |
+| `/neuraforge-enterprise` | Enterprise workflow with human approval between each phase |
+| `/neuraforge-status` | Display the status of features in progress |
+| `/neuraforge-resume` | Resume an interrupted workflow |
+
+### Slash Mode Example
+
+In the Claude Code interface, simply type:
+
+```
+/neuraforge-flash Add a REST endpoint GET /users/:id with validation and tests
+```
+
+Claude reads the `.claude/commands/neuraforge-flash.md` file, loads the `.neuraforge/memory/context.yaml` context, and executes the guided workflow directly in the conversation. Same result, different approach.
+
+## Strengths and Use Cases
+
+Why Claude Code as the default provider? Because it excels where it matters most — analysis and reasoning:
+
+| Strength | Detail |
+|---|---|
+| Analysis and review | Best provider for Analyst, Planner, QA, DocOps |
+| Long context | 200k token window — processes entire codebases |
+| Reasoning | Ideal for complex architectures and migrations |
+| Security | OWASP review, vulnerability detection |
+
+In `auto` mode, NeuraForge leverages these strengths intelligently by automatically routing to Claude Code for analytical tasks:
+
+```yaml
+routing:
+  strategy: auto
+```
+
+Here's how the routing is distributed across agents:
+
+| Agent | Auto-routed provider |
+|---|---|
+| Analyst | claude-code |
+| Planner | claude-code |
+| QA | claude-code |
+| DocOps | claude-code |
+| Dev | gemini (default) |
+
+The default model is **claude-sonnet-4-6** — a good speed/quality balance for the majority of workflows. But you can adjust based on your needs.
+
+## Advanced Options
+
+### Changing the Model
+
+Sonnet is versatile, but sometimes you need more power — or more speed. Here's how to configure multiple variants:
+
+```yaml
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    # Maximum power — complex architecture, critical migrations
+    model: claude-opus-4-5
+    maxTokens: 200000
+    costPer1k: 0.015
+
+  claude-code-fast:
+    enabled: true
+    command: claude
+    # Speed — quick fix, boilerplate generation
+    model: claude-haiku-4-5
+    maxTokens: 48000
+    costPer1k: 0.00025
+```
+
+Opus for the heavy lifting, Haiku for the small stuff — and Sonnet for everything else. It's up to you to find the right balance.
+
+### Via API Proxy (LiteLLM, Cloudflare AI Gateway)
+
+If your organization uses an LLM proxy, configure `baseUrl` to go through HTTP instead of the CLI subprocess:
+
+```yaml
+providers:
+  claude-via-proxy:
+    enabled: true
+    baseUrl: http://localhost:4000/v1
+    apiKey: sk-ant-...
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+    command: ""
+```
+
+When `baseUrl` is set, NeuraForge uses the HTTP adapter (`fetch()`) instead of the `claude` subprocess. Compatible with LiteLLM, Cloudflare AI Gateway, and any OpenAI-compatible endpoint. It's transparent for the rest of the pipeline.
+
+### Check Provider Status
+
+Unsure about your configuration? A quick `provider status` to verify everything is in order:
+
+```bash
+$ neuraforge provider status
+Provider status:
+  claude-code: configured ✓
+  gemini: not configured
+  opencode: not configured
+  copilot: not configured
+```
+
+## Troubleshooting
+
+The most common issues and how to resolve them quickly.
+
+### `claude: command not found`
+
+The package is not in the PATH. Here's how to fix it:
+
+```bash
+# Check that npm global bin is in the PATH
+$ npm bin -g
+# Add the output to your PATH in ~/.bashrc or ~/.zshrc
+
+# Or reinstall with npx
+$ npx @anthropic-ai/claude-code --version
+```
+
+### `Error: Authentication required`
+
+```bash
+# Relaunch the OAuth flow
+$ claude
+
+# Or verify that the environment variable is properly set
+$ echo $ANTHROPIC_API_KEY
+# Should display sk-ant-...
+```
+
+### Timeout on Long Workflows
+
+The default timeout is 120 seconds per provider call. For complex prompts or large codebases, increase it:
+
+```yaml
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    timeout: 240000   # 240 seconds (in ms)
+    costPer1k: 0.003
+```
+
+### `ProviderError: exit code 1`
+
+Claude Code returned a non-zero error. The most common causes:
+
+- **Quota exceeded**: check your usage at console.anthropic.com
+- **Model unavailable**: try `claude-haiku-4-5` as a fallback
+- **Prompt too long**: reduce `maxOutputCharsPerAgent` in the config
+
+```yaml
+agents:
+  maxOutputCharsPerAgent: 4000   # default: 8000
+```
+
+### Security Filtering Redacts Too Much Content
+
+If NeuraForge incorrectly redacts non-sensitive data, you can adjust the sanitizer rules or add your own patterns:
+
+```yaml
+sanitize: true
+sanitizeRules:
+  - pattern: "MY_CUSTOM_SECRET_\\w+"
+    replacement: "[REDACTED_CUSTOM]"
+```
+
+To completely disable filtering (local use only, not recommended in production):
+
+```yaml
+sanitize: false
+```
+
+## Next Step
+
+You have Claude Code configured as an NeuraForge provider — well done. To go further, explore [multi-provider routing](/en/guides/providers) to leverage multiple providers based on tasks, or check out the [workflow modes](/en/guides/modes) to choose between flash, standard and enterprise.

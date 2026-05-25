@@ -1,0 +1,192 @@
+# CI/CD Integration
+
+> NeuraForge runs on the developer's machine, not in CI. But CI can verify that artifacts exist, block PRs without review, and collect metrics. Here's how.
+
+**What you'll learn:**
+- Validate NeuraForge artifacts in CI
+- Automate NeuraForge checks in pipelines
+- Integrate NeuraForge metrics into your dashboards
+
+## Principle
+
+NeuraForge runs **on the developer's workstation**, not in CI. But CI can:
+1. **Verify** that NeuraForge artifacts exist and are consistent
+2. **Block** PRs without artifacts (if your policy requires it)
+3. **Collect** metrics for the team dashboard
+4. **Execute** non-interactive flashes for automated fixes
+
+## GitHub Actions
+
+### Verify NeuraForge Artifacts on a PR
+
+```yaml
+# .github/workflows/neuraforge-check.yml
+name: NeuraForge Artefacts Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  neuraforge-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check NeuraForge initialized
+        run: |
+          if [ ! -f .neuraforge/neuraforge.config.yaml ]; then
+            echo "::warning::NeuraForge not initialized in this project"
+            exit 0
+          fi
+
+      - name: Check feature artefacts
+        run: |
+          if [ -d .neuraforge/features ]; then
+            for feature_dir in .neuraforge/features/*/; do
+              if [ -d "$feature_dir" ]; then
+                feature=$(basename "$feature_dir")
+                echo "Checking feature: $feature"
+
+                # In standard+ mode, verify brief and spec
+                if [ -f "$feature_dir/spec.md" ] && [ ! -f "$feature_dir/review.md" ]; then
+                  echo "::warning::Feature $feature has spec but no QA review"
+                fi
+              fi
+            done
+          fi
+
+      - name: Check decisions trail
+        run: |
+          if [ -f .neuraforge/memory/decisions.jsonl ]; then
+            echo "Decisions logged: $(wc -l < .neuraforge/memory/decisions.jsonl)"
+          else
+            echo "::warning::No decisions log found"
+          fi
+```
+
+### Collect NeuraForge Metrics
+
+```yaml
+# .github/workflows/neuraforge-metrics.yml
+name: NeuraForge Metrics
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract NeuraForge metrics
+        run: |
+          if [ -f .neuraforge/memory/metrics.jsonl ]; then
+            echo "## NeuraForge Metrics" >> $GITHUB_STEP_SUMMARY
+
+            total_tokens=$(cat .neuraforge/memory/metrics.jsonl | \
+              python3 -c "import sys,json; print(sum(json.loads(l)['tokensUsed'] for l in sys.stdin))")
+            total_cost=$(cat .neuraforge/memory/metrics.jsonl | \
+              python3 -c "import sys,json; print(f'{sum(json.loads(l).get(\"cost\",0) for l in sys.stdin):.2f}')")
+            features=$(cat .neuraforge/memory/metrics.jsonl | \
+              python3 -c "import sys,json; print(len(set(json.loads(l)['feature'] for l in sys.stdin)))")
+
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Features | $features |" >> $GITHUB_STEP_SUMMARY
+            echo "| Tokens | $total_tokens |" >> $GITHUB_STEP_SUMMARY
+            echo "| Cost | \$$total_cost |" >> $GITHUB_STEP_SUMMARY
+          fi
+```
+
+## GitLab CI
+
+```yaml
+# .gitlab-ci.yml
+neuraforge-check:
+  stage: validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - |
+      if [ ! -f .neuraforge/neuraforge.config.yaml ]; then
+        echo "NeuraForge not initialized — skipping"
+        exit 0
+      fi
+
+      for dir in .neuraforge/features/*/; do
+        [ -d "$dir" ] || continue
+        feature=$(basename "$dir")
+        echo "Feature: $feature"
+        ls -la "$dir"
+      done
+
+      if [ -f .neuraforge/memory/decisions.jsonl ]; then
+        echo "Decisions: $(wc -l < .neuraforge/memory/decisions.jsonl)"
+      fi
+```
+
+## Non-Interactive Mode
+
+For automated tasks (lint fixes, dependency updates), NeuraForge can run in CI:
+
+```bash
+$ neuraforge flash "Fix lint errors" --non-interactive --auto-approve
+```
+
+The `--non-interactive` flag disables prompts. The `--auto-approve` flag skips enterprise approvals.
+
+**Warning**: reserve non-interactive mode for low-risk tasks (flash only). Standard and enterprise modes benefit from human validation.
+
+## Pre-Commit Hook
+
+Verify that artifacts are committed with the code:
+
+```bash
+#!/bin/sh
+# .git/hooks/pre-commit
+
+if git diff --cached --name-only | grep -q "^\.neuraforge/features/"; then
+  if ! git diff --cached --name-only | grep -q "decisions.jsonl"; then
+    echo "WARNING: Feature artifacts modified without decisions log."
+    echo "Did you use NeuraForge to generate these artifacts?"
+  fi
+fi
+```
+
+## Dashboards
+
+### Export for Grafana / PowerBI
+
+```bash
+$ neuraforge metrics --export csv > neuraforge-metrics.csv
+# Columns: timestamp, feature, agent, provider, tokensUsed, durationMs, cost
+```
+
+### Key Metrics for the Dashboard
+
+| Metric | Source | Calculation |
+|----------|--------|--------|
+| Features/week | metrics.jsonl | Distinct features per week |
+| Tokens/month | metrics.jsonl | Sum tokensUsed per month |
+| Cost/month | metrics.jsonl | Sum cost per month |
+| Most used provider | metrics.jsonl | Count per provider |
+| Circuit breaker rate | decisions.jsonl | circuit_breaker / total |
+| QA pass rate | decisions.jsonl | review=passed / total reviews |
+
+## Cost Report
+
+```bash
+$ neuraforge provider cost
+Provider cost report:
+  claude-code: 45000 tokens ($0.135)
+  gemini:      120000 tokens ($0.120)
+  copilot:     15000 tokens ($0.000)
+  Total:       180000 tokens ($0.255)
+```
+
+## Next Step
+
+If you're coming from BMAD, check the [BMAD migration guide](/en/cookbook/migration-bmad).

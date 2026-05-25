@@ -1,331 +1,85 @@
 # Agent Profiles & Domain Playbooks
 
-NeuraForge supports custom engineering behavior without turning every use case into a new runtime agent.
+> Agent profiles and domain playbooks let teams adapt NeuraForge to specialized work without exposing or changing the core orchestration engine.
 
-Use **agent profiles** to specialize the built-in agents, and **domain playbooks** to package skills, rules, hooks and artefacts for a specific domain.
+## Why use profiles and playbooks?
 
-## Why not create new agent roles?
+Different domains need different judgment. A payment feature, a GDPR remediation task and a WildFly to Spring Boot migration should not be handled with identical assumptions.
 
-NeuraForge already has a stable delivery pipeline:
+NeuraForge keeps the same controlled delivery model while letting teams add domain context:
 
-- **Lead** chooses mode and orchestrates the workflow.
-- **Analyst** discovers requirements, risks and unknowns.
-- **Planner** turns discovery into specs, stories and architecture decisions.
-- **Dev** implements and self-reviews.
-- **QA** validates acceptance criteria, security and quality.
-- **DocOps** documents enterprise-grade outcomes.
+- terminology;
+- risk areas;
+- expected artifacts;
+- validation expectations;
+- documentation requirements;
+- rollout and rollback concerns.
 
-Most “custom agent” needs are actually **domain specialization** needs. A WildFly-to-Spring-Boot migration should not bypass Analyst, Planner, Dev, QA and DocOps. It should specialize each of them.
+## Agent profiles
 
-## Concepts
+An agent profile specializes the behavior of the built-in workflow for a domain. It does not create a new product architecture; it guides the existing roles with the right context.
 
-### Agent profile
+Examples:
 
-An agent profile overrides the persona of one or more built-in agents for a named use case.
+- legacy Java migration;
+- regulated healthcare workflow;
+- fintech security review;
+- data-platform change management;
+- frontend accessibility review.
 
-Example:
+## Domain playbooks
 
-```yaml
-activeProfile: wildfly-to-spring-boot
+A domain playbook packages reusable guidance for a class of work.
 
-agentProfiles:
-  wildfly-to-spring-boot:
-    description: "Legacy Java EE migration profile"
-    recommendedMode: enterprise
-    workflowPreset: migration
-    instructions: >
-      Treat requests as legacy migration work: discover the current runtime,
-      plan incremental migration, preserve behavior, validate compatibility,
-      and document rollout/rollback.
-    artefacts:
-      - migration-inventory
-      - risk-matrix
-      - migration-plan
-      - compatibility-report
-      - rollback-plan
-    agents:
-      analyst:
-        role: "Legacy Java EE Migration Analyst"
-        traits: ["methodical", "risk-focused", "evidence-driven"]
-        expertise: ["WildFly", "JBoss", "Java EE", "Jakarta EE", "Spring Boot"]
-      planner:
-        role: "Enterprise Migration Architect"
-        expertise: ["incremental migration", "risk slicing", "rollback planning"]
-      dev:
-        role: "Spring Boot Migration Engineer"
-        expertise: ["EJB to services", "JAX-RS to Spring MVC", "JNDI datasource migration"]
-      qa:
-        role: "Migration Compatibility Reviewer"
-        expertise: ["regression testing", "transaction parity", "security parity"]
-      docops:
-        role: "Migration Documentation Specialist"
-        expertise: ["runbooks", "cutover plans", "operational docs"]
-```
+A migration playbook, for example, can tell NeuraForge to focus on:
 
-Run it with a CLI override:
+- current-state inventory;
+- compatibility risks;
+- incremental migration strategy;
+- behavior preservation;
+- test coverage;
+- rollback planning;
+- operational documentation.
+
+The internal file layout, manifest schema, hook contracts and executable helper scripts are intentionally kept out of the public documentation. They belong in internal engineering docs.
+
+## Example: WildFly to Spring Boot
+
+For a WildFly to Spring Boot migration, a public playbook should describe the outcome, not the internal implementation contract.
+
+A good public request is:
 
 ```bash
 neuraforge enterprise "Migrate this WildFly application to Spring Boot" --profile wildfly-to-spring-boot
 ```
 
-Or keep it active in `.neuraforge/neuraforge.config.yaml` with `activeProfile`.
+The workflow should help the team:
 
-### Domain playbook
+1. inventory the legacy application;
+2. identify Java EE dependencies and runtime assumptions;
+3. define an incremental migration path;
+4. preserve behavior before modernization;
+5. validate security and transaction parity;
+6. prepare rollout, rollback and support documentation.
 
-A domain playbook is a skill that carries domain instructions, rules, templates, hooks and optional embedded profiles.
+## Public vs internal content
 
-Recommended layout:
+Keep public docs focused on:
 
-```text
-.neuraforge/skills/wildfly-to-spring-boot/
-  skill.yaml
-  instructions.md
-  rules/
-    java-ee-inventory.md
-    migration-mapping.md
-    validation.md
-  templates/
-    migration-inventory.md
-    risk-matrix.md
-    compatibility-report.md
-  hooks/
-    scan-java-ee.sh
-    run-maven-tests.sh
-```
+- what the playbook is for;
+- when to use it;
+- what outcomes it produces;
+- what kind of evidence reviewers should expect.
 
-## Complete example: WildFly to Spring Boot
+Keep internal docs focused on:
 
-### 1. Create the playbook skeleton
+- exact profile definitions;
+- artifact schemas;
+- hook events;
+- scripts;
+- validation internals;
+- implementation details.
 
-```bash
-neuraforge skills init wildfly-to-spring-boot
-```
+## Next step
 
-Edit `.neuraforge/skills/wildfly-to-spring-boot/skill.yaml`:
-
-```yaml
-name: wildfly-to-spring-boot
-version: 1.0.0
-description: "Domain playbook for migrating WildFly/JBoss Java EE apps to Spring Boot"
-author: "Your Team"
-agents: [analyst, planner, dev, qa, docops]
-modes: [enterprise]
-priority: 50
-enabled: true
-artefacts:
-  - migration-inventory
-  - java-ee-to-spring-mapping
-  - risk-matrix
-  - migration-plan
-  - compatibility-report
-  - rollback-plan
-profiles:
-  wildfly-to-spring-boot:
-    description: "Specialize NeuraForge for WildFly/JBoss to Spring Boot migrations"
-    recommendedMode: enterprise
-    workflowPreset: migration
-    skills:
-      - wildfly-to-spring-boot
-    instructions: >
-      Execute the workflow as a controlled legacy migration. Prefer incremental,
-      reversible changes. Preserve runtime behavior before modernizing internals.
-      Never delete WildFly-specific configuration until the Spring Boot equivalent
-      is validated.
-    artefacts:
-      - migration-inventory
-      - risk-matrix
-      - migration-plan
-      - compatibility-report
-      - rollback-plan
-    agents:
-      analyst:
-        role: "Legacy Java EE Migration Analyst"
-        traits: ["methodical", "risk-focused", "asks precise questions"]
-        expertise: ["WildFly", "JBoss", "Java EE", "EJB", "JNDI", "JPA", "JAX-RS"]
-      planner:
-        role: "Enterprise Migration Architect"
-        traits: ["incremental", "rollback-aware", "dependency-conscious"]
-        expertise: ["Spring Boot architecture", "migration slicing", "ADR writing"]
-      dev:
-        role: "Spring Boot Migration Engineer"
-        traits: ["conservative", "test-first", "compatibility-focused"]
-        expertise: ["Spring Boot", "Spring MVC", "Spring Security", "Spring Data", "Maven"]
-      qa:
-        role: "Migration Compatibility Reviewer"
-        traits: ["skeptical", "parity-focused", "security-aware"]
-        expertise: ["regression tests", "transaction parity", "security parity"]
-      docops:
-        role: "Migration Documentation Specialist"
-        traits: ["operational", "clear", "audit-ready"]
-        expertise: ["runbooks", "cutover", "rollback", "support handover"]
-hooks:
-  on_feature_created:
-    - command: ./hooks/scan-java-ee.sh
-      onFailure: warn
-      requireApproval: false
-```
-
-### 2. Add domain instructions
-
-Edit `instructions.md`:
-
-```md
-# WildFly to Spring Boot migration playbook
-
-## Discovery checklist
-
-The Analyst must identify:
-
-- Runtime and version: WildFly/JBoss version, Java version, packaging type (`war`, `ear`, modules).
-- Deployment descriptors: `web.xml`, `ejb-jar.xml`, `jboss-web.xml`, `jboss-deployment-structure.xml`.
-- Java EE APIs: EJB, CDI, JAX-RS, JPA, JMS, JTA, Bean Validation, Servlet filters.
-- Container services: JNDI datasources, security realms, transactions, messaging, clustering.
-- External integrations: databases, LDAP/OIDC, queues, batch jobs, file shares.
-- Existing tests and smoke-test entry points.
-
-## Migration strategy
-
-The Planner must produce an incremental plan:
-
-1. Keep behavior stable before modernization.
-2. Move configuration to Spring Boot properties/yaml.
-3. Replace container services with explicit Spring Boot equivalents.
-4. Migrate endpoints and services in small slices.
-5. Add compatibility tests before broad refactors.
-6. Keep rollback instructions for every risky phase.
-
-## Implementation mapping
-
-The Dev should use these default mappings unless the codebase says otherwise:
-
-- `@Stateless` / `@Singleton` EJB → Spring `@Service` / `@Component`.
-- EJB injection → constructor injection.
-- JNDI datasource → Spring `DataSource` config.
-- JTA transaction boundaries → `@Transactional` with explicit propagation notes.
-- JAX-RS resources → Spring MVC `@RestController`.
-- Servlet filters → `FilterRegistrationBean` or Spring Security filter chain.
-- WildFly security realm → Spring Security configuration.
-- WAR/EAR deployment → executable Boot JAR or containerized Boot app.
-
-## QA gates
-
-QA must verify:
-
-- Endpoint parity for critical APIs.
-- Authentication/authorization parity.
-- Transaction rollback parity.
-- Database schema and migration compatibility.
-- No accidental secret capture in docs or generated files.
-- No unvalidated removal of WildFly descriptors.
-```
-
-### 3. Add targeted rules
-
-`rules/migration-mapping.md`:
-
-```md
-# Migration mapping rules
-
-- Do not replace Java EE APIs blindly. First identify current behavior and integration points.
-- Prefer constructor injection in migrated Spring components.
-- Keep transaction semantics explicit when moving from JTA/EJB to Spring transactions.
-- For each migrated endpoint, create or update a compatibility test.
-- Preserve package structure initially unless the Planner explicitly approves a refactor.
-```
-
-`rules/validation.md`:
-
-```md
-# Validation rules
-
-- Every migration slice needs a runnable verification command.
-- If tests cannot run locally, produce a blocking question or a manual validation checklist.
-- Security behavior must be checked before marking the feature complete.
-- Generated documentation must redact secrets, credentials and connection strings.
-```
-
-### 4. Add a lightweight scanner hook
-
-`hooks/scan-java-ee.sh`:
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-OUT=".neuraforge/migration-inventory.txt"
-mkdir -p .neuraforge
-{
-  echo "# Java EE inventory"
-  echo
-  echo "## Deployment descriptors"
-  find . -name 'web.xml' -o -name 'ejb-jar.xml' -o -name 'jboss-*.xml' -o -name 'persistence.xml' | sort
-  echo
-  echo "## Java EE annotations"
-  grep -RIn --include='*.java' -E '@(Stateless|Stateful|Singleton|EJB|Resource|Inject|Path|ApplicationPath|Transactional)' . || true
-  echo
-  echo "## Build files"
-  find . -name 'pom.xml' -o -name 'build.gradle' -o -name 'build.gradle.kts' | sort
-} > "$OUT"
-
-echo "Wrote $OUT"
-```
-
-Then:
-
-```bash
-chmod +x .neuraforge/skills/wildfly-to-spring-boot/hooks/scan-java-ee.sh
-```
-
-### 5. Activate and run
-
-Project config:
-
-```yaml
-activeProfile: wildfly-to-spring-boot
-```
-
-Or one-off CLI:
-
-```bash
-neuraforge enterprise "Migrate this WildFly app to Spring Boot 3 while preserving API behavior" \
-  --profile wildfly-to-spring-boot \
-  --trace
-```
-
-If the enterprise run is interrupted, resume with the same context options:
-
-```bash
-neuraforge resume migration-wildfly \
-  --profile wildfly-to-spring-boot \
-  --auto-approve \
-  --trace
-```
-
-## Expected outputs
-
-For this migration profile, expect the workflow to produce:
-
-- **Analyst**: migration inventory, unknowns, risk score, migration blockers.
-- **Planner**: phased migration plan, stories, ADRs, rollback notes.
-- **Dev**: Spring Boot skeleton or migration slice, tests, self-review.
-- **QA**: compatibility report, security notes, retry requests when parity is not proven.
-- **DocOps**: runbook, cutover checklist, rollback procedure, support notes.
-
-## Acceptance criteria
-
-A migration playbook is ready when:
-
-- The profile can be selected with `--profile` or `activeProfile`.
-- The profile changes agent personas without creating new runtime roles.
-- Skill instructions and rules are injected into the relevant agents.
-- Hooks are explicit and auditable.
-- Expected artefacts are listed in the profile.
-- The migration example can run in `enterprise` mode with trace output.
-
-## Design guardrails
-
-- Keep built-in roles stable; specialize them through profiles.
-- Use skills for domain knowledge, rules, templates and hooks.
-- Use profiles for persona and workflow intent.
-- Do not execute untrusted hooks without review.
-- Do not store secrets in rules, profiles, memory or generated artefacts.
+Use [Skills](/en/guides/skills) to understand how teams package reusable guidance.

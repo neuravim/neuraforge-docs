@@ -1,0 +1,124 @@
+# Pourquoi NeuraForge
+
+> Cette page explique comment utiliser NeuraForge et pourquoi il intéresse les équipes techniques, produit et management. Elle reste volontairement orientée usage et décision, pas implémentation interne.
+
+## En une phrase
+
+NeuraForge aide une équipe produit et engineering à passer d'une demande fonctionnelle à une livraison vérifiée, avec des agents IA spécialisés qui travaillent dans un cadre contrôlé.
+
+Pas un chatbot de plus. Pas un dossier de prompts à maintenir. Un outil CLI qui s'intègre dans un repo existant et qui met de l'ordre dans le travail des agents.
+
+## Pourquoi les CTO et responsables produit regardent ce sujet
+
+Les agents IA savent produire du code. Le vrai sujet, pour une organisation, c'est le contrôle :
+
+- savoir ce qui a été demandé ;
+- comprendre ce qui a été décidé ;
+- vérifier que le code a réellement changé ;
+- éviter les livraisons "démo locale" ;
+- garder une trace exploitable pour la QA, la sécurité, le produit et le management ;
+- réduire le temps passé à coordonner analyse, dev, review, documentation et relance.
+
+NeuraForge se place à cet endroit : entre l'intention produit et le delivery. Il ne remplace pas l'équipe. Il évite qu'elle perde du temps à piloter manuellement un réseau d'agents qui part dans tous les sens.
+
+## Utilisation rapide
+
+```bash
+npm install -g @neuravim/neuraforge
+cd mon-projet
+neuraforge init
+neuraforge flash "Corriger le bug de pagination sur /users"
+```
+
+Pour une feature plus structurante :
+
+```bash
+neuraforge standard "Ajouter un export CSV avec tests"
+```
+
+Pour un sujet sensible, avec documentation et validation plus stricte :
+
+```bash
+neuraforge enterprise "Migrer l'authentification vers OIDC avec runbook"
+```
+
+Vous pouvez ensuite suivre l'avancement et les coûts :
+
+```bash
+neuraforge status
+neuraforge metrics
+neuraforge trace <feature>
+```
+
+## Trois niveaux, pas un seul marteau
+
+- `flash` convient aux corrections et petites évolutions. L'équipe va vite, mais garde une trace.
+- `standard` convient aux features produit classiques. Analyse, plan, implémentation et review restent liés à la même feature.
+- `enterprise` convient aux sujets sensibles : sécurité, conformité, migration, documentation d'exploitation, validation humaine.
+
+Ce découpage évite un piège fréquent : appliquer un workflow lourd à chaque ticket, ou à l'inverse traiter une migration critique comme un simple prompt de génération de code.
+
+## Ce que NeuraForge change dans la pratique
+
+### Pour l'équipe technique
+
+- Moins de coordination manuelle entre agents.
+- Des rôles plus clairs : analyse, plan, code, sécurité, QA, documentation.
+- Des gates qui empêchent de confondre "réponse convaincante" et "livrable terminé".
+- Une meilleure intégration dans les projets existants.
+
+### Pour le produit
+
+- Les critères d'acceptation restent visibles.
+- Les livrables sont attachés à une feature, pas perdus dans une conversation.
+- Les arbitrages sont plus faciles à relire.
+- Les demandes peuvent être traitées avec le bon niveau de rigueur.
+
+### Pour le management
+
+- Plus de visibilité sur les coûts, les cycles et les blocages.
+- Une adoption IA moins artisanale.
+- Un cadre plus défendable pour industrialiser l'usage des agents.
+- Un moyen de réduire le temps caché : relances, relectures, documentation oubliée, corrections tardives.
+
+Et pour les cost killers : NeuraForge ne promet pas de magie. Il attaque surtout les coûts invisibles. Les minutes perdues à remettre du contexte. Les reviews refaites parce que les critères étaient flous. Les agents payés à tourner sur des prompts trop longs. Les features qui semblent finies puis reviennent deux jours plus tard.
+
+## Cas mis en vedette : migrer WildFly vers Spring Boot
+
+Un exemple parlant pour les grands groupes : la migration d'applications WildFly/JBoss ou Java EE vers Spring Boot.
+
+C'est le genre de chantier que les banques, assurances, opérateurs et groupes du CAC40 connaissent bien : applications critiques, dépendances historiques, serveurs d'application coûteux à maintenir, tests parfois incomplets, documentation dispersée, pression de modernisation cloud et sécurité.
+
+NeuraForge est intéressant ici parce que le problème n'est pas seulement de "convertir du code". Il faut garder le comportement métier, identifier les risques, produire un plan de migration, modifier les bons fichiers, remplacer les tests serveur par des tests Spring Boot, vérifier les endpoints et documenter ce qui a changé.
+
+Un workflow typique :
+
+```bash
+neuraforge enterprise "Migrer le module clients WildFly vers Spring Boot avec tests, smoke tests et runbook d'exploitation"
+```
+
+Ce cas parle autant aux CTO qu'aux responsables produit : la modernisation avance par incréments vérifiables, sans demander à l'équipe de traiter toute la plateforme d'un coup. Et côté coûts, le gain potentiel est concret : moins de dette d'exploitation, moins de dépendance à un runtime legacy, moins de temps passé à reconstituer le contexte technique à chaque migration.
+
+## NeuraForge vs BMAD
+
+BMAD a popularisé une façon structurée de penser le travail multi-agents. NeuraForge part d'une préoccupation différente : comment rendre cette logique utilisable dans un repo réel, avec moins de friction et plus de contrôle sur la livraison.
+
+| Sujet | BMAD | NeuraForge |
+|---|---|---|
+| Intention principale | Structurer le raisonnement et la préparation | Encadrer l'exécution jusqu'au livrable vérifié |
+| Démarrage | Plus de cadrage avant d'arriver au code | Initialisation rapide puis choix du mode adapté |
+| Mode de travail | Workflow plutôt lourd par défaut | Flash, standard ou enterprise selon le risque |
+| Usage brownfield | Demande souvent plus d'adaptation | Pensé pour travailler dans un projet existant |
+| Agents | Forte logique de rôles et de documents | Rôles reliés à des sorties vérifiables |
+| Qualité | Dépend beaucoup de la discipline d'exécution | Gates intégrés pour bloquer les livraisons faibles |
+| Coûts IA | Peut consommer beaucoup de contexte | Routage, scopes et compression pour limiter le gaspillage |
+| Management | Bon support de réflexion | Meilleure visibilité sur avancement, blocages et coûts |
+| Produit | Utile pour cadrer | Utile pour suivre une feature jusqu'à une sortie exploitable |
+
+## Le point important
+
+NeuraForge n'a pas besoin d'être vendu comme une révolution. Les équipes techniques voient assez vite le problème : les agents seuls produisent du volume, pas forcément une livraison maîtrisée.
+
+NeuraForge sert à réduire cet écart.
+
+Il donne aux CTO, engineering managers et responsables produit un cadre plus propre pour utiliser l'IA dans le delivery : assez simple pour être adopté, assez strict pour éviter les faux positifs, assez traçable pour être défendable en interne.

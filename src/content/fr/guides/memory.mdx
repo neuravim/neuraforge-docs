@@ -1,227 +1,52 @@
 # Gouvernance mémoire
 
-> La mémoire n'est utile que si les agents savent ce qu'elle signifie, si elle est fraîche, et quand ils ont le droit de lui faire confiance. NeuraForge rend tout ça explicite avec une gouvernance mémoire par scopes.
+> NeuraForge peut utiliser du contexte projet et session, mais l'état actuel du dépôt et la demande utilisateur restent prioritaires.
 
-**Ce que vous allez apprendre :**
-- Les quatre scopes mémoire : task, session, project, user
-- Comment la précédence résout les conflits
-- Les politiques de lecture/écriture et les cycles de vie
-- Comment la gouvernance mémoire est injectée dans les prompts agents
-- Comment configurer la mémoire proprement dans `.neuraforge/neuraforge.config.yaml`
+## Pourquoi la gouvernance mémoire compte
 
-## Pourquoi une mémoire par scopes ?
+Les outils IA deviennent plus utiles lorsqu'ils retiennent du contexte, mais la mémoire peut aussi devenir obsolète. NeuraForge traite la mémoire comme un guidage, pas comme un remplacement de la lecture du code réel.
 
-Les agents IA ont besoin de contexte, mais le contexte peut devenir obsolète. NeuraForge traite la mémoire comme des **indices contextuels, pas comme une source de vérité**. Le repository, les fichiers actuels, les tests et la demande explicite de l'utilisateur gagnent toujours.
+La mémoire aide pour :
 
-La mémoire par scopes donne un contrat clair à chaque agent :
+- conventions projet récurrentes ;
+- décisions d'architecture précédentes ;
+- contraintes connues ;
+- préférences d'équipe ;
+- retours d'expérience.
 
-| Scope | Cycle de vie | Contenu typique | Comportement par défaut |
-|---|---|---|---|
-| `task` | Éphémère | Objectif courant, contraintes, décisions temporaires | Toujours lue, écriture automatique |
-| `session` | Session | Progression workflow, handoffs, contexte court terme | Lecture contextuelle, écriture automatique |
-| `project` | Persistant | Conventions projet, architecture, pratiques d'équipe | Lecture contextuelle, écriture suggérée, revalidation avant usage |
-| `user` | Persistant | Préférences utilisateur et préférences stables | Lecture contextuelle, écriture suggérée |
+## Modèle public sûr
 
-## Précédence par défaut
+NeuraForge sépare le contexte par portée et applique des règles de gouvernance pour éviter que des informations anciennes ou sensibles prennent le dessus sur la tâche actuelle.
 
-Quand deux scopes se contredisent, NeuraForge utilise cette précédence :
+Trois principes côté utilisateur :
 
-```text
-task > session > project > user
-```
+1. le dépôt et la demande explicite sont la source de vérité ;
+2. la mémoire doit être vérifiée avant d'être utilisée ;
+3. les informations sensibles ne doivent pas être copiées dans les artefacts générés.
 
-Donc la tâche courante gagne sur la session, la session gagne sur la mémoire projet persistante, et la mémoire projet gagne sur les préférences utilisateur générales.
-
-Exemple : si la mémoire utilisateur dit « préférer Jest », que la mémoire projet dit « ce repo utilise Vitest », et que la tâche courante demande « pas de nouveaux tests », la tâche gagne.
-
-## Injection dans les prompts
-
-Quand `memory.enabled` vaut true, chaque prompt agent reçoit une section comme celle-ci :
-
-```text
---- Memory Governance ---
-Workflow Mode: standard
-Memory is governed by explicit scopes. Treat memory as contextual hints, not source of truth.
-Scope precedence: task > session > project > user
-task: read=always, write=automatic, lifecycle=ephemeral, maxSize=small, sensitivity=low, summarization=none
-session: read=contextual, write=automatic, lifecycle=session, maxSize=large, sensitivity=medium, summarization=on_close
-project: read=contextual, write=suggested, lifecycle=persistent, maxSize=medium, sensitivity=medium, summarization=periodic, revalidateBeforeUse=true
-user: read=contextual, write=suggested, lifecycle=persistent, maxSize=small, sensitivity=medium, summarization=on_limit
-```
-
-Ce n'est pas juste de la documentation. Cela modifie les instructions vues par les agents pendant l'analyse, la planification, le code, la QA et DocOps.
-
-## Configuration
-
-La gouvernance mémoire est active par défaut. Vous pouvez la rendre explicite dans `.neuraforge/neuraforge.config.yaml` :
-
-```yaml
-memory:
-  enabled: true
-  scopePrecedence: [task, session, project, user]
-  scopes:
-    task:
-      enabled: true
-      lifecycle: ephemeral
-      readPolicy: always
-      writePolicy: automatic
-      maxSize: small
-      sensitivity: low
-      summarization: none
-    session:
-      enabled: true
-      lifecycle: session
-      readPolicy: contextual
-      writePolicy: automatic
-      maxSize: large
-      sensitivity: medium
-      summarization: on_close
-    project:
-      enabled: true
-      lifecycle: persistent
-      readPolicy: contextual
-      writePolicy: suggested
-      maxSize: medium
-      sensitivity: medium
-      summarization: periodic
-      revalidateBeforeUse: true
-    user:
-      enabled: true
-      lifecycle: persistent
-      readPolicy: contextual
-      writePolicy: suggested
-      maxSize: small
-      sensitivity: medium
-      summarization: on_limit
-```
-
-## Référence des politiques
-
-### Read policy
-
-| Valeur | Signification |
-|---|---|
-| `never` | Le scope ne doit pas être lu. |
-| `explicit` | Lecture seulement quand elle est demandée explicitement. |
-| `contextual` | Lecture quand c'est pertinent pour la tâche courante. |
-| `always` | Toujours inclure/utiliser ce scope. |
-
-### Write policy
-
-| Valeur | Signification |
-|---|---|
-| `never` | Ne jamais écrire dans ce scope. |
-| `manual` | Écriture contrôlée par un humain uniquement. |
-| `suggested` | L'agent peut suggérer une écriture, mais ne doit pas persister silencieusement. |
-| `automatic` | L'agent peut écrire automatiquement quand c'est approprié. |
-
-### Lifecycle
-
-| Valeur | Signification |
-|---|---|
-| `ephemeral` | Vit seulement pendant la tâche courante. |
-| `session` | Vit pendant le workflow/la session courante. |
-| `ttl` | Expire après un TTL configuré. |
-| `persistent` | Durable entre sessions/projets, selon les règles du scope. |
-
-### Summarization
-
-| Valeur | Signification |
-|---|---|
-| `none` | Pas de résumé. |
-| `periodic` | Résumer régulièrement. |
-| `on_limit` | Résumer quand le scope atteint sa limite de taille. |
-| `on_close` | Résumer à la fermeture de session. |
-
-## Défauts sûrs
-
-Les valeurs par défaut NeuraForge sont prudentes :
-
-- `project.revalidateBeforeUse: true` empêche des notes projet obsolètes d'écraser la réalité.
-- Les écritures user et project sont `suggested`, pas automatiques.
-- La mémoire task est low-sensitivity et éphémère.
-- La mémoire session peut être automatique, car elle est courte durée.
+Le schéma mémoire interne, les sections de prompt, les règles de précédence et la logique de résumé relèvent de l'implémentation privée.
 
 ## Patterns courants
 
-### Désactiver la mémoire user pour un projet sensible
+Utilisez la mémoire pour conserver du contexte durable :
 
-```yaml
-memory:
-  scopes:
-    user:
-      enabled: false
-```
+- conventions de code ;
+- décisions d'architecture toujours valides ;
+- stratégie de tests préférée ;
+- contraintes de déploiement ;
+- terminologie d'équipe.
 
-### Forcer la mémoire projet en explicite uniquement
+N'utilisez pas la mémoire pour :
 
-```yaml
-memory:
-  scopes:
-    project:
-      readPolicy: explicit
-      writePolicy: manual
-```
+- secrets ;
+- notes temporaires ;
+- décisions obsolètes ;
+- données personnelles qui n'ont pas leur place dans le contexte d'ingénierie.
 
-### Ajouter une rétention TTL à la mémoire session
+## Vue configuration
 
-```yaml
-memory:
-  scopes:
-    session:
-      lifecycle: ttl
-      retention:
-        ttlMs: 86400000
-        maxEntries: 200
-```
+La mémoire peut être activée, désactivée ou encadrée par une politique d'équipe. Les équipes enterprise doivent définir en interne ce qui peut être lu, écrit et conservé.
 
-## Learning : Retex -> Knowledge -> Rules/Skills
+## Étape suivante
 
-Le module `learning` complète la mémoire par scopes. Il capture des Retex limités, les score, puis prépare des candidates à promouvoir sans créer de règles ou skills en silence.
-
-Flux par défaut :
-
-```text
-Retex brut -> scoring -> temporary | knowledge | rule candidate | skill candidate -> revue humaine
-```
-
-Garde-fous anti-BMAD :
-
-- `maxPerIteration: 3` limite la capture par itération.
-- Les Retex faibles restent temporaires ou sont ignorés.
-- Les Knowledge candidates peuvent être créées automatiquement si `allowAutoKnowledge` est activé.
-- Les Rules et Skills restent des candidates quand `requireHumanApprovalFor` contient `rule` ou `skill`.
-- La revue périodique (`everyIterations`) évite de transformer chaque micro-observation en process durable.
-
-Configuration minimale :
-
-```yaml
-learning:
-  enabled: true
-  mode: quiet
-  retex:
-    enabled: true
-    maxPerIteration: 3
-    ttlIterations: 20
-  review:
-    everyIterations: 10
-    minPromotionScore: 7
-  promotion:
-    allowAutoKnowledge: true
-    allowAutoRules: false
-    allowAutoSkills: false
-    requireHumanApprovalFor: [rule, skill, security]
-```
-
-CLI utile :
-
-```bash
-neuraforge learning status
-neuraforge learning review --iteration 10
-```
-
-Utilisez `learning` pour faire évoluer le projet progressivement ; utilisez `rules` ou `skills` seulement après validation d'une candidate durable.
-
-## Prochaine étape
-
-Voir la [référence configuration](/fr/reference/config) pour le schéma complet, ou relire les [agents](/fr/guides/agents) pour comprendre comment la gouvernance mémoire circule dans le pipeline.
+Voir [Règles et templates](/fr/guides/rules-and-templates) pour rendre les attentes d'équipe explicites.

@@ -1,0 +1,481 @@
+# Provider API custom
+
+> Votre entreprise a un proxy LLM interne ? Votre equipe utilise OpenAI ? Vous avez un cluster GPU avec vLLM ? NeuraForge se branche sur tout ce qui parle OpenAI-compatible.
+
+> **Ce que vous allez apprendre**
+> - Brancher NeuraForge sur n'importe quel LLM via API OpenAI-compatible
+> - Configurer LiteLLM, Ollama, Azure OpenAI et OpenAI direct
+> - Mettre en place un proxy entreprise avec logging centralisé
+> - Faire tourner un LLM on-premise en environnement air-gapped
+
+## Comment ça marche
+
+Quand le champ `baseUrl` est défini dans la configuration d'un provider, NeuraForge bascule automatiquement sur l'**adapter HTTP** au lieu du subprocess CLI. Plus aucun binaire externe n'est requis : NeuraForge envoie les prompts via `fetch()` en `POST /chat/completions` au format OpenAI standard.
+
+```
+Provider CLI (défaut)         Provider API custom
+─────────────────────         ──────────────────────
+NeuraForge                         NeuraForge
+  └─ spawn(claude -p -)         └─ fetch(POST /chat/completions)
+       ↑ stdin pipe                   ↑ JSON body (OpenAI format)
+       claude CLI                     Votre endpoint
+```
+
+La **provider factory** détecte automatiquement le type d'adapter :
+
+- Nom connu (`claude-code`, `gemini`, `copilot`, `opencode`) sans `baseUrl` → adapter CLI
+- `baseUrl` défini → adapter API HTTP, quel que soit le nom
+- `enabled: false` → ignoré
+
+Le champ `command` doit être vide (`command: ""`) pour les providers API afin d'éviter toute tentative de lancement de subprocess.
+
+## LiteLLM — proxy universel
+
+[LiteLLM](https://github.com/BerriAI/litellm) est un proxy open source qui expose une API OpenAI-compatible devant 100+ modèles (Anthropic, Google, OpenAI, Mistral, Cohere, modèles locaux…). C'est la solution recommandée pour les équipes qui veulent centraliser l'accès aux LLMs.
+
+### Installation et démarrage
+
+```bash
+$ pip install litellm
+$ litellm --model claude-sonnet-4-6
+# Proxy démarré sur http://localhost:4000
+```
+
+Pour démarrer avec plusieurs modèles en même temps, utilisez un fichier de configuration LiteLLM :
+
+```bash
+$ litellm --config litellm_config.yaml
+```
+
+### Configuration NeuraForge
+
+```yaml
+# .neuraforge/neuraforge.config.yaml
+provider: litellm
+
+providers:
+  litellm:
+    enabled: true
+    baseUrl: http://localhost:4000/v1
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+    command: ""
+```
+
+LiteLLM est particulièrement utile en entreprise pour :
+- Centraliser les API keys (elles restent sur le proxy, pas sur chaque poste)
+- Logger tous les appels LLM dans un outil observabilité (Langfuse, Helicone)
+- Appliquer des rate limits et quotas par équipe
+- Basculer de modèle sans changer la config NeuraForge
+
+## Ollama — LLM local
+
+[Ollama](https://ollama.com) permet de faire tourner des LLMs open source en local (LLaMA 3, Mistral, Qwen, Phi, Gemma…). Idéal pour les environnements air-gapped ou pour prototyper sans coût.
+
+### Installation et téléchargement du modèle
+
+```bash
+$ curl -fsSL https://ollama.com/install.sh | sh
+$ ollama pull llama3
+# Télécharge le modèle (~4 Go pour llama3:8b)
+
+$ ollama serve
+# Démarre le serveur sur http://localhost:11434
+```
+
+Vérifiez que le serveur est accessible :
+
+```bash
+$ curl http://localhost:11434/v1/models
+# Doit retourner la liste des modèles téléchargés
+```
+
+### Configuration NeuraForge
+
+```yaml
+providers:
+  local-llm:
+    enabled: true
+    baseUrl: http://localhost:11434/v1
+    model: llama3
+    maxTokens: 8000
+    costPer1k: 0
+    command: ""
+```
+
+> **Information** : `costPer1k: 0` est correct pour un modèle local — aucun appel API externe, aucun coût à la token.
+
+### Choisir le bon modèle Ollama
+
+| Modèle | RAM requise | Cas d'usage recommandé |
+|---|---|---|
+| `llama3:8b` | 8 Go | Développement, tests, prototypage |
+| `llama3:70b` | 48 Go | Qualité proche des modèles cloud |
+| `mistral:7b` | 6 Go | Génération de code rapide |
+| `qwen2.5-coder:7b` | 6 Go | Spécialisé code, bons résultats sur Dev |
+| `phi3:mini` | 4 Go | Machines avec peu de RAM |
+
+```bash
+$ ollama pull qwen2.5-coder:7b
+```
+
+```yaml
+providers:
+  local-llm:
+    enabled: true
+    baseUrl: http://localhost:11434/v1
+    model: qwen2.5-coder:7b
+    maxTokens: 32000
+    costPer1k: 0
+    command: ""
+```
+
+## OpenAI — connexion directe
+
+Si votre équipe utilise OpenAI, vous pouvez brancher NeuraForge directement sur l'API sans passer par un proxy.
+
+```yaml
+providers:
+  openai:
+    enabled: true
+    baseUrl: https://api.openai.com/v1
+    apiKey: sk-...
+    model: gpt-4o
+    maxTokens: 128000
+    costPer1k: 0.005
+    command: ""
+```
+
+> **Attention** : Ne committez jamais votre `apiKey` dans le dépôt Git. Utilisez une variable d'environnement ou le fichier `.neuraforge/neuraforge.config.yaml` dans le `.gitignore`.
+
+Pour injecter la clé via variable d'environnement, la plupart des proxies LLM (LiteLLM, Cloudflare AI Gateway) acceptent `OPENAI_API_KEY` directement. Côté NeuraForge, vous pouvez omettre la clé de la config et la passer via env.
+
+### Choisir le modèle OpenAI
+
+| Modèle | Contexte | Forces |
+|---|---|---|
+| `gpt-4o` | 128k | Meilleur équilibre qualité/vitesse/coût |
+| `gpt-4o-mini` | 128k | Rapide, très bon rapport qualité/prix |
+| `o3` | 200k | Raisonnement complexe, architecture |
+| `o4-mini` | 200k | Raisonnement rapide, bon pour QA |
+
+```yaml
+providers:
+  openai:
+    enabled: true
+    baseUrl: https://api.openai.com/v1
+    apiKey: sk-...
+    model: gpt-4o-mini
+    maxTokens: 128000
+    costPer1k: 0.00015
+    command: ""
+```
+
+## Azure OpenAI
+
+Azure OpenAI expose les modèles OpenAI via votre propre instance Azure, avec les garanties de conformité, réplication et isolation réseau de Microsoft.
+
+```yaml
+providers:
+  azure:
+    enabled: true
+    baseUrl: https://mycompany.openai.azure.com/openai/deployments/gpt-4o
+    apiKey: <votre-azure-key>
+    model: gpt-4o
+    maxTokens: 128000
+    costPer1k: 0.005
+    command: ""
+```
+
+L'URL Azure suit le format `https://<resource>.openai.azure.com/openai/deployments/<deployment-name>`. Le nom du déploiement est celui que vous avez créé dans le portail Azure AI Studio.
+
+### Authentification via variable d'environnement
+
+```bash
+$ export AZURE_OPENAI_API_KEY=<votre-azure-key>
+```
+
+Puis dans la config, omettez `apiKey` si votre proxy ou endpoint lit la variable automatiquement, ou laissez-le avec une référence explicite.
+
+## Proxy entreprise avec logging
+
+Ce scénario couvre le cas typique en entreprise : toutes les requêtes IA passent par un proxy interne qui loggue, rate-limite et gère les credentials centralement. Les postes développeurs n'ont accès à aucune API key.
+
+### Architecture
+
+```
+Poste développeur          Proxy interne              LLM Cloud
+──────────────────         ──────────────────         ──────────────
+NeuraForge (fetch)    ─────►   ai-proxy.corp/v1   ─────►  OpenAI / Anthropic
+                           │
+                           ├─ Logging (Langfuse)
+                           ├─ Rate limiting par équipe
+                           ├─ Filtrage de contenu
+                           └─ Rotation des API keys
+```
+
+### Configuration NeuraForge
+
+```yaml
+# .neuraforge/neuraforge.config.yaml
+provider: proxy-interne
+
+providers:
+  proxy-interne:
+    enabled: true
+    baseUrl: https://ai-proxy.corp.interne/v1
+    apiKey: internal-token
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+    command: ""
+```
+
+Le `apiKey` ici est un token interne émis par votre proxy — pas une API key Anthropic ou OpenAI exposée aux développeurs.
+
+### Configuration LiteLLM comme proxy entreprise
+
+Voici un exemple de `litellm_config.yaml` pour un proxy d'équipe :
+
+```yaml
+model_list:
+  - model_name: claude-sonnet-4-6
+    litellm_params:
+      model: anthropic/claude-sonnet-4-6
+      api_key: os.environ/ANTHROPIC_API_KEY
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+
+litellm_settings:
+  success_callback: ["langfuse"]
+  failure_callback: ["langfuse"]
+
+general_settings:
+  master_key: internal-token
+  database_url: postgres://...
+```
+
+Démarrez le proxy avec Docker :
+
+```bash
+$ docker run -p 4000:4000 \
+    -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
+    -e OPENAI_API_KEY=$OPENAI_API_KEY \
+    -v $(pwd)/litellm_config.yaml:/app/config.yaml \
+    ghcr.io/berriai/litellm:main \
+    --config /app/config.yaml
+```
+
+## LLM on-premise (air-gapped)
+
+Dans un environnement sans accès Internet, vous pouvez faire tourner un LLM entièrement en local via Ollama ou vLLM.
+
+### Avec Ollama (CPU/GPU local)
+
+```bash
+# Téléchargez le modèle sur un poste connecté et exportez-le
+$ ollama pull llama3
+$ ollama save llama3 llama3.tar
+
+# Transférez llama3.tar sur le réseau interne, puis :
+$ ollama load llama3.tar
+$ ollama serve
+```
+
+```yaml
+providers:
+  air-gapped-llm:
+    enabled: true
+    baseUrl: http://localhost:11434/v1
+    model: llama3
+    maxTokens: 8000
+    costPer1k: 0
+    command: ""
+```
+
+### Avec vLLM (GPU serveur)
+
+```bash
+$ pip install vllm
+$ python -m vllm.entrypoints.openai.api_server \
+    --model /models/mistral-7b-instruct \
+    --host 0.0.0.0 \
+    --port 8000
+```
+
+```yaml
+providers:
+  vllm-gpu:
+    enabled: true
+    baseUrl: http://gpu-server.interne:8000/v1
+    model: mistral-7b-instruct
+    maxTokens: 32000
+    costPer1k: 0
+    command: ""
+```
+
+> **Information** : Le sanitizer de prompts NeuraForge (`sanitize: true`) reste actif même avec un LLM local. Il protège contre les injections accidentelles de secrets dans les artefacts générés.
+
+## Vérification
+
+Après avoir configuré votre provider API, vérifiez qu'il est bien reconnu :
+
+```bash
+$ neuraforge provider status
+Provider status:
+  litellm: configured
+  openai: configured
+  azure: not configured
+  local-llm: configured
+```
+
+Pour un test rapide end-to-end :
+
+```bash
+$ neuraforge flash "Ecris une fonction TypeScript qui retourne le reverse d'une string" \
+    --provider litellm
+```
+
+NeuraForge doit compléter le workflow et écrire les artefacts dans `.neuraforge/features/`.
+
+## Multi-provider avec API et CLI
+
+Vous pouvez mélanger des providers CLI et API dans la même configuration. Le routage `auto` sélectionne le meilleur provider selon la tâche :
+
+```yaml
+# .neuraforge/neuraforge.config.yaml
+provider: claude-code
+
+routing:
+  strategy: auto
+  fallback: [litellm, local-llm]
+
+providers:
+  # Provider CLI — analyse, review (long contexte natif)
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+
+  # Provider API — génération de code via proxy d'équipe
+  litellm:
+    enabled: true
+    baseUrl: http://localhost:4000/v1
+    model: gpt-4o
+    maxTokens: 128000
+    costPer1k: 0.005
+    command: ""
+
+  # Provider API — fallback local, zéro coût
+  local-llm:
+    enabled: true
+    baseUrl: http://localhost:11434/v1
+    model: llama3
+    maxTokens: 8000
+    costPer1k: 0
+    command: ""
+```
+
+En mode `auto`, le routage par défaut devient :
+
+| Agent | Provider sélectionné | Raison |
+|---|---|---|
+| Lead | claude-code | Analyse de la demande |
+| Analyst | claude-code | Analyse de complexité |
+| Planner | claude-code | Décomposition en stories |
+| Dev | litellm | Génération de code |
+| QA | claude-code | Code review, long contexte |
+| DocOps | claude-code | Documentation |
+
+Si `claude-code` n'est pas disponible (CI sans binaire), NeuraForge bascule automatiquement sur `litellm` puis `local-llm` selon la liste `fallback`.
+
+## Troubleshooting
+
+### `fetch failed` — connexion refusée
+
+Le serveur n'est pas démarré ou l'URL est incorrecte.
+
+```bash
+# Vérifiez que le serveur écoute
+$ curl http://localhost:4000/v1/models
+# Si Ollama : curl http://localhost:11434/v1/models
+```
+
+Si `curl` échoue aussi, le serveur n'est pas démarré. Relancez `litellm` ou `ollama serve`.
+
+### `401 Unauthorized`
+
+L'`apiKey` dans la config ne correspond pas à ce qu'attend le serveur.
+
+- Pour LiteLLM : vérifiez la valeur `master_key` dans `litellm_config.yaml`
+- Pour OpenAI/Anthropic direct : vérifiez que la clé est valide et non expirée
+- Pour un proxy interne : contactez l'équipe plateforme pour renouveler le token
+
+```bash
+$ curl -H "Authorization: Bearer internal-token" \
+       http://localhost:4000/v1/models
+# Doit retourner un JSON avec la liste des modèles
+```
+
+### `model not found` ou `404 on /chat/completions`
+
+Le nom de modèle dans NeuraForge ne correspond pas à ce que le serveur expose.
+
+```bash
+# Listez les modèles disponibles sur le serveur
+$ curl http://localhost:4000/v1/models | python -m json.tool
+# Cherchez le champ "id" pour chaque modèle
+```
+
+Ajustez le champ `model` dans votre config NeuraForge pour qu'il corresponde exactement à l'identifiant retourné.
+
+### Latence élevée sur les workflows longs
+
+Les providers API ont parfois une latence plus élevée que les providers CLI, surtout pour les modèles locaux sur CPU. Le timeout par défaut est 120 secondes. Pour les modèles lents :
+
+```yaml
+providers:
+  local-llm:
+    enabled: true
+    baseUrl: http://localhost:11434/v1
+    model: llama3:70b
+    maxTokens: 8000
+    costPer1k: 0
+    timeout: 300000   # 5 minutes (en ms)
+    command: ""
+```
+
+Réduisez aussi `maxOutputCharsPerAgent` pour limiter la taille des prompts envoyés :
+
+```yaml
+pipeline:
+  maxOutputCharsPerAgent: 3000   # défaut: 8000
+```
+
+### Le sanitizer redacte des données légitimes
+
+Le sanitizer de prompts (`sanitize: true`) peut redacter à tort certaines chaînes qui ressemblent à des secrets. Pour ajouter une exception ou une règle custom :
+
+```yaml
+sanitize: true
+sanitizeRules:
+  - pattern: "INTERNAL_REF_\\w+"
+    replacement: "[REF_INTERNE]"
+```
+
+Pour désactiver le sanitizer sur un environnement totalement isolé (air-gapped, pas de données sensibles dans les prompts) :
+
+```yaml
+sanitize: false
+```
+
+> **Attention** : Désactiver le sanitizer en environnement cloud expose vos secrets si du code avec credentials est analysé par NeuraForge.
+
+## Prochaine étape
+
+Consultez le guide [routage multi-provider](/fr/guides/providers) pour configurer les stratégies `auto` et `cost-optimized`, ou la [référence configuration](/fr/reference/config) pour le schéma complet des options provider.

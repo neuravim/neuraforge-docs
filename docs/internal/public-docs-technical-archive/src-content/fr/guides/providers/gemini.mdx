@@ -1,0 +1,281 @@
+# Gemini CLI
+
+1 million de tokens de contexte. 3 fois moins cher que Claude pour la generation de code. Gemini est le partenaire ideal du Dev agent — et voici comment le brancher.
+
+> **Ce que vous allez apprendre**
+> - Installer Gemini CLI (Google's AI coding assistant)
+> - Configurer l'authentification Google
+> - Utiliser Gemini comme provider NeuraForge
+> - Brancher Gemini via API directe (alternative)
+> - Résoudre les problèmes courants
+
+## Prérequis
+
+Avant de se lancer, assurez-vous d'avoir :
+
+- **Node.js 20+** — vérifiez avec `node --version`
+- **Compte Google** avec accès à l'API Gemini (Google AI Studio ou Google Cloud)
+- NeuraForge installé et initialisé (`neuraforge init`)
+
+Rien de plus. On y va.
+
+## Installation
+
+Gemini CLI est l'assistant IA de Google pour le développement. Un simple `npm install` global et c'est réglé :
+
+```bash
+$ npm install -g @google/gemini-cli
+$ gemini --version
+```
+
+> **Note** : Le package s'appelle `@google/gemini-cli`. Ne pas confondre avec `@anthropic-ai/claude-code` qui est le CLI de Claude.
+
+Vérifiez que la commande est accessible :
+
+```bash
+$ gemini --help
+```
+
+Si la commande n'est pas trouvée, c'est probablement un problème de PATH. Ajoutez le répertoire global npm :
+
+```bash
+$ npm bin -g
+# Ajoutez ce chemin à votre PATH
+```
+
+## Authentification
+
+Deux méthodes selon votre contexte. La première est la plus simple pour le dev local, la seconde est parfaite pour la CI.
+
+### Option 1 — OAuth Google (recommandé pour le développement local)
+
+```bash
+$ gemini auth login
+```
+
+Cette commande ouvre votre navigateur pour une authentification Google OAuth. Une fois connecté, les credentials sont stockés localement. Aucune clé API à gérer — c'est la méthode la plus fluide au quotidien.
+
+Vérifiez l'authentification :
+
+```bash
+$ gemini auth status
+Logged in as: votre.email@gmail.com
+```
+
+### Option 2 — Clé API Google AI Studio
+
+Générez une clé sur [Google AI Studio](https://aistudio.google.com/apikey), puis exportez-la :
+
+```bash
+$ export GOOGLE_API_KEY=AIzaSy...
+```
+
+Pour la rendre permanente, ajoutez la ligne dans votre `~/.bashrc` ou `~/.zshrc` :
+
+```bash
+$ echo 'export GOOGLE_API_KEY=AIzaSy...' >> ~/.zshrc
+$ source ~/.zshrc
+```
+
+> **Astuce** : Préférez OAuth en développement local pour éviter de stocker des clés dans votre shell. Réservez la clé API aux environnements CI/CD où personne ne peut cliquer sur un navigateur.
+
+## Configuration NeuraForge
+
+Maintenant qu'on a un Gemini fonctionnel, on le branche dans NeuraForge. Ajoutez ceci dans votre `.neuraforge/neuraforge.config.yaml` :
+
+```yaml
+provider: gemini
+
+providers:
+  gemini:
+    enabled: true
+    command: gemini
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+```
+
+C'est la configuration la plus simple : Gemini fait tout. Mais la vraie puissance d'NeuraForge, c'est le multi-provider. Vous pouvez garder Claude Code pour l'analyse et le review, et laisser Gemini faire ce qu'il fait le mieux — générer du code :
+
+```yaml
+provider: claude-code
+
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+  gemini:
+    enabled: true
+    command: gemini
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+
+routing:
+  strategy: auto
+  fallback: [claude-code, gemini]
+```
+
+En mode `auto`, NeuraForge route automatiquement l'agent Dev vers Gemini pour la génération de code. Chaque agent utilise le provider le plus adapté à sa tâche — sans que vous ayez à y penser.
+
+## Premier usage
+
+Définissez Gemini comme provider actif et lancez une feature pour vérifier que tout fonctionne :
+
+```bash
+$ neuraforge config set provider gemini
+Set provider = gemini
+
+$ neuraforge provider status
+Provider status:
+  gemini: configured
+  claude-code: not found
+
+$ neuraforge flash "Ajouter export CSV au module rapports"
+```
+
+Un petit `neuraforge provider status` avant de lancer un workflow long, ça évite les mauvaises surprises :
+
+```bash
+$ neuraforge provider status
+```
+
+## Alternative : API directe
+
+Pas envie d'installer le CLI ? Vous êtes en CI/CD ou derrière un proxy LLM ? L'adapter HTTP d'NeuraForge est fait pour ça.
+
+Google expose un endpoint compatible OpenAI pour Gemini, ce qui veut dire qu'NeuraForge peut l'appeler directement via `fetch()` :
+
+```yaml
+providers:
+  gemini-api:
+    enabled: true
+    baseUrl: https://generativelanguage.googleapis.com/v1beta/openai
+    apiKey: AIzaSy...
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+    command: ""
+```
+
+Quand `baseUrl` est défini, NeuraForge utilise l'adapter HTTP au lieu du subprocess CLI — aucun binaire `gemini` requis. La clé API est envoyée dans le header `Authorization: Bearer`.
+
+> **Note** : Cette approche fonctionne aussi via LiteLLM ou Cloudflare AI Gateway si vous souhaitez centraliser votre routing LLM. Consultez la page [Providers](/fr/guides/providers) pour plus de détails.
+
+## Forces et cas d'usage
+
+Pourquoi Gemini dans un pipeline NeuraForge ? Voici ce qui le rend intéressant :
+
+| Caractéristique | Détail |
+|---|---|
+| **Contexte** | 1 000 000 tokens — idéal pour les gros projets multi-fichiers |
+| **Génération code** | Excellent sur la génération et refactoring de code structuré |
+| **Coût** | ~3x moins cher que Claude pour la génération de code |
+| **Vitesse** | Gemini 2.0 Flash : très rapide pour les tâches simples |
+
+En résumé : un million de tokens de contexte pour un tiers du prix. Sur de la génération de code pure, c'est difficile à battre.
+
+### Routage automatique
+
+En mode `auto`, l'agent **Dev** (`code_gen`) est routé vers Gemini par défaut. Les agents d'analyse et de review restent sur Claude Code, qui excelle dans la compréhension fine :
+
+| Agent | TaskType | Provider (auto) |
+|---|---|---|
+| Analyst | analysis | claude-code |
+| Planner | planning | claude-code |
+| **Dev** | **code_gen** | **gemini** |
+| QA | code_review | claude-code |
+| DocOps | documentation | claude-code |
+
+Le meilleur des deux mondes : Claude réfléchit, Gemini code.
+
+### Modèles disponibles
+
+| Modèle | Usage recommandé |
+|---|---|
+| `gemini-2.5-pro` | Génération et analyse de code complexe |
+| `gemini-2.0-flash` | Tâches simples, itérations rapides, flash mode |
+| `gemini-1.5-pro` | Alternative stable si 2.5 indisponible |
+
+Pour changer de modèle, une seule ligne à modifier :
+
+```yaml
+providers:
+  gemini:
+    model: gemini-2.0-flash
+```
+
+## Troubleshooting
+
+Les problèmes les plus fréquents et comment les régler en 30 secondes.
+
+### "command not found: gemini"
+
+Le binaire n'est pas dans le PATH. Vérifiez l'installation :
+
+```bash
+$ npm list -g @google/gemini-cli
+$ npm bin -g
+```
+
+Ajoutez le chemin retourné par `npm bin -g` à votre PATH.
+
+### "Authentication required" ou "UNAUTHENTICATED"
+
+L'authentification OAuth a expiré ou la clé API est absente. Reconnectez-vous :
+
+```bash
+$ gemini auth login
+```
+
+Ou vérifiez que la variable d'environnement est définie :
+
+```bash
+$ echo $GOOGLE_API_KEY
+```
+
+### "Model not found" ou "404"
+
+Le modèle spécifié n'existe pas ou n'est pas disponible dans votre région. Rabattez-vous sur `gemini-2.0-flash` qui est disponible partout :
+
+```yaml
+providers:
+  gemini:
+    model: gemini-2.0-flash
+```
+
+### Timeout sur les grosses features
+
+Le timeout par défaut d'NeuraForge est 120 secondes. Avec la fenêtre de contexte à 1M tokens, les prompts très longs peuvent dépasser cette limite. Augmentez le timeout dans `.neuraforge/neuraforge.config.yaml` :
+
+```yaml
+providers:
+  gemini:
+    timeout: 300
+```
+
+### "No provider available" après configuration
+
+Vérifiez que le provider est bien activé et accessible :
+
+```bash
+$ neuraforge provider status
+$ gemini --version
+```
+
+Si `gemini --version` échoue, réinstallez le CLI.
+
+### Limites de quota API
+
+Google AI Studio a des limites de requêtes par minute (RPM). Si vous les atteignez, NeuraForge affichera une `ProviderError`. Trois solutions :
+
+- Passez sur un projet Google Cloud avec facturation activée (quotas plus élevés)
+- Ajoutez un délai entre les features dans votre workflow
+- Utilisez LiteLLM comme proxy avec gestion du rate limiting
+
+## Prochaine étape
+
+Configurez le [routage multi-provider](/fr/guides/providers) pour combiner Gemini avec Claude Code selon les tâches. C'est là que le setup devient vraiment puissant.

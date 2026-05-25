@@ -1,0 +1,124 @@
+# Why NeuraForge
+
+> This page explains how to use NeuraForge and why it matters to technical, product and management teams. It is intentionally about usage and decision making, not internal implementation details.
+
+## In one sentence
+
+NeuraForge helps product and engineering teams turn a functional request into a verified delivery, with specialized AI agents working inside a controlled workflow.
+
+Not another chatbot. Not a folder of prompts to maintain. A CLI tool that fits into an existing repository and brings order to agent work.
+
+## Why CTOs and product leaders care
+
+AI agents can generate code. In an organization, the harder question is control:
+
+- what was requested;
+- what was decided;
+- whether the code actually changed;
+- whether the output is more than a local demo;
+- whether QA, security, product and management can inspect the trail;
+- how much time the team spends coordinating analysis, development, review, documentation and follow-up.
+
+NeuraForge sits between product intent and delivery. It does not replace the team. It reduces the time wasted manually steering a network of agents that can otherwise drift.
+
+## Quick usage
+
+```bash
+npm install -g @neuravim/neuraforge
+cd my-project
+neuraforge init
+neuraforge flash "Fix pagination on /users"
+```
+
+For a more structured feature:
+
+```bash
+neuraforge standard "Add CSV export with tests"
+```
+
+For sensitive work, with stricter documentation and validation:
+
+```bash
+neuraforge enterprise "Migrate authentication to OIDC with a runbook"
+```
+
+Then track progress and cost:
+
+```bash
+neuraforge status
+neuraforge metrics
+neuraforge trace <feature>
+```
+
+## Three levels, not one hammer
+
+- `flash` is for fixes and small changes. The team moves fast but keeps a trail.
+- `standard` is for normal product features. Analysis, planning, implementation and review stay attached to the same feature.
+- `enterprise` is for sensitive work: security, compliance, migration, operating documentation and human approval.
+
+This avoids a common trap: forcing a heavy workflow onto every ticket, or treating a critical migration like a simple code generation prompt.
+
+## What changes in practice
+
+### For engineering
+
+- Less manual coordination between agents.
+- Clearer responsibilities across analysis, planning, code, security, QA and documentation.
+- Gates that prevent teams from mistaking a convincing answer for a finished delivery.
+- Better fit for existing projects.
+
+### For product
+
+- Acceptance criteria stay visible.
+- Deliverables are attached to a feature, not lost in a chat thread.
+- Tradeoffs are easier to review later.
+- Requests can use the right level of rigor without slowing down every small fix.
+
+### For management
+
+- More visibility into costs, cycle time and blockers.
+- A less improvised way to adopt AI agents.
+- A clearer framework for scaling agent usage across teams.
+- A way to cut hidden costs: repeated context setting, unclear reviews, forgotten documentation, late rework.
+
+And for cost killers: NeuraForge does not sell magic. It targets waste. Context repeated again and again. Reviews redone because criteria were vague. Agents burning tokens on oversized prompts. Features that look done and come back two days later.
+
+## Featured use case: migrating WildFly to Spring Boot
+
+A concrete example for large organizations: migrating WildFly/JBoss or Java EE applications to Spring Boot.
+
+Banks, insurers, telecom operators and large enterprise groups know this problem well: critical applications, historical dependencies, application servers that are expensive to maintain, incomplete tests, scattered documentation, and pressure to modernize for cloud and security programs.
+
+NeuraForge is useful here because the job is not just "convert code". The team needs to preserve business behavior, identify risks, create a migration plan, change the right files, replace server based tests with Spring Boot tests, verify endpoints and document what changed.
+
+A typical workflow:
+
+```bash
+neuraforge enterprise "Migrate the customer module from WildFly to Spring Boot with tests, smoke tests and an operating runbook"
+```
+
+This use case speaks to CTOs and product leaders because modernization can move forward in verified increments instead of asking the team to rewrite the whole platform at once. For cost focused teams, the value is practical: less operational debt, less dependency on a legacy runtime, and less time spent reconstructing technical context for every migration.
+
+## NeuraForge vs BMAD
+
+BMAD made multi-agent work easier to reason about. NeuraForge starts from a different question: how do you make that logic usable in a real repository, with less friction and more control over delivery?
+
+| Topic | BMAD | NeuraForge |
+|---|---|---|
+| Main intent | Structure reasoning and preparation | Control execution through verified delivery |
+| Startup | More framing before code | Fast initialization, then the right mode for the risk |
+| Working mode | Heavier workflow by default | Flash, standard or enterprise depending on the risk |
+| Brownfield usage | Often needs more manual adaptation | Designed to work inside existing projects |
+| Agents | Strong role and document logic | Roles tied to verifiable outputs |
+| Quality | Depends heavily on execution discipline | Built-in gates block weak deliveries |
+| AI cost | Can consume a lot of context | Routing, scopes and compression reduce waste |
+| Management | Good thinking support | Better visibility into progress, blockers and cost |
+| Product | Useful for framing | Useful for tracking a feature until usable output |
+
+## The point
+
+NeuraForge does not need to be sold as a revolution. Technical teams usually see the issue quickly: agents can produce volume without producing a controlled delivery.
+
+NeuraForge reduces that gap.
+
+It gives CTOs, engineering managers and product leaders a cleaner way to use AI in delivery: simple enough to adopt, strict enough to avoid false positives, and traceable enough to defend internally.

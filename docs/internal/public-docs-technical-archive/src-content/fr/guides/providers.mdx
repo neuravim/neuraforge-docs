@@ -1,0 +1,144 @@
+# Providers
+
+> NeuraForge ne vous enferme pas. Claude pour l'analyse, Gemini pour le code, Copilot en backup gratuit, Ollama pour le 100% local — mixez comme vous voulez.
+
+## Decision rapide
+
+> **Vous debutez ?** → Claude Code.
+> **Budget serre ?** → Gemini.
+> **Donnees sensibles ?** → OpenCode + Ollama.
+> **Deja Copilot ?** → Ajoutez-le en fallback.
+
+## Providers supportes
+
+NeuraForge supporte 5 providers CLI nativement et permet de brancher n'importe quel LLM via API :
+
+| Provider | Type | Forces | Context | Cout |
+|---|---|---|---|---|
+| [Claude Code](/fr/guides/providers/claude-code) | CLI | Analyse, review, long contexte | 200k | $$$ |
+| [Gemini CLI](/fr/guides/providers/gemini) | CLI | Generation code, multi-fichier | 1M | $ |
+| [OpenCode](/fr/guides/providers/opencode) | CLI | Open source, multi-backend | Variable | Variable |
+| [Codex CLI](/fr/guides/providers/codex) | CLI | Generation multi-fichier, review, refinement | 200k | $$ |
+| [GitHub Copilot](/fr/guides/providers/copilot) | CLI | Quick fix, completion | 50k | Gratuit |
+| [API custom](/fr/guides/providers/custom-api) | HTTP | N'importe quel LLM | Variable | Variable |
+
+## Quel provider choisir ?
+
+**Vous debutez ?** Commencez avec [Claude Code](/fr/guides/providers/claude-code) — c'est le provider par defaut, le plus polyvalent.
+
+**Vous voulez optimiser les couts ?** Combinez Claude Code (analyse) + [Gemini](/fr/guides/providers/gemini) (generation) avec le routage `auto`.
+
+**Vous avez des contraintes de securite ?** Utilisez [OpenCode](/fr/guides/providers/opencode) + Ollama pour un pipeline 100% local.
+
+**Vous preferez Codex pour les edits repository ?** Ajoutez [Codex CLI](/fr/guides/providers/codex) comme provider generation/review conscient du workspace.
+
+**Vous avez deja GitHub Copilot ?** Ajoutez-le comme [fallback gratuit](/fr/guides/providers/copilot) dans votre config multi-provider.
+
+**Vous avez un proxy LLM interne ?** Configurez un [provider API custom](/fr/guides/providers/custom-api) (LiteLLM, Azure, OpenAI).
+
+## Configuration rapide
+
+Dans `.neuraforge/neuraforge.config.yaml` :
+
+```yaml
+provider: claude-code
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+  gemini:
+    enabled: true
+    command: gemini
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+  codex:
+    enabled: true
+    command: codex
+    model: codex-cli
+    maxTokens: 200000
+    costPer1k: 0.003
+```
+
+> **Information** : Consultez le guide de chaque provider pour les instructions d'installation et d'authentification.
+
+## Routage
+
+Le routage intelligent est ce qui rend NeuraForge multi-provider vraiment utile. Au lieu de tout envoyer au meme LLM, chaque tache va au provider le plus adapte — automatiquement.
+
+4 strategies disponibles :
+
+- **prefer** (defaut) : utilise le provider prefere, fallback si indisponible
+- **auto** : choisit le meilleur provider selon la tache
+- **fixed** : un seul provider toujours
+- **cost-optimized** : minimise les couts
+
+```yaml
+routing:
+  strategy: auto
+  fallback: [claude-code, gemini, opencode, codex, copilot]
+```
+
+En mode `auto`, chaque agent recoit le provider optimal :
+
+| Tache | Provider par defaut |
+|---|---|
+| Analyse, Planning, Documentation | claude-code |
+| Generation code, Tests | gemini |
+| Generation multi-fichier / fallback review | codex |
+| Quick fix, PR review | copilot |
+
+## Verifier le statut
+
+Un doute sur quel provider est actif ? Une seule commande :
+
+```bash
+$ neuraforge provider status
+```
+
+## Budget tokens
+
+Les tokens, ca chiffre vite. NeuraForge vous permet de poser des gardes-fous par feature et par mode, avec une alerte avant le mur.
+
+```yaml
+budget:
+  monthlyLimit: 500000
+  alertAt: 80
+  perFeature:
+    flash: 5000
+    standard: 20000
+    enterprise: 100000
+```
+
+> **Information** : L'alerte se declenche a 80% du budget. NeuraForge bloque les appels si le budget est depasse.
+
+## Filtrage securite
+
+Avant chaque appel provider, NeuraForge passe le prompt au crible. Les secrets ne sortent jamais de votre machine — meme par accident.
+
+NeuraForge filtre automatiquement les donnees sensibles avant de les envoyer aux providers :
+
+- Bearer tokens
+- API keys (`sk-`, `ghp_`, `github_pat_`)
+- Mots de passe
+- Cles privees (PEM)
+- Connection strings (postgres, mongodb, redis)
+- AWS access keys
+
+Le filtrage est actif par defaut. Pour le desactiver (usage local uniquement) :
+
+```yaml
+sanitize: false
+```
+
+## Guides detailles
+
+- [Claude Code](/fr/guides/providers/claude-code) — Installation, authentification, slash commands
+- [Gemini CLI](/fr/guides/providers/gemini) — Installation, auth Google, API directe
+- [OpenCode](/fr/guides/providers/opencode) — Setup multi-backend, LLM local
+- [Codex CLI](/fr/guides/providers/codex) — Generation, review, refinement sandboxes et conscients du workspace
+- [GitHub Copilot](/fr/guides/providers/copilot) — GitHub CLI, limitations
+- [Provider API custom](/fr/guides/providers/custom-api) — LiteLLM, Ollama, Azure, proxy entreprise

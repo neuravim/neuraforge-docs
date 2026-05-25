@@ -1,200 +1,61 @@
-# Votre premiere feature en mode standard
+# Votre première fonctionnalité en mode standard
 
-> Le mode flash, c'etait l'aperitif. Maintenant, on passe aux choses serieuses : **4 agents IA qui collaborent pour livrer une feature complete**. Imaginez une chaine de montage ou chaque poste est tenu par un specialiste — c'est exactement ce qui va se passer sous vos yeux.
+> Le mode Standard sert aux vraies fonctionnalités : comprendre la demande, planifier le changement, implémenter, puis vérifier le résultat.
 
-Dans ce tutoriel, vous allez suivre en direct le parcours d'une feature a travers les 4 agents du mode standard : **Analyst**, **Planner**, **Dev** et **QA**. Chacun produit des artefacts, chacun est soumis a un checkpoint douanier (quality gate), et le tout s'enchaine comme une chaine de montage bien huilee.
+Ce tutoriel montre l'expérience utilisateur publique sans exposer les contrats internes d'orchestration de NeuraForge.
 
-## Le scenario : ajouter GET /health a une API Express
+## Scénario
 
-Vous avez une API Express. Vous voulez un endpoint `/health` qui verifie la connexion DB. Une seule commande suffit pour lancer les 4 agents :
-
-```bash
-$ neuraforge standard "Ajouter un endpoint GET /health avec vérification connexion DB"
-```
-
-La chaine de montage demarre. Voyons ce qui se passe a chaque poste.
-
----
-
-## Phase 1 — Decouverte : l'Analyst prend le pouls du projet
-
-Premier sur la chaine, l'Analyst. Son role : scanner le code existant, comprendre le terrain, et produire un diagnostic structure. Il ne code rien — il observe et rapporte.
-
-```
-Phase: discovery, Agent: analyst, Provider: claude-code
-```
-
-L'Analyst rend son verdict :
-- **Complexite** : 2/5 (endpoint simple avec une verification)
-- **Risques** : dependance DB non mockee dans les tests
-- **Questions** : format de reponse ? verifier la connexion DB ou juste le serveur ?
-
-Il depose son rapport dans `.neuraforge/features/ajouter-un-endpoint-get-health/brief.md` :
-
-```markdown
----
-type: brief
-feature: ajouter-un-endpoint-get-health
-version: 1
-author: analyst
-status: draft
----
-## Analyse
-Endpoint simple retournant le statut du serveur et de la connexion DB.
-Complexite: 2/5. Risques: mock DB pour tests.
-```
-
-> **Checkpoint douanier (quality gate)** : Si l'Analyst ne detecte pas de complexite ou retourne un contenu vide, la chaine s'arrete. Pas question d'envoyer un dossier vide au Planner — le workflow est bloque jusqu'a resolution.
-
-Le brief est valide. Il passe au poste suivant.
-
----
-
-## Phase 2 — Planification : le Planner dessine le plan de bataille
-
-Le Planner recoit le brief de l'Analyst et le transforme en specification actionnable. Il decompose le travail en stories avec des criteres d'acceptation precis — exactement comme le ferait un tech lead humain.
-
-```
-Phase: planning, Agent: planner, Provider: claude-code
-```
-
-Artefacts generes :
-- `spec.md` — specification en 1-2 pages
-- `stories/001-endpoint-health.md` — story avec criteres d'acceptation
-- `stories/002-tests-health.md` — story pour les tests
-
-Voici a quoi ressemble une story :
-
-```markdown
-### Story 1: Endpoint /health
-Implementer GET /health retournant {status: "healthy", db: "connected"}.
-
-Acceptance criteria:
-- GET /health retourne 200 avec JSON
-- Si la DB est down, retourne {status: "degraded", db: "disconnected"}
-- Le endpoint est accessible sans authentification
-```
-
-> **Checkpoint douanier (quality gate)** : Si le Planner ne decompose pas en stories, le workflow est bloque. Pas de plan, pas d'implementation.
-
-Les stories sont pretes, les criteres d'acceptation sont clairs. Le Dev sait exactement quoi construire.
-
----
-
-## Phase 3 — Implementation : le Dev entre en scene
-
-C'est le moment ou le code est ecrit. Le Dev recoit tout le contexte accumule — brief, spec, stories — et se met au travail. Il ne part pas a l'aveugle : il a la vision complete de ce que les agents precedents ont prepare.
-
-```
-Phase: implementation, Agent: dev, Provider: gemini
-```
-
-Le Dev suit un processus methodique :
-1. Lit les stories et le code existant
-2. Implemente le code
-3. Ecrit les tests
-4. Fait un self-review
-
-Output structure : `filesChanged`, `testsGenerated`.
-
-> **Guardrails** : Si plus de 10 fichiers sont modifies, le circuit breaker intervient — c'est le signal que quelque chose derape. Toutes les 5 etapes, un rappel d'objectif est injecte pour garder le cap. La chaine de montage a ses propres mecanismes de securite.
-
-Le code est ecrit, les tests sont la. Mais avant de declarer victoire, il reste le dernier poste — et pas le moindre.
-
----
-
-## Phase 4 — Validation : le QA passe tout au crible
-
-Le QA recoit TOUT le contexte : brief, spec, stories, et le code du Dev. Il ne se contente pas d'un coup d'oeil — il verifie explicitement chaque critere d'acceptation, un par un.
-
-```
-Phase: validation, Agent: qa, Provider: claude-code
-```
-
-Le QA produit un rapport detaille :
-
-```
---- ACCEPTANCE CRITERIA TO VERIFY ---
-Story: Endpoint /health
-  - GET /health retourne 200 avec JSON
-  - Si la DB est down, retourne {status: "degraded"}
-  - Accessible sans authentification
-
-CRITERIA_RESULTS:
-Endpoint /health / GET retourne 200: PASS
-Endpoint /health / DB down: PASS
-Endpoint /health / Sans auth: PASS
-
-SCORE: 8/10
-PASSED: yes
-```
-
-Output structure : `passed`, `score`, `issues`, `criteriaResults`.
-
-### Et si le QA echoue ?
-
-Si `passed = false`, l'orchestrateur ne panique pas. Il lance une **boucle de correction** — comme un pair programming ou le QA pointe les problemes et le Dev corrige en temps reel :
-
-1. Le Dev recoit le feedback du QA et corrige
-2. Le QA re-review le nouveau code
-3. Maximum 2 retries. Si toujours en echec, le workflow continue avec un warning.
-
-C'est cette boucle de feedback qui fait la difference entre un outil qui genere du code et un framework qui **livre de la qualite**.
-
----
-
-## Le resultat : une feature livree, tracee, documentee
-
-La chaine de montage a termine son cycle. Voici le resultat :
+Ajouter un endpoint health-check à une API existante.
 
 ```bash
-$ neuraforge status ajouter-un-endpoint-get-health
-Feature: Ajouter un endpoint GET /health avec verification connexion DB
-  State: completed
-  Mode: standard
-  Tokens: 4500
-  Agents: analyst → planner → dev → qa
+neuraforge standard "Add GET /health returning { status: 'ok' } with tests"
 ```
 
-Tous les artefacts sont ranges dans `.neuraforge/features/ajouter-un-endpoint-get-health/` :
+## Ce qui se passe
 
-```
-brief.md              # Analyse de l'Analyst
-spec.md               # Spécification du Planner
-stories/001-*.md      # Stories avec critères
-stories/002-*.md
-review.md             # Rapport du QA
-change-summary.md     # Résumé des changements
-```
+NeuraForge guide le changement dans un flux structuré :
 
-Chaque decision est tracee dans `.neuraforge/memory/decisions.jsonl` :
+1. **Discovery** — comprendre le dépôt et le comportement demandé.
+2. **Planning** — définir le changement attendu et les critères d'acceptation.
+3. **Implementation** — modifier le code et les tests.
+4. **Review** — vérifier que le résultat correspond à l'intention et n'introduit pas de problème évident de qualité ou sécurité.
 
-```json
-{"ts":"2026-03-27T10:15:00Z","feature":"ajouter-un-endpoint-get-health","agent":"analyst","type":"complexity","value":2}
-{"ts":"2026-03-27T10:15:05Z","feature":"ajouter-un-endpoint-get-health","agent":"qa","type":"review","value":"passed"}
-```
+Les artefacts et contrats internes exacts relèvent de l'implémentation privée. Ce qui compte côté utilisateur : le travail est traçable et vérifiable.
 
-Rien n'est perdu. Tout est auditable.
+## Ce que vous devez inspecter
 
----
+Après le workflow, vérifiez :
 
-## Et apres ? Le mode enterprise
-
-Le mode standard convient a la majorite des features. Mais pour les projets critiques — migration d'authentification, conformite reglementaire, refactoring majeur — il existe un cran au-dessus.
-
-Le mode enterprise ajoute :
-- **Approbation humaine** entre chaque phase (vous validez avant de continuer)
-- **DocOps** qui genere la documentation et verifie la conformite
-- **Quality report** complet
+- fichiers modifiés ;
+- tests générés ou mis à jour ;
+- couverture des critères d'acceptation ;
+- notes sécurité éventuelles ;
+- résumé final et prochaines étapes.
 
 ```bash
-$ neuraforge enterprise "Migration authentification" --auto-approve
+neuraforge status
 ```
 
-Sans `--auto-approve`, chaque phase demande votre validation avant de continuer.
+Puis lancez les checks normaux du projet :
 
-## Prochaine etape
+```bash
+npm test
+npm run build
+```
 
-Vous avez vu flash (1 agent) et standard (4 agents). Mais comment choisir le bon mode pour chaque situation ? Et que se passe-t-il quand NeuraForge detecte qu'il faut changer de mode en cours de route ?
+Utilisez les commandes adaptées à votre stack.
 
-Decouvrez les [3 modes de NeuraForge](/fr/guides/modes) et leurs strategies de routage.
+## Si le résultat n'est pas suffisant
+
+Vous pouvez préciser la demande ou utiliser un workflow plus robuste :
+
+```bash
+neuraforge standard "Improve the /health endpoint with readiness checks and tests"
+```
+
+Pour les changements sensibles en production, utilisez le mode Enterprise.
+
+## Étape suivante
+
+Découvrez quand utiliser le [mode Enterprise](/fr/tutorial/enterprise) pour les validations, la documentation opérationnelle et la readiness production.

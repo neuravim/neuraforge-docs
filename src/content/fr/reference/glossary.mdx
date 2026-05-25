@@ -1,81 +1,71 @@
 # Glossaire
 
-Agent, Retex, Quality gate... NeuraForge a son vocabulaire. Voici le dictionnaire — chaque terme explique en une phrase.
+Agent, Retex, Quality gate... NeuraForge a son vocabulaire. Ce glossaire public explique les concepts côté utilisateur sans exposer les contrats internes d'implémentation.
 
 ---
 
 ## A
 
-**ADR** — Architecture Decision Record. Document qui trace une decision architecturale significative, genere en mode enterprise.
+**ADR** — Architecture Decision Record. Document qui trace une décision architecturale significative.
 
-**Agent** — Composant IA specialise dans un role (Lead, Analyst, Planner, Dev, QA, DocOps). Chaque agent herite de `BaseAgent` et recoit un provider par le routeur.
+**Agent** — Rôle IA spécialisé dans une partie du flux de livraison : analyse, planification, implémentation, sécurité, QA ou documentation.
 
-**Artefact** — Fichier Markdown avec frontmatter YAML genere par un agent (brief, spec, story, review, etc.). Stocke dans `.neuraforge/features/<slug>/`.
+**Artefact** — Produit de travail généré pendant un workflow NeuraForge : brief, spec, review ou note opérationnelle.
 
 ## B
 
-**Brief** — Document de decouverte cree par l'Analyst. Resume la demande, le contexte, les risques et les contraintes.
-
-**Bus de contexte** — Memoire partagee entre tous les agents (`.neuraforge/memory/context.yaml`). Contient la stack technique, l'architecture et le CI detectes.
+**Brief** — Synthèse de discovery qui capture la demande, le contexte, les risques et les contraintes.
 
 ## C
 
-**Circuit breaker** — Mecanisme qui arrete un agent apres N echecs consecutifs et escalade a l'humain. Defaut : 3 tentatives.
+**Circuit breaker** — Mécanisme de sécurité qui arrête les échecs répétés et demande une intervention humaine.
 
-**NeuraForge** — AI-Driven Engineering. Le framework lui-meme.
-
-## D
-
-**Decisions log** — Fichier JSONL append-only qui trace toutes les decisions des agents. Protege par file locking.
+**NeuraForge** — Framework d'ingénierie assistée par IA qui orchestre des agents spécialisés depuis la CLI.
 
 ## E
 
-**Enterprise** — Mode le plus complet avec documentation, conformite et approbation humaine entre chaque phase.
+**Enterprise** — Mode le plus contrôlé, destiné aux travaux sensibles, à la readiness production, à la documentation et à la validation humaine.
 
 ## F
 
-**Feature** — Unite de travail dans NeuraForge. Chaque feature a son propre cycle de vie, son dossier d'artefacts et sa machine a etats.
+**Feature** — Unité de travail traitée par NeuraForge.
 
-**Flash** — Mode le plus rapide. Lead + Dev uniquement, pas de spec ni review. Ideal pour les hotfixes.
+**Flash** — Mode rapide pour les petits changements à faible risque.
 
 ## L
 
-**Lead** — Agent orchestrateur qui coordonne tous les autres agents. Detecte aussi le mode optimal via l'analyse de signaux.
+**Lead** — Rôle de coordination qui garde le workflow aligné avec la demande.
 
 ## M
 
-**Mode** — Niveau de complexite du workflow : flash, standard ou enterprise. Determine quels agents sont executes et dans quel ordre.
-
-## O
-
-**OpenCode** — Provider CLI open source alternatif. Outil agentic configurable pointant vers n'importe quel endpoint.
+**Mode** — Niveau de workflow : `flash`, `standard` ou `enterprise`.
 
 ## P
 
-**Provider** — Service IA externe (Claude Code, Gemini, OpenCode, Copilot ou API custom) utilise par les agents. Deux types d'adapters : CLI (subprocess) et API (fetch).
+**Provider** — Backend ou outil IA utilisé par NeuraForge : Claude Code, Gemini, OpenCode, Copilot, Codex ou API custom.
 
 ## Q
 
-**Quality gate** — Verification automatique entre deux phases du workflow. Bloque la progression si les criteres ne sont pas remplis.
+**Quality gate** — Point de vérification utilisé pour éviter de considérer un travail incomplet comme terminé.
 
 ## R
 
-**Retex** — Retour d'experience structure (lessons learned). Stocke dans `.neuraforge/retex/` avec contexte, lecon et recommandation. Injecte dans les prompts agents sous `--- Lessons Learned ---`.
+**Retex** — Retour d'expérience utilisé pour améliorer les travaux futurs.
 
-**Routage** — Selection automatique du provider optimal selon la tache. Quatre strategies : `fixed`, `prefer`, `auto`, `cost-optimized`.
+**Routage** — Sélection de provider selon la configuration et la disponibilité.
 
 ## S
 
-**Sanitizer** — Mecanisme de filtrage qui masque les donnees sensibles (tokens, cles API, mots de passe, connection strings) dans les prompts avant envoi aux providers.
+**Sanitizer** — Couche de sécurité destinée à réduire l'exposition accidentelle de données sensibles.
 
-**Skill** — Package declaratif (YAML + Markdown) dans `.neuraforge/skills/` qui injecte instructions, regles et hooks dans le pipeline NeuraForge. Mecanisme d'extensibilite principal pour les entreprises.
+**Skill** — Paquet réutilisable de guidage d'équipe pour un domaine, workflow ou standard.
 
-**Spec** — Specification technique allegee creee par le Planner. Contient les exigences et les criteres d'acceptation.
+**Spec** — Spécification légère qui décrit le comportement attendu et les critères d'acceptation.
 
-**Standard** — Mode intermediaire avec analyse, planification, developpement et review. Le choix par defaut.
+**Standard** — Mode par défaut pour les fonctionnalités courantes.
 
-**Story** — User story decomposee par le Planner avec criteres d'acceptation. Numerotees sequentiellement (001-*, 002-*).
+**Story** — Élément de travail avec comportement attendu et critères d'acceptation.
 
 ## T
 
-**Token budget** — Limite de tokens par feature et par mois pour controler les couts. Configurable par mode (flash: 5000, standard: 20000, enterprise: 100000).
+**Token budget** — Garde-fou de coût et d'usage pour les workflows IA.

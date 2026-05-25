@@ -1,0 +1,134 @@
+# Troubleshooting
+
+> Not working? Don't panic. 90% of problems are solved in under a minute. Find yours below.
+
+---
+
+## Common problems
+
+### "command not found: neuraforge"
+
+**Symptom**: The terminal doesn't recognize the `neuraforge` command.
+
+**Cause**: The binary isn't in the PATH.
+
+**Solution**: Check the path and add it to your PATH:
+```bash
+$ pnpm bin -g
+```
+
+---
+
+### "No NeuraForge config found"
+
+**Symptom**: NeuraForge refuses to start and asks for a configuration.
+
+**Cause**: The project hasn't been initialized.
+
+**Solution**: Run `neuraforge init` at the root of your project.
+
+---
+
+### "No provider available"
+
+**Symptom**: NeuraForge can't find any provider to execute the task.
+
+**Cause**: No CLI provider is installed or accessible.
+
+**Solution**: Verify the provider is installed and responding:
+```bash
+$ claude --version   # or gemini --version
+$ neuraforge provider status
+```
+
+---
+
+### "Budget exceeded"
+
+**Symptom**: NeuraForge blocks execution and reports a budget overrun.
+
+**Cause**: The feature's token budget has been exceeded.
+
+**Solution**: Two options:
+- Increase the budget in `neuraforge.config.yaml`
+- Switch to flash mode (smaller but sufficient budget)
+
+---
+
+### Circuit breaker triggered
+
+**Symptom**: The following message appears:
+```
+NeuraForge Lead > Circuit breaker OPEN for dev: escalating to human
+```
+
+**Cause**: An agent failed 3 times in a row. NeuraForge stops and escalates.
+
+**Solution**: Check the error in the logs, fix the context, then resume:
+```bash
+$ neuraforge resume <slug>
+```
+
+For an enterprise workflow launched without human pauses, keep the resume run non-interactive:
+```bash
+$ neuraforge resume <slug> --auto-approve
+```
+
+---
+
+### Feature blocked
+
+**Symptom**: The feature shows as `blocked` in the status:
+```bash
+$ neuraforge status
+my-feature [blocked] (standard) - ...
+```
+
+**Cause**: A quality gate failed or an approval is missing.
+
+**Solution**: To unblock and resume:
+```bash
+$ neuraforge resume my-feature
+Resuming feature: my-feature
+```
+
+If the feature depended on an agent profile / domain playbook, pass it again explicitly:
+```bash
+$ neuraforge resume my-feature --profile wildfly-to-spring-boot --auto-approve --trace
+```
+
+To abandon permanently:
+```bash
+$ neuraforge abort my-feature
+Aborting feature: my-feature
+```
+
+---
+
+### Artifacts are not generated
+
+**Symptom**: The workflow completes but no files appear.
+
+**Cause**: The output directory doesn't exist or the provider isn't responding.
+
+**Solution**: Verify that `.neuraforge/features/` exists and that `neuraforge provider status` shows an active provider.
+
+---
+
+## Logs and debug
+
+When quick fixes aren't enough, the logs tell you exactly what happened.
+
+Decisions are in `.neuraforge/memory/decisions.jsonl` (JSONL, one line per decision).
+Metrics are in `.neuraforge/memory/metrics.jsonl`.
+
+```bash
+$ neuraforge metrics
+export-csv: 3000 tokens, $0.0090, 2 operations
+```
+
+> **Warning**: Never manually edit `decisions.jsonl`. It's an append-only log.
+
+## Next step
+
+See the [CLI reference](/en/reference/cli) for the full documentation.

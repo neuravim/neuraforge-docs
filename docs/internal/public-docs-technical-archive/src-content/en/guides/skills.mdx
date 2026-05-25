@@ -1,0 +1,328 @@
+# Skills
+
+> A code review rule is nice. A complete package with instructions, rules, hooks, and config that activates in one command? That's a skill.
+
+**What you'll learn:**
+- What an NeuraForge skill is and why to use one
+- When to choose a skill over a simple rule
+- How to create, manage, and share your own skills
+- The `skill.yaml` format and all its options
+
+## What is a skill?
+
+A **skill** is a declarative package (YAML + Markdown) that bundles instructions, rules, and hooks injectable into the NeuraForge pipeline. It's the primary extensibility mechanism for enterprises.
+
+## When to use a skill vs a simple rule?
+
+Before creating a skill, ask yourself: would a simple rule in `.neuraforge/rules/` suffice?
+
+| | **Simple rule** (`.neuraforge/rules/`) | **Skill** (`.neuraforge/skills/`) |
+|---|---|---|
+| **Use case** | Single, cross-cutting convention | Complete concern (compliance, integration, workflow) |
+| **Agent targeting** | Sent to all agents | Targets specific agents |
+| **Mode filtering** | Always active | Activatable by mode (flash, standard, enterprise) |
+| **Hooks** | No | Yes (on_feature_created, on_phase_end, etc.) |
+| **Configuration** | No | Yes (custom variables, env vars) |
+| **Versioning** | Single file | Versioned package, enable/disable |
+| **Example** | "No `any` in TypeScript" | "GDPR compliance: instructions + rules + notification hooks" |
+
+**In short**: if your need fits in a single Markdown file with no particular targeting, a rule is enough. As soon as you need to target agents, filter by mode, or add hooks, you need a skill.
+
+## Structure of a skill
+
+```
+.neuraforge/skills/
+  my-skill/
+    skill.yaml            # Manifest: metadata, target agents, hooks
+    instructions.md       # Instructions injected into agent prompts
+    rules/                # Additional rules (optional)
+      security.md
+    hooks/                # Hook scripts (optional)
+      on_feature_created.sh
+```
+
+### `skill.yaml` -- The manifest
+
+```yaml
+name: my-skill                # (required) Unique identifier
+version: 1.0.0                # Skill version
+description: "Description"    # Human-readable description
+author: platform-team          # Author (optional)
+
+# Agents that will receive this skill's instructions
+agents:
+  - dev
+  - qa
+
+# Modes where this skill is active (all if omitted)
+modes:
+  - standard
+  - enterprise
+
+# Hooks declared by this skill
+hooks:
+  on_feature_created:
+    - command: ./hooks/notify.sh
+      onFailure: warn
+  on_feature_completed:
+    - command: ./hooks/close-ticket.sh
+      onFailure: ignore
+
+# Custom configuration (accessible in hooks via env vars)
+config:
+  jira_url: https://mycompany.atlassian.net
+  project_key: PROJ
+
+# Injection priority (higher = injected first)
+priority: 10
+
+# Active or not
+enabled: true
+```
+
+### `instructions.md` -- The instructions
+
+This file's content is injected into each target agent's prompt under the `--- Skills Instructions ---` section.
+
+```markdown
+# My Skill
+
+## For Dev Agent
+- Always use strict types
+- No `any` allowed
+
+## For QA Agent
+- Verify test coverage >= 80%
+```
+
+### `rules/` -- Additional rules
+
+The `.md` files in this folder are merged with the project rules (`.neuraforge/rules/`) and injected into the `--- Enterprise Rules ---` section of the prompt.
+
+## Full `skill.yaml` schema
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `name` | string | (required) | Unique skill identifier |
+| `version` | string | `1.0.0` | Semver version |
+| `description` | string | `""` | Human-readable description |
+| `author` | string | -- | Author or team |
+| `agents` | AgentRole[] | all agents | Agents that will receive instructions |
+| `modes` | CTAMode[] | all modes | Modes where the skill is active |
+| `hooks` | Record | -- | Hooks per event |
+| `config` | Record | -- | Custom configuration |
+| `priority` | number | `0` | Injection priority (descending) |
+| `enabled` | boolean | `true` | Enable/disable without removing |
+| `compatibility` | object | -- | Version constraints (see below) |
+
+### `compatibility` field
+
+```yaml
+compatibility:
+  neuraforge: ">=0.9.0"              # Min NeuraForge version (semver range)
+  skills:                        # Skill dependencies
+    secret-scan: ">=1.0.0"
+  conflicts:                     # Incompatible skills
+    - legacy-security-check
+```
+
+### Possible `agents` values
+
+`lead`, `analyst`, `planner`, `dev`, `qa`, `docops`
+
+### Possible `modes` values
+
+`flash`, `standard`, `enterprise`
+
+### Hook events
+
+`on_feature_created`, `on_phase_start`, `on_phase_end`, `on_feature_completed`, `on_feature_blocked`, `on_agent_start`, `on_agent_output`, `on_agent_error`, `on_quality_gate_pass`, `on_quality_gate_fail`
+
+## CLI commands
+
+| Command | Description |
+|---|---|
+| `neuraforge skills list` | List all installed skills |
+| `neuraforge skills init <name>` | Create a new skill from template |
+| `neuraforge skills add <path>` | Install from local directory |
+| `neuraforge skills install <source>` | Install from registry, GitHub, URL, or local path |
+| `neuraforge skills remove <name>` | Remove a skill |
+| `neuraforge skills enable <name>` | Enable a skill |
+| `neuraforge skills disable <name>` | Disable a skill |
+| `neuraforge skills search <query>` | Search the skills registry |
+| `neuraforge skills info <name>` | Show skill details |
+| `neuraforge skills outdated` | List skills with newer versions |
+| `neuraforge skills doctor` | Check compatibility of all installed skills |
+| `neuraforge skills pack list` | List available packs |
+| `neuraforge skills pack install <name>` | Install all skills from a pack |
+| `neuraforge skills pack create <name> -s <skills>` | Create a custom pack |
+| `neuraforge skills pack remove <name>` | Remove a custom pack |
+
+## Skills Marketplace
+
+NeuraForge provides an on-demand catalogue of official skills. Install only what you need, when you need it.
+
+### Search available skills
+
+```bash
+$ neuraforge skills search security
+$ neuraforge skills search --category compliance
+$ neuraforge skills search --agent qa
+```
+
+### Install a skill
+
+```bash
+$ neuraforge skills install owasp-check           # From registry (latest)
+$ neuraforge skills install owasp-check@2.1.0     # Specific version
+$ neuraforge skills install ./my-local-skill      # From local path
+$ neuraforge skills install owasp-check --force   # Overwrite existing
+```
+
+### Check for updates
+
+```bash
+$ neuraforge skills outdated                      # List skills with newer versions
+$ neuraforge skills info owasp-check              # Detailed info about a skill
+```
+
+### Compatibility doctor
+
+```bash
+$ neuraforge skills doctor
+  ✓ code-review-strict@1.1.0  — compatible
+  ⚠ hipaa-guard@1.0.0          — requires NeuraForge >=1.0.0 (current: 0.8.0)
+  ✗ legacy-check@0.3.0         — conflicts with owasp-check
+```
+
+### Configuration
+
+```yaml
+# neuraforge.config.yaml
+skills:
+  registryUrl: https://registry.neuraforge.dev/skills.json  # Custom registry
+  autoUpdate: false
+  trustedAuthors: [neuraforge-team]
+```
+
+## Skill Packs (bundles)
+
+Install an entire set of skills in one command:
+
+```bash
+$ neuraforge skills pack list                         # List available packs
+$ neuraforge skills pack install backend-essentials   # Install a pack
+$ neuraforge skills pack create my-team --skills "code-review-strict,owasp-check,jira-sync"
+```
+
+### Official packs
+
+| Pack | Skills | Use case |
+|---|---|---|
+| `backend-essentials` | code-review-strict, owasp-check, secret-scan, test-coverage-enforcer, api-design-restful | Backend teams |
+| `frontend-essentials` | code-review-strict, react-best-practices, naming-conventions, dead-code-detector | Frontend teams |
+| `compliance-full` | compliance-rgpd, hipaa-guard, iso-27001, adr-enforcer, dependency-audit | Regulated industries |
+| `startup-fast` | code-review-strict, secret-scan, changelog-gen | Fast-moving startups |
+| `enterprise-standard` | 8 skills covering review, security, compliance, ADR, notifications | Enterprise teams |
+
+Custom packs are stored in `.neuraforge/skills/.packs.yaml` and can be committed to share with the team.
+
+## Official skill catalogue (19 skills)
+
+### Quality (5 skills)
+
+| Skill | Agents | Modes | Description |
+|---|---|---|---|
+| `code-review-strict` | dev, qa | all | Strict code review: typed returns, no `any`, JSDoc, error classes |
+| `adversarial-review` | analyst, qa | standard+ | Challenge decisions, find single points of failure |
+| `test-coverage-enforcer` | dev, qa | standard+ | Enforce minimum test coverage threshold |
+| `dead-code-detector` | qa | all | Detect unused exports, imports, unreachable code |
+| `naming-conventions` | dev, qa | all | Enforce consistent naming (configurable style) |
+
+### Security (3 skills)
+
+| Skill | Agents | Modes | Description |
+|---|---|---|---|
+| `owasp-check` | qa | all | OWASP Top 10 verification (A01-A10) |
+| `secret-scan` | dev, qa | all | Detect hardcoded secrets (API keys, tokens, passwords) |
+| `dependency-audit` | analyst, qa | standard+ | Audit dependencies for CVEs and license issues |
+
+### Compliance (3 skills)
+
+| Skill | Agents | Modes | Description |
+|---|---|---|---|
+| `compliance-rgpd` | analyst, dev, qa | standard+ | GDPR/RGPD compliance checks |
+| `hipaa-guard` | analyst, dev, qa | enterprise | HIPAA PHI protection and audit logging |
+| `iso-27001` | analyst, qa | enterprise | ISO 27001 information security controls |
+
+### Integration (3 skills)
+
+| Skill | Agents | Modes | Description |
+|---|---|---|---|
+| `jira-sync` | lead, planner | standard+ | Sync features with Jira tickets |
+| `linear-sync` | lead, planner | standard+ | Sync features with Linear issues |
+| `slack-notify` | lead | standard+ | Slack notifications on workflow events |
+
+### Framework (3 skills)
+
+| Skill | Agents | Modes | Description |
+|---|---|---|---|
+| `nestjs-patterns` | dev, qa | all | NestJS best practices (modules, DI, guards) |
+| `react-best-practices` | dev, qa | all | Modern React patterns (hooks, composition, a11y) |
+| `api-design-restful` | planner, dev | standard+ | RESTful API design standards (RFC 7807 errors) |
+
+### Documentation (2 skills)
+
+| Skill | Agents | Modes | Description |
+|---|---|---|---|
+| `adr-enforcer` | planner, docops | enterprise | Require ADRs for architectural decisions |
+| `changelog-gen` | docops | standard+ | Generate Keep a Changelog entries |
+
+## How skills are loaded
+
+1. At workflow start, the orchestrator loads all skills from `.neuraforge/skills/`
+2. Skills with `enabled: false` are filtered out
+3. Skills are sorted by `priority` (higher = injected first)
+4. For each agent, only skills targeting it (and matching the mode) are injected
+5. Instructions appear in the prompt under `--- Skills Instructions ---`
+6. Skill rules are merged with project rules under `--- Enterprise Rules ---`
+
+## Sharing skills between teams
+
+### Git submodule
+
+```bash
+$ git submodule add https://github.com/org/neuraforge-skills-common .neuraforge/skills/common
+```
+
+### Direct copy
+
+```bash
+$ neuraforge skills add /path/to/shared-skills/compliance-gdpr
+```
+
+### Monorepo
+
+In a monorepo, place shared skills at the root and create symlinks:
+
+```bash
+# Monorepo root
+shared-skills/
+  compliance-gdpr/
+
+# In each package
+.neuraforge/skills/compliance-gdpr -> ../../../shared-skills/compliance-gdpr
+```
+
+## Best practices
+
+1. **One skill = one concern**: don't mix security and Jira in the same skill
+2. **Short and actionable instructions**: LLMs prefer clear lists of rules
+3. **Target relevant agents**: don't target all agents if only the Dev is concerned
+4. **Use modes**: compliance skills don't need to be active in flash mode
+5. **Priority**: security/compliance skills should have high priority (>= 20)
+6. **Commit your skills**: `.neuraforge/skills/` should be versioned with the code
+
+## Next step
+
+See the [configuration reference](/en/reference/config) for the full schema, or the [rules and templates](/en/guides/rules-and-templates) guide for standard rules.

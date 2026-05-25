@@ -1,0 +1,218 @@
+# Brownfield : integrer NeuraForge dans un projet existant
+
+> Votre projet a 3 ans, 200K lignes de code et des conventions que seul votre lead dev connait. Parfait — c'est exactement le terrain ou NeuraForge excelle.
+
+**Ce que vous allez apprendre :**
+- Initialiser NeuraForge dans un projet en production
+- Configurer les regles specifiques a votre codebase
+- Les bonnes pratiques pour le brownfield
+- Scenarios par stack : Java/Spring, Node/Express, React, Python, monorepo
+
+## Principes brownfield
+
+NeuraForge est concu pour le brownfield. Contrairement aux frameworks qui necessitent un projet from scratch, NeuraForge s'adapte a votre code existant :
+
+1. **`neuraforge init` scanne votre projet** — detecte la stack, l'architecture, le CI/CD
+2. **Pas de refonte** — NeuraForge travaille feature par feature, sans toucher au reste
+3. **Mode standard par defaut** — l'Analyst scanne le code existant avant de proposer des changements
+4. **Les regles capturent vos conventions** — codifiez ce qui est implicite dans `.neuraforge/rules/`
+
+## Etape 1 : Initialiser
+
+```bash
+$ cd /chemin/vers/mon-projet-en-production
+$ neuraforge init
+```
+
+NeuraForge detecte automatiquement :
+
+| Detection | Sources analysees |
+|-----------|-------------------|
+| Tech stack | package.json, pom.xml, requirements.txt, go.mod, Cargo.toml |
+| Framework | Express, NestJS, Spring Boot, Django, FastAPI, React, Vue, Angular |
+| Architecture | Docker, docker-compose, Kubernetes (k8s/), Terraform |
+| CI/CD | .github/workflows/, .gitlab-ci.yml, Jenkinsfile, .circleci/ |
+| Package manager | pnpm, yarn, npm, bun, maven, gradle, pip, poetry |
+| Base de donnees | Deps (pg, mysql2, redis, mongoose) + docker-compose services |
+| Monorepo | turborepo.json, nx.json, lerna.json, pnpm-workspace.yaml |
+
+Resultat injecte dans le contexte de chaque agent pour des resultats plus pertinents.
+
+## Etape 2 : Documenter vos conventions
+
+Creez les regles qui capturent les conventions **implicites** de votre projet. C'est l'etape la plus importante en brownfield.
+
+```bash
+$ neuraforge rules add coding-standards.md
+```
+
+### Exemple Java/Spring Boot
+
+```markdown
+# coding-standards.md — Backend Java
+
+## Architecture
+- Clean Architecture : domain → application → infrastructure
+- Pas de logique metier dans les controllers
+- Repository pattern pour l'acces donnees
+- Les services ne dependent jamais directement des repositories d'un autre bounded context
+
+## Conventions existantes
+- DTOs : Records Java, suffixe Dto (UserDto, OrderDto)
+- Entites JPA : @Entity dans le package domain/model
+- Configuration : application.yml (pas .properties)
+- Profils Spring : dev, staging, prod
+
+## Tests
+- JUnit 5 + Mockito
+- Testcontainers pour PostgreSQL
+- Tests d'integration dans src/test/java/.../integration/
+- Naming : should_<expected>_when_<condition>
+
+## API
+- OpenAPI 3.0 genere depuis les annotations
+- Pagination : page, size, sort (Spring Data)
+- Validation : @Valid sur les @RequestBody
+- Erreurs : format RFC 7807 (Problem Details)
+```
+
+### Exemple Node.js/Express
+
+```markdown
+# coding-standards.md — Backend Node.js
+
+## Architecture
+- src/routes/ → src/services/ → src/repositories/
+- Middleware dans src/middleware/
+- Validation avec zod sur chaque endpoint
+
+## Conventions existantes
+- ESM (import/export, pas require)
+- TypeScript strict
+- Prisma pour l'ORM
+- Express Router par ressource (users.router.ts, orders.router.ts)
+
+## Tests
+- Vitest + supertest
+- Fixtures dans tests/fixtures/
+- Tests d'integration contre une BDD PostgreSQL locale (docker-compose)
+
+## Patterns a respecter
+- Pas de try/catch dans les routes — utiliser express-async-errors
+- Logging avec pino, pas console.log
+- Variables d'env validees au demarrage avec zod
+```
+
+### Exemple React/Next.js
+
+```markdown
+# coding-standards.md — Frontend React
+
+## Architecture
+- Next.js 14+ App Router
+- Composants dans src/components/ (PascalCase)
+- Hooks custom dans src/hooks/
+- API calls via React Query (pas de fetch direct)
+
+## Conventions existantes
+- CSS Modules (pas Tailwind, pas styled-components)
+- Formulaires avec react-hook-form + zod
+- i18n avec next-intl
+- Tests avec Vitest + Testing Library
+
+## Accessibilite
+- RGAA / WCAG 2.1 AA minimum
+- Tous les inputs ont un label associe
+- Navigation clavier complete
+- Pas de couleur comme seul indicateur d'etat
+```
+
+## Etape 3 : Premiere feature brownfield
+
+Utilisez le mode **standard** pour votre premiere feature brownfield. L'Analyst scannera le code existant et le Planner produira une spec coherente avec l'architecture en place.
+
+```bash
+$ neuraforge standard "Ajouter la pagination sur GET /api/users"
+```
+
+L'Analyst va :
+1. Scanner le codebase pour trouver le code lie aux users
+2. Identifier les patterns existants (comment les autres endpoints font la pagination)
+3. Produire un brief avec les risques et la complexite
+
+Le Planner va :
+1. Lire le brief de l'Analyst + les regles d'entreprise
+2. Creer une spec coherente avec l'architecture existante
+3. Decomposer en stories avec criteres d'acceptation
+
+Le Dev va :
+1. Lire la spec, les stories, le code existant et les regles
+2. Implementer en suivant les conventions du projet
+3. Ecrire des tests dans le style du projet
+
+Le QA va :
+1. Verifier le code vs les criteres d'acceptation
+2. Checker la conformite aux regles
+3. Scanner les patterns OWASP
+
+## Monorepo
+
+### Option A : NeuraForge a la racine
+
+```bash
+$ cd mon-monorepo
+$ neuraforge init
+```
+
+NeuraForge voit l'ensemble du monorepo. Les features touchent potentiellement plusieurs packages.
+
+### Option B : NeuraForge par package
+
+```bash
+$ cd mon-monorepo/packages/api
+$ neuraforge init
+
+$ cd mon-monorepo/packages/frontend
+$ neuraforge init
+```
+
+Chaque package a sa propre config, ses propres regles et ses propres features. Recommande pour les monorepos avec des equipes independantes par package.
+
+### Regles partagees dans un monorepo
+
+```
+mon-monorepo/
+  .neuraforge/                          # NeuraForge racine (si Option A)
+    rules/
+      shared-standards.md        # Regles partagees
+  packages/
+    api/
+      .neuraforge/
+        rules/
+          api-standards.md       # Regles specifiques API
+    frontend/
+      .neuraforge/
+        rules/
+          front-standards.md     # Regles specifiques front
+```
+
+## Bonnes pratiques brownfield
+
+### A faire
+
+- **Commencez par des features isolees** — pas par une refonte transversale
+- **Documentez vos conventions existantes** dans `.neuraforge/rules/` avant de lancer NeuraForge
+- **Utilisez standard, pas flash** — l'Analyst a besoin de scanner le code existant
+- **Commitez les artefacts** — ils documentent les decisions pour les futurs devs
+- **Verifiez le premier resultat attentivement** — ajustez les regles si necessaire
+
+### A eviter
+
+- **Ne lancez pas enterprise sur une petite feature** — standard suffit pour 80% des cas
+- **Ne sautez pas les regles** — sans regles, NeuraForge ne connait pas vos conventions
+- **Ne faites pas confiance aveuglement** — NeuraForge genere du code qui doit etre relu
+- **N'ignorez pas le review.md** — le QA a peut-etre identifie des problemes reels
+
+## Prochaine etape
+
+Decouvrez comment utiliser [NeuraForge en equipe](/fr/cookbook/team) pour standardiser les pratiques.

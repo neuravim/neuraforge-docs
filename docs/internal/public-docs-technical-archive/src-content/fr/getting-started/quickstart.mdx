@@ -1,0 +1,153 @@
+# Quickstart
+
+**5 minutes.** C'est le temps qu'il faut pour voir NeuraForge en action. Pas une demo figee, pas une video — du vrai code genere dans votre vrai projet. Pret ?
+
+On va creer une petite API Express, lancer une commande, et regarder NeuraForge ecrire le code et les tests pour nous. Allez, on y va.
+
+---
+
+## On pose les fondations
+
+D'abord, un projet tout simple. Rien de fancy — juste de quoi donner a NeuraForge quelque chose a travailler :
+
+```bash
+$ mkdir mon-api && cd mon-api
+$ npm init -y
+$ npm install express
+```
+
+Creez un fichier `index.js` minimal :
+
+```js
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => res.json({ status: 'ok' }));
+module.exports = app;
+```
+
+Trois fichiers, une dependance. C'est tout ce qu'il faut. Maintenant, on branche NeuraForge.
+
+## On branche NeuraForge
+
+```bash
+$ neuraforge init
+NeuraForge initialized in .neuraforge/
+  Config: .neuraforge/neuraforge.config.yaml
+  Rules:  .neuraforge/rules/coding-standards.md
+  Memory: .neuraforge/memory/
+  Stack:  node, express
+  PM:     npm
+```
+
+Vous voyez `Stack: node, express` ? NeuraForge a scanne votre projet et compris tout seul ce que vous utilisez. Il va s'en servir pour generer du code qui colle a votre stack — pas du code generique copie-colle d'un tutoriel.
+
+## Le moment de verite
+
+C'est la que ca devient interessant. Une seule commande, en francais :
+
+```bash
+$ neuraforge flash "Ajouter un endpoint GET /health retournant {status: healthy}"
+```
+
+Et la, NeuraForge se met au travail :
+
+```
+Starting flash workflow for: Ajouter un endpoint GET /health...
+  Phase: implementation, Agent: dev, Provider: claude-code
+  Dev: Implementing feature...
+  Dev: Writing tests...
+  Feature completed: ajouter-un-endpoint-get-health
+  Tokens: 1250 | Duration: 12s
+```
+
+12 secondes. Le code est ecrit, les tests sont la. Serieusement.
+
+## On verifie que tout est la
+
+Bon, faire confiance c'est bien, verifier c'est mieux. Voyons ce qu'NeuraForge a produit :
+
+```bash
+$ neuraforge status
+ajouter-un-endpoint-get-health [completed] (flash)
+  Tokens: 1250 | Created: 2026-03-27
+```
+
+La feature est marquee `completed`. Allons voir les artefacts :
+
+```bash
+$ ls .neuraforge/features/ajouter-un-endpoint-get-health/
+change-summary.md
+```
+
+Le `change-summary.md` contient un resume de ce que le Dev a fait : fichiers modifies, tests crees, decisions prises. C'est votre trace ecrite — utile quand un collegue demande "c'est quoi ce commit ?".
+
+## On inspecte le code
+
+Parce qu'on ne shippe jamais du code qu'on n'a pas relu :
+
+```bash
+$ cat index.js
+# Devrait contenir: app.get('/health', ...)
+
+$ ls *.test.* *.spec.*
+# Un fichier de test devrait exister
+```
+
+Le Dev a modifie `index.js` pour ajouter la route `/health` et cree un fichier de test. Pas juste le endpoint — le test qui va avec. C'est ca, un workflow qui pense a la qualite des le depart.
+
+## Un coup d'oeil aux metriques
+
+Avant de finir, un petit check sur la consommation :
+
+```bash
+$ neuraforge metrics
+Features: 1 completed
+Tokens:   1250 used
+Cost:     $0.004
+```
+
+Moins d'un centime pour une feature complete avec tests. Pas mal, non ?
+
+---
+
+## Ce que NeuraForge a fait en coulisses
+
+OK, vous avez vu le resultat. Mais ce qui est vraiment interessant, c'est ce qui s'est passe sous le capot. Parce que meme en mode flash (le plus rapide), NeuraForge ne fait pas "juste" appeler une IA :
+
+1. **Le Lead a analyse votre demande** — il a detecte que c'est une tache simple (un endpoint, < 3 fichiers impactes) et a choisi automatiquement le mode flash. Si vous aviez demande une migration de base de donnees, il aurait escalade vers le mode standard avec analyse et planning.
+
+2. **Le Dev a lu votre code existant** — il n'a pas genere un fichier from scratch. Il a lu `index.js`, compris la structure, et ajoute la route au bon endroit. Il a aussi ecrit un test coherent avec votre stack.
+
+3. **Tout est trace** — la decision est logguee dans `.neuraforge/memory/decisions.jsonl`, le contexte projet est mis a jour dans `.neuraforge/memory/context.yaml`. La prochaine fois que vous lancerez NeuraForge, il saura ce qui a deja ete fait.
+
+4. **Le budget est suivi** — chaque token utilise est comptabilise. En mode enterprise, vous pouvez definir des plafonds par feature, par sprint, par equipe.
+
+5. **Les retex s'accumulent** — au fil du temps, NeuraForge apprend de vos projets. Les lecons tirees sont reinjectees dans les prompts des agents suivants.
+
+Et ca, c'etait juste le mode flash. En mode standard, vous auriez eu un Analyst qui decompose la complexite, un Planner qui cree des stories, et un QA qui relit le code avec des criteres d'acceptation. En mode enterprise, ajoutez des validations humaines entre chaque phase et une documentation auto-generee.
+
+---
+
+## Checklist de reussite
+
+Vous avez reussi si :
+
+- `.neuraforge/` existe avec la config et la memoire
+- `neuraforge status` montre la feature completee
+- Un `change-summary.md` a ete genere
+- Le code contient la route `/health`
+
+Tout est coche ? Bravo, vous venez de livrer votre premiere feature avec NeuraForge.
+
+## Si ca ne marche pas
+
+Pas de panique, voici les cas classiques :
+
+- **"NeuraForge not initialized"** — Lancez `neuraforge init` d'abord. NeuraForge a besoin du dossier `.neuraforge/` pour fonctionner.
+- **"No provider available"** — Verifiez que `claude --version` fonctionne dans votre terminal. NeuraForge a besoin d'au moins un provider IA accessible.
+- **Le provider timeout** — La premiere requete peut etre lente (cold start). Relancez simplement la commande.
+- **Le code n'est pas ce que vous attendiez** — Essayez `neuraforge standard` pour plus de controle. Vous aurez une phase d'analyse et de planning avant l'implementation, plus une review QA a la fin.
+
+## Et maintenant ?
+
+Vous avez goute au mode flash — rapide, direct, efficace. Mais NeuraForge peut faire bien plus. Suivez le tutoriel [Premiere feature](/fr/getting-started/first-feature) pour decouvrir le mode standard complet : Analyst, Planner, Dev et QA qui collaborent sur votre feature. C'est la que la magie opère vraiment.

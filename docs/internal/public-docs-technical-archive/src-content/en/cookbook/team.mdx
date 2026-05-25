@@ -1,0 +1,232 @@
+# NeuraForge in a Team
+
+> One dev with NeuraForge is great. An entire team with the same rules, the same workflow and a 30-minute onboarding? That's where it becomes truly powerful.
+
+**What you'll learn:**
+- Configure NeuraForge for a team of 5 to 50+ developers
+- Share rules, conventions and templates
+- Git workflow with NeuraForge
+- Onboard a new member in 30 minutes
+
+## Team Configuration
+
+### Shared Rules in Git
+
+Commit `.neuraforge/rules/` in your repo. The entire team uses the same standards automatically.
+
+```
+.neuraforge/
+  rules/
+    coding-standards.md         # Common code standards
+    security-policy.md          # Security policy
+    architecture-principles.md  # Architecture principles
+    api-guidelines.md           # REST API standards
+```
+
+Each rule is a Markdown file automatically injected into agent prompts.
+
+### Global Config (Multi-Project)
+
+For rules that apply to **all projects** in the organization, use the global config:
+
+```yaml
+# ~/.neuraforge/enterprise.config.yaml (on each workstation)
+company: MyCompany
+defaults:
+  mode: standard
+  lang: en
+  provider: claude-code
+
+security:
+  no_secrets_in_artefacts: true
+  scan_dependencies: true
+  require_security_review: true
+
+compliance:
+  enabled: true
+  frameworks: [GDPR, ISO27001]
+  audit_log: true
+
+coding:
+  test_coverage_min: 80
+  max_pr_size: 400
+  commit_convention: conventional
+```
+
+Distribute this file via your developer workstation provisioning script.
+
+### Profiles per Team
+
+If your organization has multiple teams with different stacks:
+
+```yaml
+# .neuraforge/neuraforge.config.yaml
+profiles:
+  backend:
+    rules: [coding-standards.md, api-guidelines.md, database-rules.md]
+    provider: claude-code
+    mode: standard
+
+  frontend:
+    rules: [coding-standards-front.md, accessibility.md, ui-guidelines.md]
+    provider: gemini
+    mode: standard
+
+  data:
+    rules: [coding-standards-python.md, data-pipeline-rules.md]
+    provider: gemini
+    mode: standard
+```
+
+## Git Workflow with NeuraForge
+
+### Recommended Workflow
+
+```
+1. Create a branch       git checkout -b feature/export-csv
+2. Launch NeuraForge           neuraforge standard "Add CSV export for reports"
+3. NeuraForge generates        code + tests + artifacts in .neuraforge/features/
+4. Human review          Reviewer reads review.md + spec.md + the diff
+5. Commit                git add -A && git commit -m "feat: CSV export"
+6. Push + PR             Artifacts help the reviewer
+7. Merge + clean         The feature stays archived in .neuraforge/features/
+```
+
+### Branch Naming Convention
+
+| Branch type | Recommended NeuraForge mode |
+|----------------|---------------------|
+| `fix/<slug>` | `neuraforge flash` |
+| `feature/<slug>` | `neuraforge standard` |
+| `refactor/<slug>` | `neuraforge standard` |
+| `release/<slug>` | `neuraforge enterprise` |
+| `hotfix/<slug>` | `neuraforge flash` |
+
+### What to Commit in Git?
+
+| Directory | Commit? | Reason |
+|-----------|------------|--------|
+| `.neuraforge/neuraforge.config.yaml` | **Yes** | Shared configuration |
+| `.neuraforge/rules/` | **Yes** | Team standards |
+| `.neuraforge/templates/` | **Yes** | Custom templates |
+| `.neuraforge/features/` | **Yes** | Artifacts = living documentation |
+| `.neuraforge/memory/context.yaml` | **Optional** | Current state (useful for resuming) |
+| `.neuraforge/memory/decisions.jsonl` | **Yes** | Audit trail |
+| `.neuraforge/memory/metrics.jsonl` | **Optional** | Metrics (useful for tracking) |
+
+### Recommended .gitignore
+
+```gitignore
+# NeuraForge — keep artifacts, ignore temporary files
+.neuraforge/memory/*.lock
+```
+
+## Review Policy with NeuraForge
+
+### Artifact-Based Review
+
+When a developer opens a PR after an `neuraforge standard`, the reviewer has:
+
+| Artifact | What the reviewer checks |
+|----------|---------------------------|
+| `brief.md` | Is the analysis correct? Are risks identified? |
+| `spec.md` | Does the spec match the need? |
+| `stories/*.md` | Are acceptance criteria complete? |
+| `review.md` | Did QA identify any issues? All criteria PASS? |
+| `decisions.jsonl` | Are AI decisions reasonable? |
+
+The human reviewer focuses on **business coherence** and **architecture choices**, not on style or tests (already verified by QA).
+
+### Review Levels by Mode
+
+| Mode | Review required |
+|------|---------------|
+| Flash | Self-review by the dev (QA is skipped) |
+| Standard | QA review.md + human review on the PR |
+| Enterprise | review.md + human review + tech lead approval |
+
+## Onboarding a New Member
+
+### Checklist (30 minutes)
+
+```
+5 min   Install Node 20+ and pnpm
+2 min   pnpm add -g @neuravim/neuraforge
+1 min   Copy ~/.neuraforge/enterprise.config.yaml (via provisioning)
+2 min   Clone the repo (rules are included in .neuraforge/rules/)
+1 min   neuraforge provider status  — verify the provider
+5 min   neuraforge flash "Add an info log at startup"  — first flash
+5 min   neuraforge status + explore the generated artifacts
+10 min  Read artifacts from an existing feature in .neuraforge/features/
+```
+
+### Onboarding Value of Artifacts
+
+NeuraForge artifacts in `.neuraforge/features/` are **living onboarding documents**. A new member can read:
+
+- The `brief.md` to understand **why** a feature exists
+- The `spec.md` to understand **how** it was designed
+- The `review.md` to understand **what issues** were identified
+- The `decisions.jsonl` to understand **what AI decisions** were made
+
+That's faster than reading the code and guessing the intent.
+
+### Capitalize with Retex
+
+**Retex** (experience feedback) let the team capitalize on lessons learned:
+
+```bash
+# After a successful feature
+$ neuraforge retex add --title "Incremental ORM migration" \
+  --context prisma,drizzle,migration \
+  --outcome success \
+  --lesson "Migrating table by table is safer than a big bang" \
+  --recommendation "Keep both ORMs running in parallel during migration"
+
+# After a failure
+$ neuraforge retex add --title "Redis cache without TTL" \
+  --context redis,cache,bug \
+  --outcome failure \
+  --lesson "A cache without TTL caused an OOM in production" \
+  --recommendation "Always set a TTL on Redis keys"
+
+# Search relevant retex
+$ neuraforge retex search migration
+```
+
+Relevant retex are automatically injected into agent prompts. The team collectively learns from its experiences.
+
+## Team Metrics
+
+### Adoption Tracking
+
+```bash
+# Global metrics
+$ neuraforge metrics
+
+# CSV export for dashboard
+$ neuraforge metrics --export csv > team-metrics-march.csv
+```
+
+### Team KPIs
+
+| Metric | Target | How |
+|----------|-------|---------|
+| % active devs on NeuraForge | > 70% | metrics.jsonl per unique agent |
+| Standard vs flash features | > 30% standard | decisions.jsonl type=mode_selection |
+| Average cost per dev/month | < $80 | metrics.jsonl aggregated |
+| Circuit breaker rate | < 10% | decisions.jsonl type=circuit_breaker |
+
+## Anti-Patterns to Avoid
+
+| Anti-pattern | Why it's a problem | Solution |
+|-------------|---------------------------|----------|
+| Force NeuraForge on the entire team at once | Rejection and frustration | Adopt progressively: pilot -> teams -> company-wide |
+| Use enterprise for everything | Over-engineering, slowness | Flash for fixes, standard for features, enterprise for critical projects |
+| Don't commit artifacts | Loss of traceability and onboarding | Always commit `.neuraforge/features/` with the code |
+| Ignore review.md | Lose the value of automatic QA | The human reviewer must read review.md first |
+| Rules too strict at the start | Friction, workarounds | Start with lightweight rules, tighten progressively |
+
+## Next Step
+
+Integrate NeuraForge into your [CI/CD pipelines](/en/cookbook/ci-cd) to automate verifications.

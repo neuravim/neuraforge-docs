@@ -1,0 +1,127 @@
+# The 3 NeuraForge modes: choose your weapon
+
+> **TL;DR** — Bug fix → flash. Feature → standard. Critical migration → enterprise. When in doubt, standard.
+
+Imagine three tools in front of you. A **Swiss army knife** for everyday emergencies. A **full workshop** for building something solid. And a **certified construction site** with blueprints, inspections, and sign-offs at every step. NeuraForge works exactly like that — three modes tailored to the scope of your task.
+
+This guide will show you how to choose the right mode, and more importantly, how NeuraForge can do it for you.
+
+## At a glance
+
+| Feature | Flash | Standard | Enterprise |
+|---|---|---|---|
+| Time | < 30 min | 2h - 1 day | 1 day - 1 week |
+| Agents | Lead, Dev | +Analyst, Planner, QA | +DocOps |
+| Brief | No | Yes | Yes |
+| Spec | No | Yes | Yes + ADR |
+| Review | No | Yes | Yes + quality report + production gate |
+| Human approval | No | No | Yes |
+
+Let's look at each mode in detail.
+
+## Flash — the Swiss army knife
+
+Flash mode is pure responsiveness. Got a bug, a small refactoring, a quick tweak? Two agents (Lead + Dev), zero paperwork, and it's done.
+
+```bash
+$ neuraforge flash "Fix bug #123"
+```
+
+It's the right choice when:
+- Less than 3 files affected
+- No new API
+- Low complexity (1-2/5)
+
+Think of it as a 30-minute sprint: get in, fix it, get out.
+
+## Standard — the full workshop
+
+Now we're getting serious. Standard mode mobilizes five agents — analysis, planning, implementation, review — to produce a structured and tested result.
+
+```bash
+$ neuraforge standard "New users API"
+```
+
+It's the right choice when:
+- 3 to 15 files affected
+- New API or integration
+- Medium complexity (3-4/5)
+
+The majority of your features will go through this mode. It's the sweet spot between speed and rigor.
+
+## Enterprise — the certified construction site
+
+When the slightest misstep can be costly — data migration, GDPR compliance, architecture overhaul — Enterprise mode adds DocOps and, most importantly, **human approval between each phase**.
+
+```bash
+$ neuraforge enterprise "Authentication migration"
+```
+
+It's the right choice when:
+- More than 15 files
+- New architecture
+- Compliance required (GDPR, security)
+
+Enterprise is no longer just a demo mode with more agents. The workflow ends with a blocking **production readiness gate**. An enterprise feature reaches `completed` only when it looks like a real deliverable application:
+
+- Dev changed at least one real file (`FILES_CHANGED`) and generated at least one test (`TESTS_GENERATED`).
+- Security Reviewer did not block the workflow (`status != blocked`).
+- QA passed with a minimum score of 9/10.
+- QA returned explicit acceptance-criteria results (`CRITERIA_RESULTS`) and every criterion is `PASS`.
+- DocOps produced the required operations artefacts: runbook, rollback, and deployment guide/procedure.
+
+If any of these points is missing, NeuraForge marks the feature as `blocked` with `Enterprise production readiness failed`. This prevents a mockup or textual response from being mistaken for an application ready to ship.
+
+### Human approval: the safety net
+
+In Enterprise mode, **each phase requires human approval** before proceeding to the next. At the end of each phase, the CLI displays:
+
+```
+[APPROVAL] Phase "discovery" for "migration-auth" completed.
+  Agent: analyst | Tokens: 2340
+  Preview: COMPLEXITY: 4 RISKS: - Data loss during migration...
+  Approve? (y/n):
+```
+
+If you answer `n`, the workflow is aborted with the status `aborted`.
+
+To bypass approvals (for example in CI/CD):
+
+```bash
+$ neuraforge enterprise "Auth migration" --auto-approve
+```
+
+> **Warning**: `--auto-approve` disables all human validation. Use only in automated pipelines.
+
+## What if you don't know which mode to choose?
+
+Good news: you don't have to. The Lead analyzes your feature description using heuristics and suggests the optimal mode:
+
+- `"Fix typo in README"` → **flash** (low complexity, 1 file)
+- `"Add new REST API with OAuth"` → **standard** (new API, external dependency)
+- `"Migrate monolith to microservices with GDPR compliance"` → **enterprise** (new architecture, compliance)
+
+The detection also takes project context into account (number of technologies, architecture). In short, the more complex your project, the more cautious NeuraForge will be.
+
+## Dynamic switching: shifting gears without stopping
+
+Here's where it gets really clever. NeuraForge can switch modes mid-flight **without losing work** and by executing the missing phases:
+
+```bash
+# Starts in flash, switches to standard if complexity detected
+$ neuraforge flash "CSV export"
+NeuraForge Lead > Complexity detected (5 files). Switch to standard? [Y/n]
+```
+
+When you switch from flash to standard, `switchMode()`:
+1. Identifies already completed phases (implementation)
+2. Executes the missing phases (discovery, planning)
+3. Continues the workflow with the new artifacts
+
+Switching from standard to flash is a no-op — flash phases are a subset of standard.
+
+It's like switching from a screwdriver to a power drill mid-project: you keep the hole already made, you just change the tool.
+
+## What's next
+
+Now that you know when to use each mode, it's time to meet the ones doing the real work. Discover the [NeuraForge agents](/en/guides/agents) — Lead, Analyst, Planner, Dev, QA, DocOps — and how they collaborate in the pipeline.

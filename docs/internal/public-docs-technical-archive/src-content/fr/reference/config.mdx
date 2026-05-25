@@ -1,0 +1,319 @@
+# Reference Configuration
+
+Le fichier neuraforge.config.yaml a une option pour presque tout. Voici le schema complet, commente et avec les valeurs par defaut.
+
+---
+
+## Schema complet
+
+```yaml
+# .neuraforge/neuraforge.config.yaml
+project: mon-projet              # (requis) Nom du projet
+provider: claude-code            # Provider par defaut
+mode: standard                   # flash | standard | enterprise
+lang: fr                         # Langue des artefacts
+activeProfile: wildfly-to-spring-boot  # Profil agent / playbook metier optionnel
+
+agentProfiles:                   # Personas custom optionnelles pour les agents integres
+  wildfly-to-spring-boot:
+    description: "Profil de migration Java EE legacy"
+    recommendedMode: enterprise
+    workflowPreset: migration
+    artefacts: [migration-inventory, risk-matrix, migration-plan]
+    agents:
+      analyst:
+        role: "Legacy Java EE Migration Analyst"
+        expertise: [WildFly, Java EE, Spring Boot]
+      dev:
+        role: "Spring Boot Migration Engineer"
+
+providers:                       # Configuration par provider
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+  gemini:
+    enabled: true
+    command: gemini
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+  opencode:
+    enabled: true
+    command: opencode
+    model: opencode
+    maxTokens: 200000
+    costPer1k: 0.002
+  codex:
+    enabled: true
+    command: codex
+    model: codex-cli
+    maxTokens: 200000
+    costPer1k: 0.003
+  copilot:
+    enabled: true
+    command: gh
+    model: copilot
+    maxTokens: 50000
+    costPer1k: 0
+  # Provider API custom (proxy LLM)
+  litellm:
+    enabled: true
+    baseUrl: http://localhost:4000/v1   # endpoint OpenAI-compatible
+    # apiKey: sk-xxx                    # optionnel
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+    command: ""                         # pas de subprocess
+
+routing:                         # Strategie de routage
+  strategy: prefer               # auto | prefer | fixed | cost-optimized
+  fallback: [claude-code, gemini, opencode, codex, copilot]
+
+budget:                          # Budget tokens
+  monthlyLimit: 500000
+  alertAt: 80                    # Pourcentage
+  perFeature:
+    flash: 5000
+    standard: 20000
+    enterprise: 100000
+
+hooks: {}                        # Hooks par evenement
+rules: []                        # Fichiers de regles
+
+pipeline:                        # Configuration du pipeline inter-agents
+  maxOutputCharsPerAgent: 8000   # Troncature outputs (defaut: 8000)
+
+
+learning:                        # Learning Retex -> candidates
+  enabled: true
+  mode: quiet
+  retex:
+    enabled: true
+    maxPerIteration: 3
+    ttlIterations: 20
+  review:
+    everyIterations: 10
+    maxItems: 10
+    minPromotionScore: 7
+  promotion:
+    allowAutoKnowledge: true
+    allowAutoRules: false
+    allowAutoSkills: false
+    requireHumanApprovalFor: [rule, skill, security]
+
+sanitize: true                   # Filtrage donnees sensibles (defaut: true)
+
+memory:                          # Gouvernance memoire par scopes
+  enabled: true
+  scopePrecedence: [task, session, project, user]
+  scopes:
+    user:
+      enabled: true
+      maxSize: small
+      lifecycle: persistent
+      writePolicy: suggested
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: on_limit
+    project:
+      enabled: true
+      maxSize: medium
+      lifecycle: persistent
+      writePolicy: suggested
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: periodic
+      revalidateBeforeUse: true
+    session:
+      enabled: true
+      maxSize: large
+      lifecycle: session
+      writePolicy: automatic
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: on_close
+    task:
+      enabled: true
+      maxSize: small
+      lifecycle: ephemeral
+      writePolicy: automatic
+      readPolicy: always
+      sensitivity: low
+      summarization: none
+```
+
+---
+
+## Detail des options
+
+### Options providers
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `providers.<name>.enabled` | boolean | — | Activer/desactiver le provider |
+| `providers.<name>.command` | string | — | Commande CLI a spawner |
+| `providers.<name>.model` | string | — | Modele a utiliser |
+| `providers.<name>.maxTokens` | number | — | Limite de tokens par requete |
+| `providers.<name>.costPer1k` | number | — | Cout par 1000 tokens |
+| `providers.<name>.baseUrl` | string | — | Endpoint API OpenAI-compatible (active l'adapter HTTP) |
+| `providers.<name>.apiKey` | string | — | Cle API pour l'authentification Bearer |
+
+Quand `baseUrl` est defini, NeuraForge utilise l'adapter API (`fetch`) au lieu du subprocess CLI. Le `command` est ignore.
+
+### Options Agent Profile
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `activeProfile` | string | — | Active un profil agent nomme pour le workflow. Peut aussi etre passe via `--profile`. |
+| `agentProfiles.<name>.description` | string | — | Objectif lisible du profil. |
+| `agentProfiles.<name>.recommendedMode` | string | — | Mode conseille pour ce profil, souvent `enterprise` pour les migrations. |
+| `agentProfiles.<name>.workflowPreset` | string | — | Label d'intention workflow optionnel, par exemple `migration`. |
+| `agentProfiles.<name>.instructions` | string | — | Instructions niveau profil injectees avec les instructions de skills. |
+| `agentProfiles.<name>.artefacts` | string[] | — | Artefacts domaine attendus. |
+| `agentProfiles.<name>.agents.<role>` | object ou `false` | — | Surcharge persona pour un role integre, ou `false` pour desactiver l'injection de persona sur ce role. |
+
+Voir [Agent Profiles & Domain Playbooks](/fr/guides/agent-profiles) pour l'exemple complet WildFly vers Spring Boot.
+
+### Options Pipeline
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `pipeline.maxOutputCharsPerAgent` | number | 8000 | Nombre max de caracteres par output d'agent injecte dans le prompt du suivant. |
+
+### Options routing
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `routing.strategy` | string | `prefer` | Strategie : `fixed`, `prefer`, `auto`, `cost-optimized`. En mode `auto`, chaque agent recoit le provider optimal. |
+| `routing.fallback` | string[] | `[claude-code, gemini, opencode, codex, copilot]` | Chaine de fallback si le provider prefere est indisponible. |
+
+
+### Options de gouvernance memoire
+
+Quand la memoire est active, NeuraForge injecte une section explicite `--- Memory Governance ---` dans les prompts agents. Les agents doivent traiter la memoire comme des indices contextuels, pas comme une source de verite.
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `memory.enabled` | boolean | `true` | Active l'injection de gouvernance memoire par scopes. |
+| `memory.scopePrecedence` | MemoryScope[] | `[task, session, project, user]` | Ordre utilise quand des scopes se contredisent. |
+| `memory.scopes.<scope>.enabled` | boolean | `true` | Active un scope. |
+| `memory.scopes.<scope>.maxSize` | `small`/`medium`/`large`/number | selon scope | Budget taille du scope. |
+| `memory.scopes.<scope>.lifecycle` | `ephemeral`/`session`/`ttl`/`persistent` | selon scope | Cycle de retention. |
+| `memory.scopes.<scope>.writePolicy` | `never`/`manual`/`suggested`/`automatic` | selon scope | Autorise l'ecriture ou la suggestion d'ecriture. |
+| `memory.scopes.<scope>.readPolicy` | `never`/`explicit`/`contextual`/`always` | selon scope | Niveau de lecture du scope. |
+| `memory.scopes.<scope>.sensitivity` | `low`/`medium`/`high` | selon scope | Classification sensibilite. |
+| `memory.scopes.<scope>.summarization` | `none`/`periodic`/`on_limit`/`on_close` | selon scope | Quand la memoire doit etre resumee. |
+| `memory.scopes.<scope>.revalidateBeforeUse` | boolean | `false` | Force une verification avant d'utiliser ce scope comme contexte. |
+| `memory.scopes.<scope>.retention.ttlMs` | number | — | TTL optionnel pour le lifecycle `ttl`. |
+| `memory.scopes.<scope>.retention.maxEntries` | number | — | Nombre max optionnel d'entrees du scope. |
+
+Les scopes par defaut sont `task`, `session`, `project` et `user`. Le scope `project` definit `revalidateBeforeUse: true` pour verifier la memoire projet avant qu'elle influence le comportement agent.
+
+
+### Options Learning
+
+`learning` transforme les Retex en candidates révisables. Les defaults privilégient le mode silencieux et la validation humaine pour les artefacts prescriptifs.
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `learning.enabled` | boolean | `true` | Active le moteur de capture/scoring Retex. |
+| `learning.mode` | `quiet`/`suggest`/`active` | `quiet` | Niveau de proactivité. |
+| `learning.retex.maxPerIteration` | number | `3` | Nombre maximum de Retex capturés par itération. |
+| `learning.retex.ttlIterations` | number | `20` | Expiration des Retex temporaires non promus. |
+| `learning.review.everyIterations` | number | `10` | Fréquence de revue périodique. |
+| `learning.review.minPromotionScore` | number | `7` | Score minimal pour créer une candidate durable. |
+| `learning.promotion.allowAutoKnowledge` | boolean | `true` | Autorise les Knowledge candidates automatiques. |
+| `learning.promotion.allowAutoRules` | boolean | `false` | Garde les rules en candidates sauf validation explicite. |
+| `learning.promotion.allowAutoSkills` | boolean | `false` | Garde les skills en candidates sauf validation explicite. |
+| `learning.promotion.requireHumanApprovalFor` | string[] | `[rule, skill, security]` | Types nécessitant revue humaine. |
+
+### Options securite
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `sanitize` | boolean | `true` | Active le filtrage des donnees sensibles (tokens, cles API, mots de passe, cles privees, connection strings) avant envoi aux providers. |
+
+---
+
+## Schema projet (context.yaml)
+
+Le scan de `neuraforge init` genere `.neuraforge/memory/context.yaml` avec ce schema :
+
+| Cle | Type | Description |
+|---|---|---|
+| `project.name` | string | Nom du projet (depuis le dossier) |
+| `project.techStack` | string[] | Technologies detectees (node, typescript, react, nestjs, prisma, python...) |
+| `project.architecture` | string[] | Infrastructure (docker, docker-compose, kubernetes) |
+| `project.ci` | string[] | Systemes CI/CD (github-actions, gitlab-ci, jenkins, circleci) |
+| `project.packageManager` | string? | Gestionnaire de paquets (pnpm, yarn, npm, bun) |
+| `project.databases` | string[]? | Bases de donnees (postgres, mysql, redis, mongodb) |
+| `project.monorepo` | string? | Outil monorepo (turborepo, nx, lerna, pnpm-workspaces) |
+
+Ces donnees sont injectees dans le prompt de chaque agent via la section `--- Project Context ---`.
+
+---
+
+## Schema `skill.yaml`
+
+Chaque skill dans `.neuraforge/skills/<name>/` contient un fichier `skill.yaml` :
+
+```yaml
+name: mon-skill                # (requis) Identifiant unique
+version: 1.0.0                 # Version semver (defaut: 1.0.0)
+description: ""                # Description lisible
+author: equipe-platform        # Auteur (optionnel)
+agents:                        # Agents cibles (defaut: tous)
+  - dev
+  - qa
+modes:                         # Modes actifs (defaut: tous)
+  - standard
+  - enterprise
+hooks:                         # Hooks declares
+  on_feature_created:
+    - command: ./hooks/notify.sh
+      onFailure: warn
+config:                        # Configuration custom
+  jira_url: https://company.atlassian.net
+priority: 10                   # Priorite (defaut: 0, plus haut = premier)
+enabled: true                  # Actif (defaut: true)
+```
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `name` | string | (requis) | Identifiant unique, valide par Zod |
+| `version` | string | `1.0.0` | Version semver |
+| `description` | string | `""` | Description |
+| `author` | string | — | Auteur |
+| `agents` | AgentRole[] | tous | `lead`, `analyst`, `planner`, `dev`, `qa`, `docops` |
+| `modes` | CTAMode[] | tous | `flash`, `standard`, `enterprise` |
+| `hooks` | Record | — | Hooks par evenement (meme format que `neuraforge.config.yaml`) |
+| `config` | Record | — | Paires cle-valeur libres |
+| `priority` | integer | `0` | Tri decroissant |
+| `enabled` | boolean | `true` | Desactiver sans supprimer |
+
+Voir le [guide skills](/fr/guides/skills) pour l'utilisation complete.
+
+---
+
+## Niveaux de surcharge
+
+La configuration suit une cascade a cinq niveaux — chaque niveau ecrase le precedent :
+
+| Niveau | Fichier | Portee |
+|---|---|---|
+| 1. Defauts | (built-in) | Global |
+| 2. Enterprise | `~/.neuraforge/enterprise.config.yaml` | Tous les projets |
+| 3. Projet | `.neuraforge/neuraforge.config.yaml` | Ce projet |
+| 4. Feature | `.neuraforge/features/<slug>/.override.yaml` | Cette feature |
+| 5. CLI | `--mode`, `--provider` | Cette commande |
+
+Chaque niveau ecrase les valeurs du precedent. Les objets sont fusionnes en profondeur, les tableaux sont remplaces.
+
+---
+
+## Prochaine etape
+
+Consultez la [reference artefacts](/fr/reference/artefacts).

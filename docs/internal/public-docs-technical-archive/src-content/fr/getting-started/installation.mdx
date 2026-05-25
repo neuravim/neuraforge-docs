@@ -1,0 +1,160 @@
+# Installation
+
+**Vous ecrivez encore vos specs a la main, vous debuggez seul a 23h, et votre backlog ne desemplit jamais ?** NeuraForge change la donne — mais d'abord, il faut l'installer. Bonne nouvelle : c'est l'affaire de 3 commandes.
+
+> **TL;DR** — Pour les impatients, voici la version express :
+> ```bash
+> pnpm add -g @neuravim/neuraforge   # 1. Installer
+> neuraforge init                     # 2. Initialiser dans votre projet
+> neuraforge flash "Hello world" --dry-run  # 3. Verifier que ca marche
+> ```
+> C'est tout. Si vous voulez comprendre chaque etape (et eviter les pieges), lisez la suite.
+
+---
+
+## Prerequis
+
+Avant d'inviter NeuraForge dans votre projet, assurez-vous d'avoir le bon environnement. Pensez-y comme les ingredients avant la recette :
+
+- **Node.js 20+** — verifiez avec `node --version`
+- **pnpm** — installez avec `npm install -g pnpm`
+- Au moins un provider IA : Claude Code, Gemini CLI, OpenCode ou GitHub Copilot (ou un proxy API type LiteLLM)
+
+Le provider, c'est le "cerveau" qu'NeuraForge va piloter. Sans provider, NeuraForge est un chef d'orchestre sans musiciens — il sait quoi faire, mais personne pour jouer la partition.
+
+Tout est pret ? Parfait, passons a l'installation proprement dite.
+
+---
+
+## Installer NeuraForge
+
+Une seule commande, installation globale :
+
+```bash
+$ pnpm add -g @neuravim/neuraforge
+```
+
+Verifiez que tout s'est bien passe :
+
+```bash
+$ neuraforge --version
+0.12.1
+```
+
+> **Astuce** : Si `command not found`, ajoutez le dossier global pnpm a votre PATH : `export PATH="$(pnpm store path)/../../.pnpm:$PATH"`
+
+Le binaire est la. Maintenant, il faut presenter NeuraForge a votre projet — c'est la qu'`neuraforge init` entre en jeu.
+
+---
+
+## Initialiser un projet
+
+C'est l'etape ou NeuraForge "fait connaissance" avec votre codebase. Dans le repertoire de votre projet :
+
+```bash
+$ neuraforge init
+NeuraForge initialized in .neuraforge/
+  Config: .neuraforge/neuraforge.config.yaml
+  Rules:  .neuraforge/rules/coding-standards.md
+  Memory: .neuraforge/memory/
+  Stack:  node, typescript, express
+  Arch:   docker
+  CI:     github-actions
+  PM:     pnpm
+```
+
+Qu'est-ce qui se passe sous le capot ? NeuraForge scanne automatiquement votre projet et detecte tout ce qu'il peut. C'est un peu comme un nouveau developpeur qui lirait votre `package.json`, votre `Dockerfile` et votre CI config le premier jour — sauf qu'il le fait en quelques secondes :
+
+- **Tech stack** : Node.js, TypeScript, React, Express, NestJS, Vue, Angular, Python, Go, Rust...
+- **Architecture** : Docker, Docker Compose, Kubernetes
+- **CI/CD** : GitHub Actions, GitLab CI, Jenkins, CircleCI
+- **Package manager** : pnpm, yarn, npm, bun
+- **Databases** : PostgreSQL, MySQL, Redis, MongoDB (depuis les deps et docker-compose)
+- **Monorepo** : Turborepo, Nx, Lerna, pnpm workspaces
+
+Ces informations sont injectees dans le contexte de chaque agent pour des resultats plus pertinents. Plus NeuraForge connait votre projet, plus ses suggestions sont adaptees.
+
+Voici la structure creee dans votre projet :
+
+```
+.neuraforge/
+  neuraforge.config.yaml    # Configuration projet
+  memory/            # Contexte, decisions, metriques
+  rules/             # Regles entreprise
+  templates/         # Templates personnalises
+  features/          # Features en cours
+```
+
+Le projet est initialise — reste a s'assurer qu'NeuraForge peut parler a votre IA preferee.
+
+---
+
+## Configurer le provider
+
+Par defaut, NeuraForge utilise Claude Code. Si vous preferez un autre provider, un simple changement de config suffit :
+
+```bash
+$ neuraforge config set provider gemini
+Set provider = gemini
+```
+
+Providers disponibles : `claude-code`, `gemini`, `copilot`.
+
+Pour verifier que votre provider est bien accessible (parce qu'un outil qu'on ne peut pas joindre, ca ne sert pas a grand-chose) :
+
+```bash
+$ neuraforge provider status
+Provider status:
+  claude-code: configured
+  gemini: not found
+  copilot: configured
+```
+
+Si vous voyez "configured" en face de votre provider, vous etes pret pour le grand moment : le premier test.
+
+---
+
+## Premier test
+
+Avant de lancer NeuraForge sur une vraie feature, faisons un test a blanc. Le flag `--dry-run` simule l'execution sans appeler le provider — pratique pour verifier que tout est bien cable :
+
+```bash
+$ neuraforge flash "Ajouter hello.ts" --dry-run
+[DRY RUN] Flash workflow: "Ajouter hello.ts"
+Mode: flash | Agents: lead, dev
+```
+
+Si vous voyez ce resultat, bravo : NeuraForge est installe, initialise, et pret a travailler. Le `--dry-run` montre ce qui serait fait sans appeler le provider.
+
+---
+
+## Mode slash (Claude Code)
+
+Si vous utilisez deja Claude Code au quotidien, il y a un raccourci encore plus direct : les slash commands. Zero installation supplementaire, zero config — juste des commandes dans votre session Claude :
+
+- `/neuraforge-init` — initialiser NeuraForge
+- `/neuraforge-flash` — mode rapide
+- `/neuraforge-standard` — mode complet
+- `/neuraforge-enterprise` — mode enterprise
+
+Les deux modes (CLI et slash) ecrivent dans les memes fichiers `.neuraforge/`. Vous pouvez alterner librement entre les deux sans perdre votre contexte.
+
+---
+
+## Troubleshooting
+
+Tout ne se passe pas toujours comme prevu. Voici les erreurs classiques et comment les resoudre en 30 secondes :
+
+**`command not found: neuraforge`** — Assurez-vous que le dossier global pnpm est dans votre PATH.
+
+**`NeuraForge not initialized`** — Lancez `neuraforge init` dans le repertoire du projet.
+
+**`No provider available`** — Installez Claude Code (`npm install -g @anthropic-ai/claude-code`) ou un autre provider.
+
+**Timeout sur le provider** — Le timeout par defaut est 120s. Si votre LLM est lent, augmentez-le dans `.neuraforge/neuraforge.config.yaml`.
+
+---
+
+## Prochaine etape
+
+L'installation, c'est fait. Maintenant, passez aux choses serieuses : le [Quickstart](/fr/getting-started/quickstart) vous guide a travers un scenario complet en 5 minutes, de la feature request au code genere.

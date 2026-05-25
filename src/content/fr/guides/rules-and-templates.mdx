@@ -1,81 +1,61 @@
-# Regles et Templates
+# Règles et templates
 
-> Vos conventions d'equipe existent dans la tete de votre lead dev. Probleme : les agents IA ne lisent pas dans les pensees. Solution : ecrivez-les en Markdown, NeuraForge les injecte automatiquement.
+> Les conventions d'équipe doivent être explicites. NeuraForge permet de les exprimer sous forme de règles et de templates réutilisables.
 
-**Ce que vous allez apprendre :**
-- Ecrire et ajouter des regles d'entreprise
-- Personnaliser les templates d'artefacts
-- Comment les regles transforment concretement les prompts des agents
+## Règles enterprise
 
-## Regles d'entreprise
+Les règles décrivent les standards que les agents doivent respecter dans votre dépôt.
 
-Les regles sont des fichiers `.md` dans `.neuraforge/rules/`. Elles sont automatiquement injectees dans le contexte de chaque agent. Pas d'API a configurer, pas de plugin a installer : du Markdown, c'est tout.
+Elles couvrent souvent :
 
-### Ajouter une regle
+- style de code ;
+- attentes de tests ;
+- contraintes sécurité ;
+- conventions API ;
+- exigences documentaires ;
+- conventions de commit et pull request.
+
+### Ajouter une règle
 
 ```bash
-$ neuraforge rules add coding-standards.md
-Rule added: coding-standards.md
+neuraforge rules add coding-standards.md
 ```
 
-### Exemple de regle
+### Exemple de règle
 
 ```markdown
-# Standards de code
+# Coding Standards
 
-## TypeScript
-- Strict mode obligatoire
-- Pas de `any` sans justification
-- Interfaces pour tous les types publics
-
-## Tests
-- Couverture minimale : 80%
-- Tests unitaires pour toute logique metier
-
-## Git
-- Conventional Commits
-- PR : max 400 lignes
+- Use strict typing.
+- Add tests for business logic.
+- Follow the team's commit convention.
+- Do not expose secrets in generated artifacts.
 ```
 
-### Lister les regles
-
-```bash
-$ neuraforge rules list
-  coding-standards (.neuraforge/rules/coding-standards.md)
-  security-policy (.neuraforge/rules/security-policy.md)
-```
-
-## Injection des regles : avant / apres
-
-Sans regles, un agent Dev recoit un prompt generique. Il produit du code qui fonctionne, mais qui ne respecte pas forcement vos conventions. Avec des regles, le prompt de l'agent contient explicitement vos standards, et le code genere les respecte des la premiere iteration.
-
-**Sans regles** : l'agent Dev genere du code valide, mais utilise `any`, oublie les interfaces publiques, et cree des commits sans convention.
-
-**Avec `coding-standards.md`** : l'agent Dev recoit vos standards dans son prompt sous `--- Enterprise Rules ---`. Il produit du TypeScript strict, avec des interfaces, et des commits conventionnels.
-
-Les regles sont filtrees par agent pour eviter le bruit :
-- **Dev** recoit : coding-standards, security-policy
-- **QA** recoit : coding-standards, security-policy
-- **Planner** recoit : coding-standards, architecture-principles
-- Les regles custom sont toujours envoyees a tous les agents
-
-La difference est immediate : au lieu d'esperer que l'IA devine vos conventions, vous les lui donnez noir sur blanc.
+Le modèle public reste volontairement simple : écrivez les attentes en langage clair et gardez-les avec le projet. L'assemblage exact des prompts et le filtrage relèvent de l'implémentation interne de NeuraForge.
 
 ## Templates
 
-NeuraForge fournit 7 templates par defaut (brief, spec, story, review, change-summary, architecture-decision, quality-report).
+Les templates standardisent les artefacts : briefs, specs, reviews, change summaries et notes opérationnelles.
 
-### Personnaliser un template
+Utilisez-les lorsque votre équipe veut une documentation cohérente entre fonctionnalités et dépôts.
 
 ```bash
-$ neuraforge template customize spec
-Template "spec" copied to .neuraforge/templates/ for customization.
+neuraforge template customize spec
 ```
 
-Le template copie utilise Handlebars. Variables disponibles : `feature_name`, `provider`, `mode`, `date`, etc.
+Personnalisations fréquentes :
 
-Vous voulez que chaque spec generee contienne une section "Impact RGPD" ? Modifiez le template, et tous les agents qui produisent des specs l'incluront automatiquement.
+- ajouter une section impact GDPR ;
+- exiger des notes de rollback ;
+- inclure le transfert support ;
+- formater les critères d'acceptation ;
+- demander des ADR pour les gros changements.
 
-## Prochaine etape
+## Bonne pratique
 
-Consultez le guide de [troubleshooting](/fr/guides/troubleshooting).
+Gardez les règles publiques compréhensibles par les humains. Si une règle dépend d'un processus interne détaillé, conservez ce détail dans la documentation privée et exposez seulement l'attente opérationnelle dans le dépôt.
+
+## Étape suivante
+
+Voir le guide [troubleshooting](/fr/guides/troubleshooting).

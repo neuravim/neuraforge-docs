@@ -1,0 +1,200 @@
+# Your first feature in standard mode
+
+> Flash mode was the appetizer. Now let's get to the main course: **4 AI agents collaborating to deliver a complete feature**. Imagine an assembly line where each station is manned by a specialist — that's exactly what's about to happen before your eyes.
+
+In this tutorial, you'll follow a feature's journey through the 4 agents of standard mode in real time: **Analyst**, **Planner**, **Dev**, and **QA**. Each produces artifacts, each goes through a quality gate checkpoint, and the whole thing flows like a well-oiled assembly line.
+
+## The scenario: adding GET /health to an Express API
+
+You have an Express API. You want a `/health` endpoint that checks the DB connection. A single command kicks off all 4 agents:
+
+```bash
+$ neuraforge standard "Add a GET /health endpoint with DB connection check"
+```
+
+The assembly line starts. Let's see what happens at each station.
+
+---
+
+## Phase 1 — Discovery: the Analyst takes the project's pulse
+
+First on the line, the Analyst. Its role: scan the existing code, understand the landscape, and produce a structured diagnosis. It doesn't write code — it observes and reports.
+
+```
+Phase: discovery, Agent: analyst, Provider: claude-code
+```
+
+The Analyst delivers its verdict:
+- **Complexity**: 2/5 (simple endpoint with one check)
+- **Risks**: DB dependency not mocked in tests
+- **Questions**: response format? check DB connection or just the server?
+
+It files its report in `.neuraforge/features/add-a-get-health-endpoint/brief.md`:
+
+```markdown
+---
+type: brief
+feature: add-a-get-health-endpoint
+version: 1
+author: analyst
+status: draft
+---
+## Analysis
+Simple endpoint returning server status and DB connection status.
+Complexity: 2/5. Risks: mock DB for tests.
+```
+
+> **Quality gate checkpoint**: If the Analyst doesn't detect complexity or returns empty content, the line stops. No sending an empty file to the Planner — the workflow is blocked until resolution.
+
+The brief is validated. It moves to the next station.
+
+---
+
+## Phase 2 — Planning: the Planner draws up the battle plan
+
+The Planner receives the Analyst's brief and transforms it into an actionable specification. It breaks the work down into stories with precise acceptance criteria — exactly like a human tech lead would.
+
+```
+Phase: planning, Agent: planner, Provider: claude-code
+```
+
+Generated artifacts:
+- `spec.md` — specification in 1-2 pages
+- `stories/001-endpoint-health.md` — story with acceptance criteria
+- `stories/002-tests-health.md` — story for the tests
+
+Here's what a story looks like:
+
+```markdown
+### Story 1: Endpoint /health
+Implement GET /health returning {status: "healthy", db: "connected"}.
+
+Acceptance criteria:
+- GET /health returns 200 with JSON
+- If DB is down, returns {status: "degraded", db: "disconnected"}
+- The endpoint is accessible without authentication
+```
+
+> **Quality gate checkpoint**: If the Planner doesn't break work into stories, the workflow is blocked. No plan, no implementation.
+
+The stories are ready, the acceptance criteria are clear. The Dev knows exactly what to build.
+
+---
+
+## Phase 3 — Implementation: the Dev takes the stage
+
+This is where code gets written. The Dev receives all the accumulated context — brief, spec, stories — and gets to work. It doesn't fly blind: it has the full picture of what the previous agents prepared.
+
+```
+Phase: implementation, Agent: dev, Provider: gemini
+```
+
+The Dev follows a methodical process:
+1. Reads the stories and existing code
+2. Implements the code
+3. Writes the tests
+4. Does a self-review
+
+Structured output: `filesChanged`, `testsGenerated`.
+
+> **Guardrails**: If more than 10 files are modified, the circuit breaker kicks in — that's the signal something is going off the rails. Every 5 steps, an objective reminder is injected to stay on track. The assembly line has its own safety mechanisms.
+
+The code is written, the tests are there. But before declaring victory, there's one last station — and not the least important.
+
+---
+
+## Phase 4 — Validation: the QA goes through everything with a fine-tooth comb
+
+The QA receives ALL the context: brief, spec, stories, and the Dev's code. It doesn't just glance — it explicitly verifies each acceptance criterion defined by the Planner, one by one.
+
+```
+Phase: validation, Agent: qa, Provider: claude-code
+```
+
+The QA produces a detailed report:
+
+```
+--- ACCEPTANCE CRITERIA TO VERIFY ---
+Story: Endpoint /health
+  - GET /health returns 200 with JSON
+  - If DB is down, returns {status: "degraded"}
+  - Accessible without authentication
+
+CRITERIA_RESULTS:
+Endpoint /health / GET returns 200: PASS
+Endpoint /health / DB down: PASS
+Endpoint /health / No auth: PASS
+
+SCORE: 8/10
+PASSED: yes
+```
+
+Structured output: `passed`, `score`, `issues`, `criteriaResults`.
+
+### What if the QA fails?
+
+If `passed = false`, the orchestrator doesn't panic. It launches a **correction loop** — like pair programming where the QA points out problems and the Dev fixes them in real time:
+
+1. The Dev receives the QA's feedback and fixes the issues
+2. The QA re-reviews the new code
+3. Maximum 2 retries. If still failing, the workflow continues with a warning.
+
+It's this feedback loop that makes the difference between a tool that generates code and a framework that **delivers quality**.
+
+---
+
+## The result: a feature delivered, tracked, documented
+
+The assembly line has completed its cycle. Here's the result:
+
+```bash
+$ neuraforge status add-a-get-health-endpoint
+Feature: Add a GET /health endpoint with DB connection check
+  State: completed
+  Mode: standard
+  Tokens: 4500
+  Agents: analyst → planner → dev → qa
+```
+
+All artifacts are organized in `.neuraforge/features/add-a-get-health-endpoint/`:
+
+```
+brief.md              # Analyst's analysis
+spec.md               # Planner's specification
+stories/001-*.md      # Stories with criteria
+stories/002-*.md
+review.md             # QA report
+change-summary.md     # Change summary
+```
+
+Every decision is tracked in `.neuraforge/memory/decisions.jsonl`:
+
+```json
+{"ts":"2026-03-27T10:15:00Z","feature":"add-a-get-health-endpoint","agent":"analyst","type":"complexity","value":2}
+{"ts":"2026-03-27T10:15:05Z","feature":"add-a-get-health-endpoint","agent":"qa","type":"review","value":"passed"}
+```
+
+Nothing is lost. Everything is auditable.
+
+---
+
+## What's next? Enterprise mode
+
+Standard mode works for the majority of features. But for critical projects — authentication migration, regulatory compliance, major refactoring — there's a step above.
+
+Enterprise mode adds:
+- **Human approval** between each phase (you validate before continuing)
+- **DocOps** that generates documentation and verifies compliance
+- **Complete quality report**
+
+```bash
+$ neuraforge enterprise "Authentication migration" --auto-approve
+```
+
+Without `--auto-approve`, each phase requests your validation before continuing.
+
+## Next step
+
+You've seen flash (1 agent) and standard (4 agents). But how do you choose the right mode for each situation? And what happens when NeuraForge detects it needs to switch modes mid-flight?
+
+Discover the [3 NeuraForge modes](/en/guides/modes) and their routing strategies.

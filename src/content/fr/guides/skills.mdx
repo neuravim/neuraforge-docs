@@ -1,328 +1,57 @@
 # Skills
 
-> Une regle de code review, c'est bien. Un package complet avec instructions, regles, hooks et config qui s'active en une commande ? C'est un skill.
-
-**Ce que vous allez apprendre :**
-- Ce qu'est un skill NeuraForge et pourquoi l'utiliser
-- Quand choisir un skill plutot qu'une simple regle
-- Comment creer, gerer et partager vos propres skills
-- Le format `skill.yaml` et toutes ses options
+> Les skills permettent aux équipes de packager des connaissances réutilisables pour NeuraForge sans modifier le produit.
 
 ## Qu'est-ce qu'un skill ?
 
-Un **skill** est un package declaratif (YAML + Markdown) qui regroupe des instructions, regles et hooks injectables dans le pipeline NeuraForge. C'est le mecanisme d'extensibilite principal pour les entreprises.
+Un skill est un paquet réutilisable de connaissances d'équipe. Il peut décrire comment traiter un domaine, quels standards appliquer ou quels contrôles effectuer pour un type de travail.
 
-## Quand utiliser un skill vs une simple regle ?
+Utilisez un skill lorsqu'une simple règle projet ne suffit pas et que l'équipe veut guider NeuraForge de manière répétable sur plusieurs tâches.
 
-Avant de creer un skill, posez-vous la question : une simple regle dans `.neuraforge/rules/` suffit-elle ?
+## Quand utiliser des skills
 
-| | **Regle simple** (`.neuraforge/rules/`) | **Skill** (`.neuraforge/skills/`) |
-|---|---|---|
-| **Cas d'usage** | Convention unique et transversale | Preoccupation complete (compliance, integration, workflow) |
-| **Ciblage agents** | Envoyee a tous les agents | Cible des agents specifiques |
-| **Filtrage par mode** | Toujours active | Activable par mode (flash, standard, enterprise) |
-| **Hooks** | Non | Oui (on_feature_created, on_phase_end, etc.) |
-| **Configuration** | Non | Oui (variables custom, env vars) |
-| **Versioning** | Fichier seul | Package versionne, activable/desactivable |
-| **Exemple** | "Pas de `any` en TypeScript" | "Compliance RGPD : instructions + regles + hooks de notification" |
+Bons cas d'usage :
 
-**En resume** : si votre besoin tient en un fichier Markdown sans ciblage particulier, une regle suffit. Des que vous avez besoin de cibler des agents, filtrer par mode, ou ajouter des hooks, c'est un skill qu'il vous faut.
+- attentes de revue sécurité ;
+- conformité ;
+- playbooks de migration ;
+- standards d'ingénierie métier ;
+- exigences documentaires ;
+- conventions d'onboarding.
 
-## Structure d'un skill
+Pour une convention de code isolée, utilisez une règle. Pour un workflow réutilisable complet, utilisez un skill.
 
-```
-.neuraforge/skills/
-  mon-skill/
-    skill.yaml            # Manifeste : metadata, agents cibles, hooks
-    instructions.md       # Instructions injectees dans les prompts agents
-    rules/                # Regles additionnelles (optionnel)
-      security.md
-    hooks/                # Scripts hooks (optionnel)
-      on_feature_created.sh
-```
+## Comment les équipes utilisent les skills
 
-### `skill.yaml` -- Le manifeste
+Flux typique :
 
-```yaml
-name: mon-skill               # (requis) Identifiant unique
-version: 1.0.0                # Version du skill
-description: "Description"    # Description lisible
-author: equipe-platform        # Auteur (optionnel)
+1. identifier un type de travail récurrent ;
+2. écrire le guidage une seule fois ;
+3. l'attacher aux projets ou workflows concernés ;
+4. l'améliorer au fil des retours d'expérience.
 
-# Agents qui recevront les instructions de ce skill
-agents:
-  - dev
-  - qa
+Le format interne du manifest, les événements de hooks, les priorités et les détails d'injection dans les prompts relèvent de l'implémentation privée. Côté public, il suffit de savoir que les skills sont versionnés, réutilisables et pensés pour la gouvernance d'équipe.
 
-# Modes ou ce skill s'active (tous si omis)
-modes:
-  - standard
-  - enterprise
+## Exemples d'utilisation
 
-# Hooks declares par ce skill
-hooks:
-  on_feature_created:
-    - command: ./hooks/notify.sh
-      onFailure: warn
-  on_feature_completed:
-    - command: ./hooks/close-ticket.sh
-      onFailure: ignore
-
-# Configuration custom (accessible dans les hooks via env vars)
-config:
-  jira_url: https://mycompany.atlassian.net
-  project_key: PROJ
-
-# Priorite d'injection (plus haut = injecte en premier)
-priority: 10
-
-# Actif ou non
-enabled: true
-```
-
-### `instructions.md` -- Les instructions
-
-Le contenu de ce fichier est injecte dans le prompt de chaque agent cible sous la section `--- Skills Instructions ---`.
-
-```markdown
-# Mon Skill
-
-## For Dev Agent
-- Toujours utiliser des types stricts
-- Pas de `any` autorise
-
-## For QA Agent
-- Verifier la couverture de tests >= 80%
-```
-
-### `rules/` -- Regles additionnelles
-
-Les fichiers `.md` dans ce dossier sont merges avec les regles du projet (`.neuraforge/rules/`) et injectes dans la section `--- Enterprise Rules ---` du prompt.
-
-## Schema complet `skill.yaml`
-
-| Cle | Type | Defaut | Description |
-|---|---|---|---|
-| `name` | string | (requis) | Identifiant unique du skill |
-| `version` | string | `1.0.0` | Version semver |
-| `description` | string | `""` | Description lisible |
-| `author` | string | -- | Auteur ou equipe |
-| `agents` | AgentRole[] | tous les agents | Agents qui recevront les instructions |
-| `modes` | CTAMode[] | tous les modes | Modes ou le skill est actif |
-| `hooks` | Record | -- | Hooks par evenement |
-| `config` | Record | -- | Configuration custom |
-| `priority` | number | `0` | Priorite d'injection (decroissant) |
-| `enabled` | boolean | `true` | Activer/desactiver sans supprimer |
-| `compatibility` | object | -- | Contraintes de version (voir ci-dessous) |
-
-### Champ `compatibility`
-
-```yaml
-compatibility:
-  neuraforge: ">=0.9.0"              # Version NeuraForge minimum (range semver)
-  skills:                        # Dependances entre skills
-    secret-scan: ">=1.0.0"
-  conflicts:                     # Skills incompatibles
-    - legacy-security-check
-```
-
-### Valeurs `agents` possibles
-
-`lead`, `analyst`, `planner`, `dev`, `qa`, `docops`
-
-### Valeurs `modes` possibles
-
-`flash`, `standard`, `enterprise`
-
-### Evenements hooks
-
-`on_feature_created`, `on_phase_start`, `on_phase_end`, `on_feature_completed`, `on_feature_blocked`, `on_agent_start`, `on_agent_output`, `on_agent_error`, `on_quality_gate_pass`, `on_quality_gate_fail`
-
-## Commandes CLI
-
-| Commande | Description |
+| Skill | Objectif |
 |---|---|
-| `neuraforge skills list` | Lister tous les skills installes |
-| `neuraforge skills init <name>` | Creer un nouveau skill depuis le template |
-| `neuraforge skills add <path>` | Installer depuis un repertoire local |
-| `neuraforge skills install <source>` | Installer depuis le registry, GitHub, URL ou local |
-| `neuraforge skills remove <name>` | Supprimer un skill |
-| `neuraforge skills enable <name>` | Activer un skill |
-| `neuraforge skills disable <name>` | Desactiver un skill |
-| `neuraforge skills search <query>` | Chercher dans le registry |
-| `neuraforge skills info <name>` | Details d'un skill |
-| `neuraforge skills outdated` | Lister les skills avec une version plus recente |
-| `neuraforge skills doctor` | Verifier la compatibilite de tous les skills |
-| `neuraforge skills pack list` | Lister les packs disponibles |
-| `neuraforge skills pack install <name>` | Installer tous les skills d'un pack |
-| `neuraforge skills pack create <name> -s <skills>` | Creer un pack custom |
-| `neuraforge skills pack remove <name>` | Supprimer un pack custom |
+| Standards API | Harmoniser la conception des endpoints |
+| Checklist sécurité | Rendre explicites les attentes appsec |
+| Playbook migration | Guider la modernisation legacy |
+| Politique documentation | Garantir des docs utiles pour les changements importants |
 
-## Marketplace de skills
-
-NeuraForge fournit un catalogue de skills officiels sur etagere. Installez uniquement ce dont vous avez besoin, quand vous en avez besoin.
-
-### Rechercher des skills
+## Installer et gérer les skills
 
 ```bash
-$ neuraforge skills search security
-$ neuraforge skills search --category compliance
-$ neuraforge skills search --agent qa
+neuraforge skills list
+neuraforge skills install <skill-name>
+neuraforge skills enable <skill-name>
+neuraforge skills disable <skill-name>
 ```
 
-### Installer un skill
+Votre organisation peut fournir un registre interne ou un ensemble validé de skills.
 
-```bash
-$ neuraforge skills install owasp-check           # Depuis le registry (derniere version)
-$ neuraforge skills install owasp-check@2.1.0     # Version specifique
-$ neuraforge skills install ./mon-skill-local     # Depuis un chemin local
-$ neuraforge skills install owasp-check --force   # Ecraser un skill existant
-```
+## Étape suivante
 
-### Verifier les mises a jour
-
-```bash
-$ neuraforge skills outdated                      # Lister les skills avec version plus recente
-$ neuraforge skills info owasp-check              # Details d'un skill
-```
-
-### Diagnostic de compatibilite
-
-```bash
-$ neuraforge skills doctor
-  ✓ code-review-strict@1.1.0  — compatible
-  ⚠ hipaa-guard@1.0.0          — necessite NeuraForge >=1.0.0 (actuel: 0.8.0)
-  ✗ legacy-check@0.3.0         — conflit avec owasp-check
-```
-
-### Configuration
-
-```yaml
-# neuraforge.config.yaml
-skills:
-  registryUrl: https://registry.neuraforge.dev/skills.json  # Registry custom
-  autoUpdate: false
-  trustedAuthors: [neuraforge-team]
-```
-
-## Skill Packs (bundles)
-
-Installez un ensemble complet de skills en une commande :
-
-```bash
-$ neuraforge skills pack list                         # Lister les packs
-$ neuraforge skills pack install backend-essentials   # Installer un pack
-$ neuraforge skills pack create mon-equipe --skills "code-review-strict,owasp-check,jira-sync"
-```
-
-### Packs officiels
-
-| Pack | Skills | Cas d'usage |
-|---|---|---|
-| `backend-essentials` | code-review-strict, owasp-check, secret-scan, test-coverage-enforcer, api-design-restful | Equipes backend |
-| `frontend-essentials` | code-review-strict, react-best-practices, naming-conventions, dead-code-detector | Equipes frontend |
-| `compliance-full` | compliance-rgpd, hipaa-guard, iso-27001, adr-enforcer, dependency-audit | Industries reglementees |
-| `startup-fast` | code-review-strict, secret-scan, changelog-gen | Startups rapides |
-| `enterprise-standard` | 8 skills couvrant review, securite, compliance, ADR, notifications | Equipes enterprise |
-
-Les packs custom sont stockes dans `.neuraforge/skills/.packs.yaml` et peuvent etre commits pour partage.
-
-## Catalogue officiel (19 skills)
-
-### Qualite (5 skills)
-
-| Skill | Agents | Modes | Description |
-|---|---|---|---|
-| `code-review-strict` | dev, qa | tous | Review stricte : types explicites, pas de `any`, JSDoc, classes d'erreur |
-| `adversarial-review` | analyst, qa | standard+ | Challenge les decisions, trouve les points de defaillance |
-| `test-coverage-enforcer` | dev, qa | standard+ | Impose un seuil minimum de couverture de tests |
-| `dead-code-detector` | qa | tous | Detecte les exports, imports et code inutilises |
-| `naming-conventions` | dev, qa | tous | Impose des conventions de nommage (style configurable) |
-
-### Securite (3 skills)
-
-| Skill | Agents | Modes | Description |
-|---|---|---|---|
-| `owasp-check` | qa | tous | Verification OWASP Top 10 (A01-A10) |
-| `secret-scan` | dev, qa | tous | Detection de secrets hardcodes (cles API, tokens, mots de passe) |
-| `dependency-audit` | analyst, qa | standard+ | Audit des dependances (CVE et licences) |
-
-### Conformite (3 skills)
-
-| Skill | Agents | Modes | Description |
-|---|---|---|---|
-| `compliance-rgpd` | analyst, dev, qa | standard+ | Conformite RGPD/GDPR |
-| `hipaa-guard` | analyst, dev, qa | enterprise | Protection PHI HIPAA et audit logging |
-| `iso-27001` | analyst, qa | enterprise | Controles securite de l'information ISO 27001 |
-
-### Integration (3 skills)
-
-| Skill | Agents | Modes | Description |
-|---|---|---|---|
-| `jira-sync` | lead, planner | standard+ | Sync avec Jira |
-| `linear-sync` | lead, planner | standard+ | Sync avec Linear |
-| `slack-notify` | lead | standard+ | Notifications Slack sur les evenements workflow |
-
-### Framework (3 skills)
-
-| Skill | Agents | Modes | Description |
-|---|---|---|---|
-| `nestjs-patterns` | dev, qa | tous | Bonnes pratiques NestJS (modules, DI, guards) |
-| `react-best-practices` | dev, qa | tous | Patterns React modernes (hooks, composition, a11y) |
-| `api-design-restful` | planner, dev | standard+ | Standards de design API REST (erreurs RFC 7807) |
-
-### Documentation (2 skills)
-
-| Skill | Agents | Modes | Description |
-|---|---|---|---|
-| `adr-enforcer` | planner, docops | enterprise | Exige des ADR pour les decisions d'architecture |
-| `changelog-gen` | docops | standard+ | Genere des entrees Keep a Changelog |
-
-## Comment les skills sont charges
-
-1. Au demarrage d'un workflow, l'orchestrateur charge tous les skills depuis `.neuraforge/skills/`
-2. Les skills avec `enabled: false` sont filtres
-3. Les skills sont tries par `priority` (plus haut = injecte en premier)
-4. Pour chaque agent, seuls les skills qui le ciblent (et correspondent au mode) sont injectes
-5. Les instructions apparaissent dans le prompt sous `--- Skills Instructions ---`
-6. Les rules des skills sont mergees avec celles du projet sous `--- Enterprise Rules ---`
-
-## Partager des skills entre equipes
-
-### Git submodule
-
-```bash
-$ git submodule add https://github.com/org/neuraforge-skills-common .neuraforge/skills/common
-```
-
-### Copie directe
-
-```bash
-$ neuraforge skills add /path/to/shared-skills/compliance-rgpd
-```
-
-### Monorepo
-
-Dans un monorepo, placez les skills partages a la racine et creez des liens symboliques :
-
-```bash
-# Racine du monorepo
-shared-skills/
-  compliance-rgpd/
-
-# Dans chaque package
-.neuraforge/skills/compliance-rgpd -> ../../../shared-skills/compliance-rgpd
-```
-
-## Bonnes pratiques
-
-1. **Un skill = une preoccupation** : ne melangez pas securite et Jira dans le meme skill
-2. **Instructions courtes et actionnables** : les LLMs preferent des listes de regles claires
-3. **Ciblez les agents pertinents** : ne ciblez pas tous les agents si seul le Dev est concerne
-4. **Utilisez les modes** : les skills de conformite n'ont pas besoin d'etre actifs en mode flash
-5. **Priorite** : les skills de securite/conformite devraient avoir une priorite haute (>= 20)
-6. **Committez vos skills** : `.neuraforge/skills/` doit etre versionne avec le code
-
-## Prochaine etape
-
-Consultez la [reference configuration](/fr/reference/config) pour le schema complet, ou le guide [regles et templates](/fr/guides/rules-and-templates) pour les regles classiques.
+Lisez [Agent Profiles & Domain Playbooks](/fr/guides/agent-profiles) pour voir comment les skills soutiennent le travail métier.

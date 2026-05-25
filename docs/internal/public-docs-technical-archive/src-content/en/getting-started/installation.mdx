@@ -1,0 +1,160 @@
+# Installation
+
+**Still writing specs by hand, debugging alone at 11 PM, and watching your backlog grow endlessly?** NeuraForge changes the game — but first, you need to install it. Good news: it takes just 3 commands.
+
+> **TL;DR** — For the impatient, here's the express version:
+> ```bash
+> pnpm add -g @neuravim/neuraforge   # 1. Install
+> neuraforge init                     # 2. Initialize in your project
+> neuraforge flash "Hello world" --dry-run  # 3. Verify it works
+> ```
+> That's it. If you want to understand each step (and avoid the pitfalls), read on.
+
+---
+
+## Prerequisites
+
+Before inviting NeuraForge into your project, make sure you have the right environment. Think of it as gathering ingredients before the recipe:
+
+- **Node.js 20+** — check with `node --version`
+- **pnpm** — install with `npm install -g pnpm`
+- At least one AI provider: Claude Code, Gemini CLI, OpenCode, or GitHub Copilot (or an API proxy like LiteLLM)
+
+The provider is the "brain" that NeuraForge will orchestrate. Without a provider, NeuraForge is a conductor without musicians — it knows what to do, but there's nobody to play the score.
+
+All set? Perfect, let's move on to the actual installation.
+
+---
+
+## Install NeuraForge
+
+One command, global installation:
+
+```bash
+$ pnpm add -g @neuravim/neuraforge
+```
+
+Verify everything went smoothly:
+
+```bash
+$ neuraforge --version
+0.12.1
+```
+
+> **Tip**: If you get `command not found`, add the pnpm global directory to your PATH: `export PATH="$(pnpm store path)/../../.pnpm:$PATH"`
+
+The binary is there. Now you need to introduce NeuraForge to your project — that's where `neuraforge init` comes in.
+
+---
+
+## Initialize a project
+
+This is the step where NeuraForge "gets acquainted" with your codebase. In your project directory:
+
+```bash
+$ neuraforge init
+NeuraForge initialized in .neuraforge/
+  Config: .neuraforge/neuraforge.config.yaml
+  Rules:  .neuraforge/rules/coding-standards.md
+  Memory: .neuraforge/memory/
+  Stack:  node, typescript, express
+  Arch:   docker
+  CI:     github-actions
+  PM:     pnpm
+```
+
+What's happening under the hood? NeuraForge automatically scans your project and detects everything it can. It's like a new developer reading your `package.json`, your `Dockerfile`, and your CI config on day one — except it does it in seconds:
+
+- **Tech stack**: Node.js, TypeScript, React, Express, NestJS, Vue, Angular, Python, Go, Rust...
+- **Architecture**: Docker, Docker Compose, Kubernetes
+- **CI/CD**: GitHub Actions, GitLab CI, Jenkins, CircleCI
+- **Package manager**: pnpm, yarn, npm, bun
+- **Databases**: PostgreSQL, MySQL, Redis, MongoDB (from deps and docker-compose)
+- **Monorepo**: Turborepo, Nx, Lerna, pnpm workspaces
+
+This information is injected into every agent's context for more relevant results. The more NeuraForge knows about your project, the more tailored its suggestions become.
+
+Here's the structure created in your project:
+
+```
+.neuraforge/
+  neuraforge.config.yaml    # Project configuration
+  memory/            # Context, decisions, metrics
+  rules/             # Enterprise rules
+  templates/         # Custom templates
+  features/          # Active features
+```
+
+The project is initialized — now let's make sure NeuraForge can talk to your preferred AI.
+
+---
+
+## Configure the provider
+
+By default, NeuraForge uses Claude Code. If you prefer a different provider, a simple config change is all it takes:
+
+```bash
+$ neuraforge config set provider gemini
+Set provider = gemini
+```
+
+Available providers: `claude-code`, `gemini`, `copilot`.
+
+To verify your provider is accessible (because a tool you can't reach isn't much use):
+
+```bash
+$ neuraforge provider status
+Provider status:
+  claude-code: configured
+  gemini: not found
+  copilot: configured
+```
+
+If you see "configured" next to your provider, you're ready for the big moment: the first test.
+
+---
+
+## First test
+
+Before unleashing NeuraForge on a real feature, let's do a dry run. The `--dry-run` flag simulates execution without calling the provider — handy for verifying everything is properly wired:
+
+```bash
+$ neuraforge flash "Add hello.ts" --dry-run
+[DRY RUN] Flash workflow: "Add hello.ts"
+Mode: flash | Agents: lead, dev
+```
+
+If you see this output, congratulations: NeuraForge is installed, initialized, and ready to work. The `--dry-run` shows what would be done without calling the provider.
+
+---
+
+## Slash mode (Claude Code)
+
+If you already use Claude Code daily, there's an even more direct shortcut: slash commands. Zero extra installation, zero config — just commands in your Claude session:
+
+- `/neuraforge-init` — initialize NeuraForge
+- `/neuraforge-flash` — fast mode
+- `/neuraforge-standard` — full mode
+- `/neuraforge-enterprise` — enterprise mode
+
+Both modes (CLI and slash) write to the same `.neuraforge/` files. You can freely switch between the two without losing your context.
+
+---
+
+## Troubleshooting
+
+Things don't always go as planned. Here are the classic errors and how to fix them in 30 seconds:
+
+**`command not found: neuraforge`** — Make sure the pnpm global directory is in your PATH.
+
+**`NeuraForge not initialized`** — Run `neuraforge init` in your project directory.
+
+**`No provider available`** — Install Claude Code (`npm install -g @anthropic-ai/claude-code`) or another provider.
+
+**Provider timeout** — The default timeout is 120s. If your LLM is slow, increase it in `.neuraforge/neuraforge.config.yaml`.
+
+---
+
+## Next step
+
+Installation is done. Now let's get to the real stuff: the [Quickstart](/en/getting-started/quickstart) walks you through a complete scenario in 5 minutes, from feature request to generated code.

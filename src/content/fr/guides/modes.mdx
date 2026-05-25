@@ -1,127 +1,69 @@
-# Les 3 modes NeuraForge : choisissez votre arme
+# Les 3 modes NeuraForge
 
-> **TL;DR** — Bug fix → flash. Feature → standard. Migration critique → enterprise. En cas de doute, standard.
+> Bug fix → Flash. Feature → Standard. Migration critique → Enterprise. En cas de doute, commencez avec Standard.
 
-Imaginez trois outils devant vous. Un **couteau suisse** pour les urgences du quotidien. Un **atelier complet** pour construire quelque chose de solide. Et un **chantier certifie** avec plans, inspections et validations a chaque etape. NeuraForge fonctionne exactement comme ca — trois modes adaptes a l'ampleur de votre tache.
+NeuraForge adapte le workflow au risque et à la taille de la tâche. On n'a pas besoin du même processus pour une faute de frappe, une nouvelle API et une migration réglementée.
 
-Ce guide va vous montrer comment choisir le bon mode, et surtout comment NeuraForge peut le faire pour vous.
+## Vue d'ensemble
 
-## D'un coup d'oeil
+| Besoin | Mode recommandé | Ce que vous obtenez |
+|---|---|---|
+| Correction ou petit changement | Flash | Implémentation rapide avec peu de cérémonie |
+| Fonctionnalité produit classique | Standard | Analyse, plan, implémentation et revue |
+| Travail sensible ou critique | Enterprise | Contrôles renforcés, validation humaine et documentation opérationnelle |
 
-| Fonctionnalite | Flash | Standard | Enterprise |
-|---|---|---|---|
-| Temps | < 30 min | 2h - 1 jour | 1 jour - 1 semaine |
-| Agents | Lead, Dev | +Analyst, Planner, QA | +DocOps |
-| Brief | Non | Oui | Oui |
-| Spec | Non | Oui | Oui + ADR |
-| Review | Non | Oui | Oui + rapport qualite + gate production |
-| Approbation humaine | Non | Non | Oui |
+## Flash
 
-Voyons chaque mode en detail.
-
-## Flash — le couteau suisse
-
-Le mode Flash, c'est la reactivite pure. Vous avez un bug, un petit refactoring, un tweak rapide ? Deux agents (Lead + Dev), zero paperasse, et c'est plie.
+Utilisez Flash quand le changement est petit, isolé et à faible risque.
 
 ```bash
-$ neuraforge flash "Fix le bug #123"
+neuraforge flash "Fix the broken health-check response"
 ```
 
-C'est le bon choix quand :
-- Moins de 3 fichiers impactes
-- Pas de nouvelle API
-- Complexite faible (1-2/5)
+Bon cas d'usage :
 
-Pensez-y comme un sprint de 30 minutes : on entre, on corrige, on sort.
+- faute de frappe ou petit bug ;
+- refactoring simple ;
+- périmètre limité ;
+- pas d'impact majeur architecture ou sécurité.
 
-## Standard — l'atelier complet
+## Standard
 
-Maintenant on passe aux choses serieuses. Le mode Standard mobilise cinq agents — analyse, planification, implementation, review — pour produire un resultat structure et teste.
+Utilisez Standard pour la majorité des travaux d'ingénierie courants.
 
 ```bash
-$ neuraforge standard "Nouvelle API users"
+neuraforge standard "Add a users API with tests"
 ```
 
-C'est le bon choix quand :
-- 3 a 15 fichiers impactes
-- Nouvelle API ou integration
-- Complexite moyenne (3-4/5)
+Bon cas d'usage :
 
-La majorite de vos features passeront par ce mode. C'est le sweet spot entre vitesse et rigueur.
+- nouvelle fonctionnalité ;
+- intégration ;
+- refactoring moyen ;
+- travail qui bénéficie d'un plan et d'une revue.
 
-## Enterprise — le chantier certifie
+## Enterprise
 
-Quand le moindre faux pas peut couter cher — migration de donnees, conformite RGPD, refonte d'architecture — le mode Enterprise ajoute DocOps et surtout une **approbation humaine entre chaque phase**.
+Utilisez Enterprise quand la qualité de livraison compte autant que la vitesse.
 
 ```bash
-$ neuraforge enterprise "Migration authentification"
+neuraforge enterprise "Migrate authentication to the new identity provider"
 ```
 
-C'est le bon choix quand :
-- Plus de 15 fichiers
-- Nouvelle architecture
-- Compliance requise (RGPD, securite)
+Bon cas d'usage :
 
-Enterprise n'est plus un simple mode demo avec plus d'agents. Le workflow se termine par un **gate de readiness production** bloquant. Une feature enterprise ne passe en `completed` que si elle ressemble a une vraie application livrable :
+- migration critique ;
+- conformité ou sécurité ;
+- changement avec impact production ;
+- validation métier requise ;
+- runbook, rollback et transfert support attendus.
 
-- Le Dev a modifie au moins un fichier reel (`FILES_CHANGED`) et genere au moins un test (`TESTS_GENERATED`).
-- Le Security Reviewer n'a pas bloque le workflow (`status != blocked`).
-- Le QA passe avec un score minimum de 9/10.
-- Le QA renvoie des resultats explicites pour les criteres d'acceptation (`CRITERIA_RESULTS`) et tous doivent etre `PASS`.
-- DocOps produit les artefacts d'exploitation obligatoires : runbook, rollback et guide/procedure de deploiement.
+Enterprise évite un problème fréquent des outils de code IA : confondre une réponse convaincante ou un prototype local avec un livrable réellement prêt pour la production.
 
-Si un de ces points manque, NeuraForge marque la feature `blocked` avec le message `Enterprise production readiness failed`. Cela evite de confondre une maquette ou une reponse textuelle avec une application prete a etre livree.
+## Changer de niveau quand le périmètre évolue
 
-### Approbation humaine : le filet de securite
+Si une tâche s'avère plus complexe que prévu, NeuraForge peut vous orienter vers un workflow plus robuste sans vous forcer à repartir de zéro. La logique exacte d'orchestration reste interne ; côté utilisateur, l'expérience reste simple : commencez avec la bonne intention, puis montez en niveau si le risque le justifie.
 
-En mode Enterprise, **chaque phase requiert une approbation humaine** avant de passer a la suivante. A la fin de chaque phase, le CLI affiche :
+## Étape suivante
 
-```
-[APPROVAL] Phase "discovery" for "migration-auth" completed.
-  Agent: analyst | Tokens: 2340
-  Preview: COMPLEXITY: 4 RISKS: - Data loss during migration...
-  Approve? (y/n):
-```
-
-Si vous repondez `n`, le workflow est avorte avec le statut `aborted`.
-
-Pour bypasser les approbations (par exemple en CI/CD) :
-
-```bash
-$ neuraforge enterprise "Migration auth" --auto-approve
-```
-
-> **Attention** : `--auto-approve` desactive toute validation humaine. A utiliser uniquement dans les pipelines automatises.
-
-## Et si vous ne savez pas quel mode choisir ?
-
-Bonne nouvelle : vous n'avez pas a choisir. Le Lead analyse la description de votre feature avec des heuristiques et suggere le mode optimal :
-
-- `"Fix typo in README"` → **flash** (faible complexite, 1 fichier)
-- `"Add new REST API with OAuth"` → **standard** (nouvelle API, dependance externe)
-- `"Migrate monolith to microservices with RGPD compliance"` → **enterprise** (nouvelle architecture, compliance)
-
-La detection prend aussi en compte le contexte projet (nombre de technologies, architecture). En clair, plus votre projet est complexe, plus NeuraForge sera prudent.
-
-## Le passage dynamique : changer de vitesse sans s'arreter
-
-Voici la ou ca devient vraiment malin. NeuraForge peut changer de mode en cours de route **sans perdre le travail** et en executant les phases manquantes :
-
-```bash
-# Demarre en flash, bascule en standard si complexite detectee
-$ neuraforge flash "Export CSV"
-NeuraForge Lead > Complexite detectee (5 fichiers). Passer en standard ? [Y/n]
-```
-
-Quand vous passez de flash a standard, `switchMode()` :
-1. Identifie les phases deja completees (implementation)
-2. Execute les phases manquantes (discovery, planning)
-3. Continue le workflow avec les nouveaux artefacts
-
-Le passage de standard a flash est un no-op — les phases flash sont un sous-ensemble de standard.
-
-C'est un peu comme passer d'un tournevis a une perceuse en plein chantier : on garde le trou deja fait, on change juste d'outil.
-
-## La suite
-
-Maintenant que vous savez quand utiliser chaque mode, il est temps de rencontrer ceux qui font le vrai travail. Decouvrez les [agents NeuraForge](/fr/guides/agents) — Lead, Analyst, Planner, Dev, QA, DocOps — et comment ils collaborent dans le pipeline.
+Découvrez les [agents NeuraForge](/fr/guides/agents) et leur séparation des responsabilités.

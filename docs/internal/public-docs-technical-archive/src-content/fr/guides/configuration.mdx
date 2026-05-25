@@ -1,0 +1,112 @@
+# Configuration
+
+> 4 lignes de YAML. C'est tout ce qu'il faut pour configurer NeuraForge. Le reste, c'est du bonus pour les perfectionnistes.
+
+**Ce que vous allez apprendre :**
+- Les 5 niveaux de configuration et comment ils s'emboitent
+- Les options disponibles pour affiner chaque aspect
+- La configuration entreprise pour standardiser vos equipes
+
+## Les 5 niveaux : des poupees russes
+
+Pensez a des poupees russes : chaque niveau de configuration enveloppe le precedent. La plus petite poupee (les defauts NeuraForge) est toujours la. Chaque couche que vous ajoutez vient la surcharger, sans jamais casser ce qui est en dessous.
+
+1. **Defauts NeuraForge** (built-in) -- la base, toujours presente
+2. **Enterprise** (`~/.neuraforge/enterprise.config.yaml`) -- standards de votre organisation
+3. **Projet** (`.neuraforge/neuraforge.config.yaml`) -- specifique a ce repo
+4. **Feature** (`.neuraforge/features/<slug>/.override.yaml`) -- ajustements par feature
+5. **CLI flags** (`--mode`, `--provider`, etc.) -- surcharge ponctuelle, priorite maximale
+
+Resultat : vous ne configurez que ce qui change. Tout le reste herite automatiquement du niveau au-dessus.
+
+## Configuration minimale : 4 lignes, c'est parti
+
+Vous n'avez pas besoin de tout comprendre pour demarrer. Creez un fichier, collez 4 lignes, et NeuraForge fonctionne :
+
+```yaml
+# .neuraforge/neuraforge.config.yaml
+project: mon-projet
+provider: claude-code
+mode: standard
+lang: fr
+```
+
+4 lignes suffisent pour demarrer.
+
+C'est la poupee russe la plus externe de votre projet. Elle surcharge les defauts NeuraForge avec vos choix. Tout ce que vous ne specifiez pas garde sa valeur par defaut.
+
+## Options completes
+
+Quand vous etes pret a aller plus loin, voici tout ce que vous pouvez controler :
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `project` | string | (requis) | Nom du projet |
+| `provider` | string | `claude-code` | Provider par defaut |
+| `mode` | enum | `standard` | flash, standard, enterprise |
+| `lang` | string | `fr` | Langue des artefacts |
+| `providers` | object | (built-in) | Config par provider |
+| `routing` | object | prefer | Strategie de routage |
+| `budget` | object | (built-in) | Budget tokens |
+| `hooks` | object | {} | Hooks d'evenements |
+| `rules` | array | [] | Liste des fichiers de regles |
+| `pipeline` | object | (voir ci-dessous) | Configuration du pipeline inter-agents |
+| `memory` | object | defauts scopes | Gouvernance memoire : scopes, precedence, politiques read/write |
+
+### Pipeline
+
+```yaml
+pipeline:
+  maxOutputCharsPerAgent: 8000  # Troncature des outputs agents (defaut: 8000)
+```
+
+Cette option controle la quantite de texte d'un agent precedent qui est injectee dans le prompt du suivant. Avec un LLM a grand contexte (200k+), vous pouvez augmenter cette valeur. Reduisez-la si vous atteignez les limites de tokens.
+
+
+### Memoire
+
+```yaml
+memory:
+  enabled: true
+  scopePrecedence: [task, session, project, user]
+```
+
+La gouvernance memoire controle comment les agents traitent les memoires task, session, project et user. Elle est active par defaut et injectee dans chaque prompt agent comme des regles explicites. Voir le [guide memoire](/fr/guides/memory) pour les scopes, la precedence et les patterns de securite.
+
+## Configuration entreprise : la poupee la plus interne
+
+Voici ou les choses deviennent interessantes pour les equipes. La config enterprise se place dans votre repertoire home et s'applique a **tous** vos projets NeuraForge, sur toute la machine. C'est le socle commun de votre organisation.
+
+```yaml
+# ~/.neuraforge/enterprise.config.yaml
+company: my-company
+defaults:
+  mode: standard
+  lang: fr
+  provider: claude-code
+  require_approval: true
+security:
+  no_secrets_in_artefacts: true
+  scan_dependencies: true
+coding:
+  test_coverage_min: 80
+  commit_convention: conventional
+```
+
+Un nouveau dev rejoint l'equipe ? Il installe la config enterprise, et tous les projets NeuraForge respectent immediatement les standards. Pas de copier-coller, pas d'oubli.
+
+## Modifier via CLI
+
+Pas envie d'editer du YAML a la main ? La CLI fait ca pour vous :
+
+```bash
+$ neuraforge config set mode flash
+Set mode = flash
+
+$ neuraforge config show
+{ "project": "mon-projet", "mode": "flash", ... }
+```
+
+## Prochaine etape
+
+Configurez la [gouvernance memoire](/fr/guides/memory) ou apprenez a gerer les [regles et templates](/fr/guides/rules-and-templates).

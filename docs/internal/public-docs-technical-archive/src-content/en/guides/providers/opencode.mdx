@@ -1,0 +1,364 @@
+# OpenCode
+
+> Your data must never leave your servers? OpenCode + Ollama = a 100% local NeuraForge pipeline. Zero cloud API, zero data leaks.
+
+> **What you'll learn**
+> - What is OpenCode
+> - Install OpenCode CLI
+> - Configure an LLM backend
+> - Use OpenCode as an NeuraForge provider
+> - Combine with a local LLM (Ollama)
+> - Troubleshooting
+
+## What is OpenCode?
+
+[OpenCode](https://github.com/opencode-ai/opencode) is an open source agentic CLI tool designed to interact with any OpenAI-compatible LLM backend. Unlike Claude Code or Gemini CLI, OpenCode is not tied to a single vendor: it can be configured to point to Anthropic, OpenAI, Ollama, LiteLLM or any OpenAI-compatible endpoint.
+
+NeuraForge uses OpenCode via a **stdin/stdout subprocess**: it sends the prompt on `stdin`, reads the response on `stdout`, and doesn't need to know which LLM backend is configured in OpenCode. This provides maximum flexibility without modifying the NeuraForge configuration.
+
+**Typical use cases:**
+- Air-gapped environments with on-premise LLM
+- Teams wanting to avoid vendor lock-in
+- Quick switching between multiple LLM backends from a single NeuraForge provider
+
+## Prerequisites
+
+- Go 1.21+ (for installation via `go install`) **or** Node.js 20+ (if distributed via npm)
+- An accessible LLM endpoint: Anthropic API, OpenAI API, local Ollama, LiteLLM proxy, etc.
+- NeuraForge initialized (`neuraforge init`)
+
+## Installation
+
+### Via Go (recommended)
+
+```bash
+$ go install github.com/opencode-ai/opencode@latest
+$ opencode --version
+```
+
+Make sure `$GOPATH/bin` (defaults to `~/go/bin`) is in your `PATH`:
+
+```bash
+$ export PATH="$PATH:$(go env GOPATH)/bin"
+$ echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.bashrc
+```
+
+### Verify Installation
+
+```bash
+$ opencode --version
+opencode v0.x.x
+$ which opencode
+/home/user/go/bin/opencode
+```
+
+## LLM Backend Configuration
+
+OpenCode uses a configuration file (by default `~/.config/opencode/config.json` or `.opencode.json` at the project root) to point to the LLM backend of your choice.
+
+### Anthropic Backend
+
+```json
+{
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-6",
+  "apiKey": "$ANTHROPIC_API_KEY"
+}
+```
+
+```bash
+$ export ANTHROPIC_API_KEY="sk-ant-..."
+```
+
+### OpenAI Backend
+
+```json
+{
+  "provider": "openai",
+  "model": "gpt-4o",
+  "apiKey": "$OPENAI_API_KEY"
+}
+```
+
+```bash
+$ export OPENAI_API_KEY="sk-..."
+```
+
+### Ollama Backend (Local LLM)
+
+```json
+{
+  "provider": "openai",
+  "model": "llama3",
+  "baseUrl": "http://localhost:11434/v1",
+  "apiKey": "ollama"
+}
+```
+
+No data is sent externally with this configuration.
+
+### LiteLLM Proxy Backend
+
+```json
+{
+  "provider": "openai",
+  "model": "claude-sonnet-4-6",
+  "baseUrl": "http://localhost:4000/v1",
+  "apiKey": "$LITELLM_API_KEY"
+}
+```
+
+### Test OpenCode Standalone
+
+```bash
+$ echo "Say hello in one sentence." | opencode -p -
+Hello! I'm ready to help you.
+```
+
+If this command returns a response, OpenCode is correctly configured and NeuraForge can use it.
+
+## NeuraForge Configuration
+
+Once OpenCode is installed and its backend configured, declare it as a provider in `.neuraforge/neuraforge.config.yaml`:
+
+```yaml
+provider: opencode
+providers:
+  opencode:
+    enabled: true
+    command: opencode
+    model: opencode
+    maxTokens: 200000
+    costPer1k: 0.002
+```
+
+> **Note**: The `model` field is used for NeuraForge metrics. OpenCode uses the model configured in its own config file — the two are independent.
+
+### Verify the Connection
+
+```bash
+$ neuraforge provider status
+Provider status:
+  opencode: configured
+```
+
+### OpenCode as Primary Provider
+
+```yaml
+provider: opencode
+providers:
+  opencode:
+    enabled: true
+    command: opencode
+    model: opencode
+    maxTokens: 200000
+    costPer1k: 0.002
+```
+
+### OpenCode as Fallback
+
+```yaml
+provider: claude-code
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+  opencode:
+    enabled: true
+    command: opencode
+    model: opencode
+    maxTokens: 200000
+    costPer1k: 0.002
+
+routing:
+  strategy: prefer
+  fallback: [claude-code, opencode]
+```
+
+### OpenCode in Auto Routing
+
+```yaml
+routing:
+  strategy: auto
+  auto:
+    code_gen: opencode
+    analysis: claude-code
+    planning: claude-code
+    code_review: opencode
+    documentation: claude-code
+  fallback: [claude-code, opencode]
+```
+
+## OpenCode + Local LLM (Ollama)
+
+This combination enables a **100% local** NeuraForge pipeline, with no data sent to external services. Ideal for air-gapped environments or sensitive data.
+
+### 1. Install Ollama
+
+```bash
+$ curl -fsSL https://ollama.com/install.sh | sh
+$ ollama --version
+```
+
+### 2. Download a Model
+
+```bash
+$ ollama pull llama3
+$ ollama pull codellama        # Optimized for code generation
+$ ollama pull mistral          # Good performance/size balance
+```
+
+```bash
+$ ollama list
+NAME            ID              SIZE    MODIFIED
+llama3:latest   ...             4.7 GB  ...
+codellama:latest ...            3.8 GB  ...
+```
+
+### 3. Start Ollama
+
+```bash
+$ ollama serve
+Ollama is running on http://localhost:11434
+```
+
+Ollama starts automatically on most systems. Verify:
+
+```bash
+$ curl http://localhost:11434/api/tags
+{"models":[{"name":"llama3:latest",...}]}
+```
+
+### 4. Configure OpenCode -> Ollama
+
+In `~/.config/opencode/config.json`:
+
+```json
+{
+  "provider": "openai",
+  "model": "codellama",
+  "baseUrl": "http://localhost:11434/v1",
+  "apiKey": "ollama"
+}
+```
+
+### 5. Test the Full Chain
+
+```bash
+$ echo "Write a TypeScript hello world function." | opencode -p -
+```
+
+### 6. Configure NeuraForge
+
+```yaml
+provider: opencode
+providers:
+  opencode:
+    enabled: true
+    command: opencode
+    model: codellama
+    maxTokens: 32000
+    costPer1k: 0
+
+sanitize: true
+```
+
+> **Note**: Setting `costPer1k: 0` reflects the absence of per-token cost for a local LLM.
+
+> **Warning**: Local models (7B-13B parameters) are less performant than large cloud models for complex tasks. In `standard` or `enterprise` mode, prefer 30B+ models or use OpenCode as a fallback only.
+
+## Strengths and Use Cases
+
+| Use case | OpenCode advantage |
+|---|---|
+| Air-gapped environment | Local LLM via Ollama, no external data |
+| On-premise LLM | Points to your own internal endpoint |
+| Multi-backend | Switch LLMs without touching the NeuraForge config |
+| Open source audit | Verifiable source code, no black box |
+| Cost control | Local LLM = infrastructure cost only |
+| GDPR compliance | Data processed locally |
+
+## Troubleshooting
+
+### "command not found: opencode"
+
+Go is not installed or `$GOPATH/bin` is not in the PATH:
+
+```bash
+$ go version
+$ echo $GOPATH
+$ ls $(go env GOPATH)/bin/opencode
+```
+
+Solution:
+
+```bash
+$ export PATH="$PATH:$(go env GOPATH)/bin"
+```
+
+### "opencode: flag -p not recognized"
+
+Your version of OpenCode doesn't support the `-p -` flag (stdin pipe mode). Update:
+
+```bash
+$ go install github.com/opencode-ai/opencode@latest
+$ opencode --version
+```
+
+### "No provider available" in NeuraForge
+
+```bash
+$ neuraforge provider status
+$ echo "test" | opencode -p -
+```
+
+If OpenCode responds but NeuraForge doesn't detect it, verify that `command: opencode` is correct and that the executable is in the PATH.
+
+### Timeout After 120 Seconds
+
+Local LLMs (Ollama) can be slow on limited hardware. NeuraForge's default timeout is 120s. To increase it:
+
+```yaml
+providers:
+  opencode:
+    enabled: true
+    command: opencode
+    model: llama3
+    maxTokens: 32000
+    costPer1k: 0
+    timeout: 300000
+```
+
+### Truncated or Empty Responses
+
+The local model has reached `maxTokens`. Reduce prompt size or increase the limit:
+
+```yaml
+providers:
+  opencode:
+    maxTokens: 8000
+```
+
+> **Note**: In flash mode, prompts are shorter. Start by testing NeuraForge in `flash` mode with a local LLM before switching to `standard` mode.
+
+### OpenCode Returns an API Error
+
+```bash
+$ echo "test" | opencode -p -
+Error: connection refused http://localhost:11434
+```
+
+Ollama is not running:
+
+```bash
+$ ollama serve
+```
+
+Or the backend configured in OpenCode is unreachable. Check the configuration in `~/.config/opencode/config.json`.
+
+## Next Step
+
+Check the [Providers](/en/guides/providers) page to configure routing between multiple providers, or [Troubleshooting](/en/guides/troubleshooting) for general NeuraForge issues.

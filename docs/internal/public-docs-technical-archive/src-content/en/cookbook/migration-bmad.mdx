@@ -1,0 +1,65 @@
+# Migration from BMAD
+
+> BMAD: 12-16h before the first code, ~31K tokens per workflow. NeuraForge: 30 min, less than 8K tokens. Same multi-agent philosophy, radically different execution.
+
+**What you'll learn:**
+- The differences between BMAD and NeuraForge
+- How to migrate a BMAD project
+- Equivalence table
+
+## Why Migrate?
+
+| Criterion | BMAD | NeuraForge |
+|---|---|---|
+| Time to first code | 12-16h | 30 min - 2h |
+| Learning curve | ~2 months | 1-3 days |
+| Tokens/workflow | ~31,667 | < 8,000 |
+| Modes | 1 only | 3 adaptive |
+| AI providers | 1-2 | 3 native |
+| Brownfield | Difficult | Native |
+
+## Equivalences
+
+| BMAD | NeuraForge |
+|---|---|
+| Business Analyst agent | Analyst agent |
+| PM agent | Planner agent (merges PM + Architect) |
+| Architect agent | Planner agent |
+| Developer agent | Dev agent |
+| QA agent | QA agent |
+| DevOps agent | DocOps agent |
+| Full PRD (20 pages) | Lightweight spec (1-2 pages) |
+| Documentary monolith | 1 feature = 1 isolated context |
+| Single session | Shared context bus |
+
+## Migration Steps
+
+### 1. Initialize NeuraForge
+
+```bash
+$ neuraforge init
+```
+
+### 2. Convert Rules
+
+Copy your BMAD rules into `.neuraforge/rules/` in Markdown format.
+
+### 3. Adapt the Workflow
+
+- Small features: use flash (no BMAD equivalent)
+- Medium features: standard replaces the full BMAD workflow
+- Critical projects: enterprise with human approval
+
+### 4. Ignore Old BMAD Files
+
+The `.bmad/` files are no longer used. You can archive them.
+
+> **Warning**: NeuraForge does not resume BMAD sessions in progress. Finish your BMAD features before migrating.
+
+## FAQ
+
+**Can I use both in parallel?** Yes, but not recommended. They write to different folders.
+
+**Do my BMAD templates work?** No, NeuraForge uses Handlebars. Convert them with `neuraforge template customize`.
+
+**What does the Context Bus replace?** It replaces the isolated memory of each BMAD agent with a shared context.

@@ -1,0 +1,181 @@
+# The 7 NeuraForge agents
+
+> Imagine a team of 7 specialized developers, available 24/7, passing work along like a perfectly oiled assembly line. That's exactly what NeuraForge does.
+>
+> Each agent has a precise role, a personality, and most importantly: they communicate with each other automatically.
+
+## Meet the team
+
+Think of NeuraForge as an engineering firm. The **Lead** is the project manager, the **Analyst** is the detective, the **Planner** is the architect, the **Dev** is the builder, the **Security Reviewer** is the adversarial appsec gate, the **QA** is the inspector, and the **DocOps** is the notary. Each excels in their specialty, and together they deliver a result that no one could produce alone.
+
+### Lead (the project manager)
+
+Always in command. It receives your request, assesses the situation in a split second, and decides who will work and in what order. It monitors everything: quality gates, circuit breakers, token budget. Nothing gets past it.
+
+Always active. Analyzes the request, chooses the mode, orchestrates the agents, enforces quality gates and circuit breakers.
+
+### Analyst (the detective)
+
+Before coding anything, the Analyst investigates. It digs through your codebase, identifies risk areas, asks the right questions (3 to 5, no more), and delivers a clear brief with a complexity score. Without it, you'd be coding blind.
+
+Active in standard and enterprise. Scans the code, asks 3-5 questions, creates the brief, estimates complexity.
+
+### Planner (the architect)
+
+The Analyst made the diagnosis, the Planner draws the blueprints. It produces a lean spec (1-2 pages, not a novel), breaks the work into actionable stories, and writes ADRs if the architecture calls for it. It's the roadmap everyone follows.
+
+Active in standard and enterprise. Creates the lean spec (1-2 pages), breaks work into stories, writes ADRs if needed.
+
+### Dev (the builder)
+
+The Dev is the one who lays the bricks. It receives the Planner's blueprints, implements the code, writes the tests, and does a self-review before handing off. It has its guardrails: objective reminder every 5 steps, max 10 files per pass, circuit breaker if things go sideways.
+
+Always active. Implements code, writes tests, does a self-review. Guardrails: objective reminder every 5 steps, max 10 files, circuit breaker.
+
+### Security Reviewer (the appsec gate)
+
+The Security Reviewer assumes authenticated users can be malicious. It reviews the plan and implementation for concrete exploit paths: BOLA/IDOR, missing resource-level authorization, tenant isolation failures, client-controlled `userId` / `tenantId` values, data exposure, injection, XSS, command execution, hardcoded secrets, and unsafe workflow decisions.
+
+Active in standard and enterprise. Runs after Dev and before QA. Returns `approved`, `warning`, or `blocked`, records findings with severity/evidence/recommendations, and lists required security tests. Critical authorization or data-exposure risks block the workflow.
+
+### QA (the inspector)
+
+The inspector lets nothing slip through. It doesn't do a generic review — it verifies each acceptance criterion defined by the Planner, line by line. Basic OWASP security scan included. If the Dev's work doesn't pass, they go again (up to 2 times).
+
+Active in standard and enterprise. Code review, acceptance criteria verification, basic OWASP security scan, quality report.
+
+### DocOps (the notary)
+
+The last link, but not the least. DocOps makes everything official: documentation, changelog, compliance, runbooks. In an enterprise context, nothing goes to production without its stamp.
+
+Active in enterprise only. Generates documentation, changelog, verifies compliance, creates runbooks.
+
+## Activation by mode
+
+Need domain-specific behavior without creating new runtime roles? Use [Agent Profiles & Domain Playbooks](/en/guides/agent-profiles) to specialize the built-in agents, for example for a WildFly to Spring Boot migration.
+
+| Agent | Flash | Standard | Enterprise |
+|---|---|---|---|
+| Lead | Yes | Yes | Yes |
+| Analyst | — | Yes | Yes |
+| Planner | — | Yes | Yes |
+| Dev | Yes | Yes | Yes |
+| Security Reviewer | — | Yes | Yes |
+| QA | — | Yes | Yes |
+| DocOps | — | — | Yes |
+
+## How agents communicate (Pipeline)
+
+Here's what concretely happens when you launch a workflow. Agents don't work in isolation. Each agent receives a `PipelineContext` containing:
+- The original **feature request**
+- The **outputs from all previous agents** (truncated to 8000 chars per agent, configurable)
+- The real **project context** (tech stack, architecture, CI — detected by `neuraforge init`)
+- The active **workflow mode** and **memory governance** policy when configured
+
+Imagine a folder circulating from desk to desk. Each agent opens the folder, reads what the previous ones wrote, adds their contribution, and passes the folder along. Nobody works in a vacuum.
+
+Concrete flow in standard mode:
+
+```
+Analyst execute() → output.content + output.structured
+    ↓
+Planner receives [ANALYST]: in its prompt → output.content + structured.stories
+    ↓
+Dev receives [ANALYST]: + [PLANNER]: → implements according to stories
+    ↓
+Security receives [PLANNER]: + [DEV]: → runs the application security gate
+    ↓
+QA receives [ANALYST]: + [PLANNER]: + [DEV]: + [SECURITY]: → reviews the Dev's code
+```
+
+
+### Scoped memory governance
+
+When `memory.enabled` is true, the orchestrator passes the configured memory policy to every agent. The base prompt includes a `--- Memory Governance ---` section with:
+
+- The current workflow mode (`flash`, `standard`, or `enterprise`)
+- Scope precedence: `task > session > project > user` by default
+- Read/write policies per scope (`never`, `explicit`, `contextual`, `always`; `manual`, `suggested`, `automatic`)
+- Lifecycle, max size, sensitivity and summarization rules
+- `revalidateBeforeUse` when a scope must be checked before use
+
+This keeps memory useful without letting stale context override the current repository state. Agents must treat memory as contextual hints, not source of truth.
+
+### Structured outputs
+
+Each agent returns typed data in `output.structured`:
+
+| Agent | Structured fields |
+|-------|------------------|
+| Analyst | `complexity` (1-5), `risks` (string[]), `questions` (string[]) |
+| Planner | `stories` (array of id/title/description/acceptanceCriteria), `estimatedTokens` (number) |
+| Dev | `filesChanged` (string[]), `testsGenerated` (string[]) |
+| Security Reviewer | `status` (`approved`/`warning`/`blocked`), `passed` (boolean), `findings` (array), `requiredSecurityTests` (string[]) |
+| QA | `passed` (boolean), `score` (1-10), `issues` (array of severity/message), `criteriaResults` (array of story/criterion/passed/reason) |
+| DocOps | `docsGenerated` (string[]) |
+
+The orchestrator uses these fields for quality gates and the feedback loop.
+
+### Cross-verification QA / Planner
+
+The QA doesn't do a generic review. It extracts stories and acceptance criteria from the Planner's output (`structured.stories`) and explicitly includes them in its review:
+
+```
+--- ACCEPTANCE CRITERIA TO VERIFY ---
+Story: Setup Database
+  - Tables are created
+  - Migrations run successfully
+
+For each criterion: PASS or FAIL with reason.
+```
+
+The QA returns `structured.criteriaResults` with each criterion's result, enabling precise tracking of functional coverage.
+
+### Multi-provider routing per agent
+
+Each agent receives the optimal provider for its task via the router:
+
+| Agent | TaskType | Default provider (auto) |
+|-------|----------|---------------------------|
+| Analyst | analysis | claude-code |
+| Planner | planning | claude-code |
+| Dev | code_gen | gemini |
+| Security Reviewer | security_review | claude-code |
+| QA | code_review | claude-code |
+| DocOps | documentation | claude-code |
+
+The orchestrator calls `router.route(taskType)` before each execution. If the preferred provider is unavailable, the fallback takes over.
+
+### Feedback loop QA -> Dev
+
+If the QA fails (`structured.passed = false`), the orchestrator:
+1. Re-runs the Dev with the QA's feedback in `previousOutputs`
+2. Re-runs the QA on the new code
+3. Repeats max 2 times. If still failing, the workflow continues.
+
+### Quality gates
+
+After the **discovery** phase: the gate verifies that the Analyst's output contains content and a detected complexity. Otherwise, the feature is blocked.
+
+After the **planning** phase: the gate verifies that the spec contains content and at least one story. Otherwise, blocked.
+
+In **enterprise** mode, a final `enterprise_production_readiness` gate runs after Security, QA, and DocOps. It blocks the feature when the implementation has no changed files, no tests, a security review that is not approved or still has findings, a QA score below 9/10, missing/failing acceptance criteria, or incomplete DocOps artefacts (`runbook`, `rollback`, `deployment`).
+
+## Manual invocation
+
+You can invoke an agent outside of a workflow:
+
+```bash
+$ neuraforge agent analyst "Analyze the billing module"
+Invoking agent "analyst" with: "Analyze the billing module"
+```
+
+```bash
+$ neuraforge agent qa "Review the changes from the last commit"
+```
+
+> **Tip**: Manual invocation is useful for one-off analyses without creating a feature.
+
+## Next step
+
+You now know the 7 agents and how they collaborate. But a team, no matter how talented, needs the right tools. Discover how to connect and configure your [AI providers](/en/guides/providers) to give each agent the engine it deserves.

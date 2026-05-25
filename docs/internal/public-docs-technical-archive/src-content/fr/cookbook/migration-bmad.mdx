@@ -1,0 +1,65 @@
+# Migration depuis BMAD
+
+> BMAD : 12-16h avant le premier code, \~31K tokens par workflow. NeuraForge : 30 min, moins de 8K tokens. Meme philosophie multi-agents, execution radicalement differente.
+
+**Ce que vous allez apprendre :**
+- Les differences entre BMAD et NeuraForge
+- Comment migrer un projet BMAD
+- Tableau d'equivalences
+
+## Pourquoi migrer ?
+
+| Critere | BMAD | NeuraForge |
+|---|---|---|
+| Temps avant 1er code | 12-16h | 30 min - 2h |
+| Courbe apprentissage | ~2 mois | 1-3 jours |
+| Tokens/workflow | ~31 667 | < 8 000 |
+| Modes | 1 seul | 3 adaptatifs |
+| Providers IA | 1-2 | 3 natifs |
+| Brownfield | Difficile | Natif |
+
+## Equivalences
+
+| BMAD | NeuraForge |
+|---|---|
+| Business Analyst agent | Analyst agent |
+| PM agent | Planner agent (fusionne PM + Archi) |
+| Architect agent | Planner agent |
+| Developer agent | Dev agent |
+| QA agent | QA agent |
+| DevOps agent | DocOps agent |
+| Full PRD (20 pages) | Spec allegee (1-2 pages) |
+| Monolithe documentaire | 1 feature = 1 contexte isole |
+| Session unique | Bus de contexte partage |
+
+## Etapes de migration
+
+### 1. Initialiser NeuraForge
+
+```bash
+$ neuraforge init
+```
+
+### 2. Convertir les regles
+
+Copiez vos regles BMAD dans `.neuraforge/rules/` au format Markdown.
+
+### 3. Adapter le workflow
+
+- Les petites features : utilisez flash (pas d'equivalent BMAD)
+- Les features moyennes : standard remplace le workflow BMAD complet
+- Les projets critiques : enterprise avec approbation humaine
+
+### 4. Ignorer les anciens fichiers BMAD
+
+Les fichiers `.bmad/` ne sont plus utilises. Vous pouvez les archiver.
+
+> **Attention** : NeuraForge ne reprend pas les sessions BMAD en cours. Terminez vos features BMAD avant de migrer.
+
+## FAQ
+
+**Puis-je utiliser les deux en parallele ?** Oui, mais pas recommande. Les deux ecrivent dans des dossiers differents.
+
+**Mes templates BMAD fonctionnent-ils ?** Non, NeuraForge utilise Handlebars. Reconvertissez-les avec `neuraforge template customize`.
+
+**Le Bus de contexte remplace quoi ?** Il remplace la memoire isolee de chaque agent BMAD par un contexte partage.

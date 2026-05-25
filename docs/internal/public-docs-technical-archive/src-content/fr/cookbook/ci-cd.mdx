@@ -1,0 +1,192 @@
+# Integration CI/CD
+
+> NeuraForge tourne sur le poste du dev, pas dans la CI. Mais la CI peut verifier que les artefacts existent, bloquer les PRs sans review, et collecter les metriques. Voici comment.
+
+**Ce que vous allez apprendre :**
+- Valider les artefacts NeuraForge dans la CI
+- Automatiser les checks NeuraForge dans les pipelines
+- Integrer les metriques NeuraForge dans vos dashboards
+
+## Principe
+
+NeuraForge s'execute **sur le poste du developpeur**, pas dans la CI. Mais la CI peut :
+1. **Verifier** que les artefacts NeuraForge existent et sont coherents
+2. **Bloquer** les PRs sans artefacts (si votre politique l'exige)
+3. **Collecter** les metriques pour le dashboard d'equipe
+4. **Executer** des flash non-interactifs pour les fix automatiques
+
+## GitHub Actions
+
+### Verifier les artefacts NeuraForge sur une PR
+
+```yaml
+# .github/workflows/neuraforge-check.yml
+name: NeuraForge Artefacts Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  neuraforge-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check NeuraForge initialized
+        run: |
+          if [ ! -f .neuraforge/neuraforge.config.yaml ]; then
+            echo "::warning::NeuraForge not initialized in this project"
+            exit 0
+          fi
+
+      - name: Check feature artefacts
+        run: |
+          if [ -d .neuraforge/features ]; then
+            for feature_dir in .neuraforge/features/*/; do
+              if [ -d "$feature_dir" ]; then
+                feature=$(basename "$feature_dir")
+                echo "Checking feature: $feature"
+
+                # En mode standard+, verifier brief et spec
+                if [ -f "$feature_dir/spec.md" ] && [ ! -f "$feature_dir/review.md" ]; then
+                  echo "::warning::Feature $feature has spec but no QA review"
+                fi
+              fi
+            done
+          fi
+
+      - name: Check decisions trail
+        run: |
+          if [ -f .neuraforge/memory/decisions.jsonl ]; then
+            echo "Decisions logged: $(wc -l < .neuraforge/memory/decisions.jsonl)"
+          else
+            echo "::warning::No decisions log found"
+          fi
+```
+
+### Collecter les metriques NeuraForge
+
+```yaml
+# .github/workflows/neuraforge-metrics.yml
+name: NeuraForge Metrics
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract NeuraForge metrics
+        run: |
+          if [ -f .neuraforge/memory/metrics.jsonl ]; then
+            echo "## NeuraForge Metrics" >> $GITHUB_STEP_SUMMARY
+
+            total_tokens=$(cat .neuraforge/memory/metrics.jsonl | \
+              python3 -c "import sys,json; print(sum(json.loads(l)['tokensUsed'] for l in sys.stdin))")
+            total_cost=$(cat .neuraforge/memory/metrics.jsonl | \
+              python3 -c "import sys,json; print(f'{sum(json.loads(l).get(\"cost\",0) for l in sys.stdin):.2f}')")
+            features=$(cat .neuraforge/memory/metrics.jsonl | \
+              python3 -c "import sys,json; print(len(set(json.loads(l)['feature'] for l in sys.stdin)))")
+
+            echo "| Metrique | Valeur |" >> $GITHUB_STEP_SUMMARY
+            echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Features | $features |" >> $GITHUB_STEP_SUMMARY
+            echo "| Tokens | $total_tokens |" >> $GITHUB_STEP_SUMMARY
+            echo "| Cout | \$$total_cost |" >> $GITHUB_STEP_SUMMARY
+          fi
+```
+
+## GitLab CI
+
+```yaml
+# .gitlab-ci.yml
+neuraforge-check:
+  stage: validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - |
+      if [ ! -f .neuraforge/neuraforge.config.yaml ]; then
+        echo "NeuraForge not initialized — skipping"
+        exit 0
+      fi
+
+      for dir in .neuraforge/features/*/; do
+        [ -d "$dir" ] || continue
+        feature=$(basename "$dir")
+        echo "Feature: $feature"
+        ls -la "$dir"
+      done
+
+      if [ -f .neuraforge/memory/decisions.jsonl ]; then
+        echo "Decisions: $(wc -l < .neuraforge/memory/decisions.jsonl)"
+      fi
+```
+
+## Mode non-interactif
+
+Pour les taches automatisees (fix de lint, updates de deps), NeuraForge peut tourner en CI :
+
+```bash
+$ neuraforge flash "Fix lint errors" --non-interactive --auto-approve
+```
+
+Le `--non-interactive` desactive les prompts. Le `--auto-approve` skip les approbations enterprise.
+
+**Attention** : reservez le mode non-interactif aux taches a faible risque (flash uniquement). Les modes standard et enterprise beneficient de la validation humaine.
+
+## Pre-commit hook
+
+Verifier que les artefacts sont commites avec le code :
+
+```bash
+#!/bin/sh
+# .git/hooks/pre-commit
+
+if git diff --cached --name-only | grep -q "^\.neuraforge/features/"; then
+  if ! git diff --cached --name-only | grep -q "decisions.jsonl"; then
+    echo "WARNING: Feature artefacts modifies sans decisions log."
+    echo "Avez-vous utilise NeuraForge pour generer ces artefacts ?"
+  fi
+fi
+```
+
+## Dashboards
+
+### Export pour Grafana / PowerBI
+
+```bash
+$ neuraforge metrics --export csv > neuraforge-metrics.csv
+# Colonnes: timestamp, feature, agent, provider, tokensUsed, durationMs, cost
+```
+
+### Metriques cles pour le dashboard
+
+| Metrique | Source | Calcul |
+|----------|--------|--------|
+| Features/semaine | metrics.jsonl | Distinct features par semaine |
+| Tokens/mois | metrics.jsonl | Sum tokensUsed par mois |
+| Cout/mois | metrics.jsonl | Sum cost par mois |
+| Provider le plus utilise | metrics.jsonl | Count par provider |
+| Taux circuit breaker | decisions.jsonl | circuit_breaker / total |
+| Taux QA pass | decisions.jsonl | review=passed / total reviews |
+
+## Rapport de couts
+
+```bash
+$ neuraforge provider cost
+Provider cost report:
+  claude-code: 45000 tokens ($0.135)
+  gemini:      120000 tokens ($0.120)
+  copilot:     15000 tokens ($0.000)
+  Total:       180000 tokens ($0.255)
+```
+
+## Prochaine etape
+
+Si vous venez de BMAD, consultez la [migration BMAD](/fr/cookbook/migration-bmad).

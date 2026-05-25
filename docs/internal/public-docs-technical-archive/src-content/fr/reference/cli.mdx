@@ -1,0 +1,224 @@
+# Reference CLI
+
+La reference complete. Chaque commande, chaque flag, chaque option. Ctrl+F et trouvez ce dont vous avez besoin.
+
+---
+
+## Commandes workflow
+
+### `neuraforge init`
+
+Initialise NeuraForge dans le projet courant. Scanne la stack technique, detecte le CI, les bases de donnees et le gestionnaire de paquets.
+
+```bash
+neuraforge init [--enterprise]
+```
+
+- `--enterprise` : inclut les templates et regles enterprise
+
+### `neuraforge flash <description>`
+
+Lance un workflow flash (rapide). Lead + Dev, sans spec ni review — ideal pour les corrections urgentes.
+
+```bash
+neuraforge flash "Fix bug #123" [--dry-run] [--provider <name>] [--profile <name>] [--trace] [--verbose [level]]
+```
+
+### `neuraforge standard <description>`
+
+Lance un workflow standard. Analyse, planification, developpement et review automatique.
+
+```bash
+neuraforge standard "Nouvelle API users" [--dry-run] [--provider <name>] [--profile <name>] [--trace] [--verbose [level]]
+```
+
+### `neuraforge enterprise <description>`
+
+Lance un workflow enterprise avec approbation humaine entre chaque phase. Documentation et conformite incluses.
+
+```bash
+neuraforge enterprise "Migration auth" [--dry-run] [--provider <name>] [--profile <name>] [--auto-approve] [--trace] [--verbose [level]]
+```
+
+Options communes aux trois modes :
+- `--dry-run` : affiche ce qui serait fait sans executer
+- `--provider <name>` : force un provider specifique
+- `--profile <name>` : active un agent profile / domain playbook pour cette execution
+- `--trace` : enregistre une trace detaillee du workflow
+- `--verbose [level]` : affiche la trace en live (`normal` ou `full`)
+
+Option enterprise :
+- `--auto-approve` : bypasse les gates d'approbation humaine (utile en CI/CD)
+
+---
+
+## Commandes de suivi
+
+### `neuraforge status [feature-slug]`
+
+Affiche le statut des features — etat courant, phase, provider utilise.
+
+```bash
+neuraforge status                    # Toutes les features
+neuraforge status export-csv         # Une feature specifique
+```
+
+### `neuraforge resume <feature-slug>`
+
+Reprend une feature en pause ou bloquee. L'orchestrateur redetermine la prochaine etape automatiquement.
+
+```bash
+neuraforge resume export-csv [--provider <name>] [--profile <name>] [--auto-approve] [--trace] [--verbose [level]]
+```
+
+Options utiles :
+- `--provider <name>` : reprend avec un provider specifique
+- `--profile <name>` : recharge le meme agent profile / domain playbook qu'au lancement initial
+- `--auto-approve` : reprend un workflow enterprise sans reprompt entre phases
+- `--trace` / `--verbose [level]` : garde ou affiche la trace pendant la reprise
+
+### `neuraforge abort <feature-slug>`
+
+Abandonne une feature (sauvegarde l'etat avant suppression).
+
+```bash
+neuraforge abort export-csv
+```
+
+---
+
+## Commandes agents et providers
+
+### `neuraforge agent <name> <prompt>`
+
+Invoque un agent directement, en dehors du workflow. Utile pour des analyses ponctuelles ou du debugging.
+
+```bash
+neuraforge agent analyst "Analyser le module billing"
+neuraforge agent qa "Reviewer les changements recents"
+```
+
+Agents : `analyst`, `planner`, `dev`, `qa`, `docops`.
+
+### `neuraforge provider`
+
+Gere les providers IA — statut, basculement, couts.
+
+```bash
+neuraforge provider status           # Etat des providers
+neuraforge provider switch gemini    # Changer de provider
+neuraforge provider cost             # Rapport de couts
+```
+
+---
+
+## Commandes de configuration
+
+### `neuraforge metrics`
+
+Affiche les metriques d'utilisation — tokens consommes, couts, nombre d'appels par agent.
+
+```bash
+neuraforge metrics                   # Affichage texte
+neuraforge metrics --export csv      # Export CSV
+```
+
+### `neuraforge config`
+
+Gere la configuration du projet.
+
+```bash
+neuraforge config show                       # Afficher toute la config
+neuraforge config get <cle>                  # Obtenir une valeur (notation par point)
+neuraforge config get providers.claude-code  # Exemple : cle imbriquee
+neuraforge config set <cle> <valeur>         # Definir une valeur (notation par point)
+neuraforge config set mode flash             # Exemple : changer le mode
+neuraforge config set routing.strategy auto  # Exemple : cle imbriquee
+```
+
+### `neuraforge rules`
+
+Gere les regles d'entreprise injectees dans les prompts agents.
+
+```bash
+neuraforge rules list                # Lister
+neuraforge rules add security.md     # Ajouter
+neuraforge rules remove security     # Supprimer
+```
+
+### `neuraforge skills`
+
+Gere les skills d'extensibilite — des packages declaratifs qui enrichissent le pipeline.
+
+```bash
+neuraforge skills list                # Lister les skills installes
+neuraforge skills init my-skill       # Creer un nouveau skill
+neuraforge skills add /path/to/skill  # Installer depuis un dossier
+neuraforge skills remove my-skill     # Supprimer un skill
+neuraforge skills enable my-skill     # Activer un skill
+neuraforge skills disable my-skill    # Desactiver un skill
+```
+
+Les skills sont des packages declaratifs (YAML + Markdown) dans `.neuraforge/skills/` qui injectent instructions, regles et hooks dans le pipeline. Voir le [guide skills](/fr/guides/skills) pour plus de details.
+
+### `neuraforge retex`
+
+Gere les retours d'experience (lessons learned). Les retex pertinents sont automatiquement injectes dans les prompts agents.
+
+```bash
+neuraforge retex list                                    # Lister tous les retex
+neuraforge retex add --title "..." --context tag1,tag2 \
+  --outcome success --lesson "..." \
+  --recommendation "..."                           # Ajouter un retex
+neuraforge retex search <tag>                             # Chercher par tag
+neuraforge retex remove <id>                              # Supprimer un retex
+```
+
+Les retex sont stockes dans `.neuraforge/retex/` en Markdown. Les retex pertinents sont injectes dans les prompts agents sous `--- Lessons Learned ---`.
+
+
+### `neuraforge learning`
+
+Inspecte le moteur Learning Retex -> Knowledge/Rules/Skills candidates.
+
+```bash
+neuraforge learning status
+neuraforge learning review --iteration 10
+```
+
+`status` affiche le nombre de Retex et candidates. `review` indique si la revue périodique est due et liste les candidates prêtes à valider.
+
+### `neuraforge template`
+
+Gere les templates d'artefacts.
+
+```bash
+neuraforge template list             # Lister
+neuraforge template customize spec   # Personnaliser
+```
+
+---
+
+## Slash commands (Claude Code)
+
+NeuraForge est aussi disponible en slash commands dans Claude Code — zero installation, meme resultat :
+
+| Slash command | Equivalent CLI |
+|---|---|
+| `/neuraforge-help` | — |
+| `/neuraforge-init` | `neuraforge init` |
+| `/neuraforge-flash <desc>` | `neuraforge flash "<desc>"` |
+| `/neuraforge-standard <desc>` | `neuraforge standard "<desc>"` |
+| `/neuraforge-enterprise <desc>` | `neuraforge enterprise "<desc>"` |
+| `/neuraforge-status` | `neuraforge status` |
+| `/neuraforge-resume <slug>` | `neuraforge resume <slug>` |
+| `/neuraforge-agent <nom> <prompt>` | `neuraforge agent <nom> "<prompt>"` |
+| `/neuraforge-rules` | `neuraforge rules list` |
+
+Les deux modes ecrivent dans les memes fichiers `.neuraforge/` et sont interchangeables.
+
+---
+
+## Prochaine etape
+
+Consultez la [reference configuration](/fr/reference/config).

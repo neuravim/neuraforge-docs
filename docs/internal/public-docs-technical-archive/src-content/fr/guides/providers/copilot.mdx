@@ -1,0 +1,256 @@
+# GitHub Copilot
+
+> Vous payez deja pour Copilot ? Autant l'utiliser. Cout supplementaire : zero. Ideal pour les flash rapides et comme filet de securite quand les autres providers sont down.
+
+> **Ce que vous allez apprendre**
+> - Installer GitHub CLI et l'extension Copilot
+> - Configurer l'authentification GitHub
+> - Utiliser Copilot comme provider NeuraForge
+> - Comprendre les limitations
+> - Troubleshooting
+
+GitHub Copilot est un provider CLI natif d'NeuraForge. Il s'appuie sur `gh copilot explain` pour traiter les prompts en mode semi-interactif. Son coût est nul — il est inclus dans votre abonnement Copilot — ce qui en fait un excellent fallback ou provider de quick fix.
+
+## Prérequis
+
+- **GitHub CLI** (`gh`) installé et à jour
+- **Abonnement GitHub Copilot** actif (Individual, Business ou Enterprise)
+- NeuraForge initialisé dans votre projet (`neuraforge init`)
+
+## Installation
+
+### 1. Installer GitHub CLI
+
+Installez `gh` selon votre plateforme :
+
+```bash
+$ brew install gh                # macOS (Homebrew)
+$ winget install GitHub.cli      # Windows (winget)
+$ sudo apt install gh            # Linux / Debian-Ubuntu
+```
+
+Vérifiez l'installation :
+
+```bash
+$ gh --version
+gh version 2.x.x (...)
+```
+
+> **Information** : Sur Linux, si `gh` n'est pas dans les dépôts apt de votre distribution, utilisez le [script d'installation officiel](https://github.com/cli/cli#installation).
+
+### 2. Authentification GitHub
+
+Connectez GitHub CLI à votre compte GitHub :
+
+```bash
+$ gh auth login
+```
+
+Lors de l'assistant interactif, choisissez :
+- **GitHub.com** (pas GitHub Enterprise, sauf si votre organisation l'impose)
+- **HTTPS** comme protocole préféré
+- **Login with a web browser** pour l'authentification
+
+Vérifiez que vous êtes bien connecté :
+
+```bash
+$ gh auth status
+github.com
+  ✓ Logged in to github.com account <your-username>
+  - Active account: true
+  - Token scopes: 'copilot', 'gist', 'read:org', 'repo', 'workflow'
+```
+
+### 3. Installer l'extension Copilot
+
+```bash
+$ gh extension install github/gh-copilot
+```
+
+Vérifiez que l'extension est disponible :
+
+```bash
+$ gh copilot --version
+gh copilot version x.x.x
+```
+
+Testez manuellement que Copilot répond :
+
+```bash
+$ echo "Explique ce qu'est un closure en JavaScript" | gh copilot explain -
+```
+
+## Configuration NeuraForge
+
+Ajoutez la section `copilot` dans `.neuraforge/neuraforge.config.yaml` :
+
+```yaml
+provider: copilot
+providers:
+  copilot:
+    enabled: true
+    command: gh
+    model: copilot
+    maxTokens: 50000
+    costPer1k: 0
+```
+
+Paramètres clés :
+
+| Paramètre | Valeur | Description |
+|---|---|---|
+| `command` | `gh` | Binaire GitHub CLI |
+| `model` | `copilot` | Identifiant interne du provider |
+| `maxTokens` | `50000` | Contexte maximum supporté |
+| `costPer1k` | `0` | Inclus dans l'abonnement Copilot |
+
+## Premier usage
+
+Définissez Copilot comme provider actif puis lancez une feature flash :
+
+```bash
+$ neuraforge config set provider copilot
+$ neuraforge flash "Fix le typo dans README"
+```
+
+Vérifiez que le provider est bien détecté :
+
+```bash
+$ neuraforge provider status
+Provider status:
+  copilot: configured
+```
+
+## Forces et cas d'usage
+
+Copilot excelle dans des tâches ciblées et rapides :
+
+| Cas d'usage | Pertinence |
+|---|---|
+| Quick fix, corrections de typos | Excellent |
+| Petites corrections de code | Bon |
+| Résumés de PR / explications | Bon |
+| Analyses complexes multi-fichiers | Limité |
+| Génération de code étendue | Limité |
+
+**Avantages principaux :**
+
+- **Coût : $0** — inclus dans votre abonnement Copilot Individual, Business ou Enterprise
+- **Intégré à l'écosystème GitHub** — cohérent avec `gh pr`, `gh issue`, etc.
+- **Disponible partout** où `gh` est installé, sans configuration d'API key supplémentaire
+
+## Limitations connues
+
+> **Attention** : Avant de choisir Copilot comme provider principal, tenez compte de ces limitations.
+
+- **Contexte limité à 50 000 tokens** — insuffisant pour les analyses de codebase larges
+- **Mode semi-interactif** (`gh copilot explain`) — pas un appel API direct, la latence peut varier
+- **Moins performant pour l'analyse complexe** — Copilot est optimisé pour la completion et l'explication, pas pour les raisonnements multi-étapes
+- **Pas de streaming** — la réponse est retournée en bloc après traitement complet
+- **Dépendance à la connectivité GitHub** — nécessite un accès internet et une session `gh auth` valide
+
+**Recommandation** : utilisez Copilot en fallback ou pour les tâches flash légères. Pour les modes `standard` et `enterprise`, préférez `claude-code` ou `gemini` en provider principal.
+
+## Utilisation recommandee : multi-provider
+
+La configuration optimale combine plusieurs providers avec Copilot en position de fallback :
+
+```yaml
+provider: claude-code
+providers:
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+  gemini:
+    enabled: true
+    command: gemini
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+  copilot:
+    enabled: true
+    command: gh
+    model: copilot
+    maxTokens: 50000
+    costPer1k: 0
+routing:
+  strategy: prefer
+  fallback: [claude-code, gemini, copilot]
+```
+
+Avec la stratégie `prefer`, NeuraForge utilise `claude-code` en priorité et bascule automatiquement sur `gemini` puis `copilot` si le provider principal est indisponible.
+
+Pour les quick fixes uniquement, vous pouvez router les tâches légères vers Copilot via la stratégie `auto` :
+
+```yaml
+routing:
+  strategy: auto
+  fallback: [claude-code, gemini, copilot]
+```
+
+En mode `auto`, NeuraForge affecte Copilot aux tâches `quick fix` et `PR review`, et réserve les providers plus puissants pour l'analyse et la génération de code.
+
+## Troubleshooting
+
+### "gh: command not found"
+
+GitHub CLI n'est pas installé ou n'est pas dans le PATH.
+
+```bash
+$ which gh
+$ gh --version
+```
+
+Réinstallez `gh` via votre gestionnaire de paquets, puis relancez votre terminal.
+
+### "gh copilot: unknown command"
+
+L'extension Copilot n'est pas installée.
+
+```bash
+$ gh extension list
+$ gh extension install github/gh-copilot
+```
+
+### "You are not authenticated"
+
+La session GitHub CLI est expirée ou manquante.
+
+```bash
+$ gh auth status
+$ gh auth login
+```
+
+### "copilot: not configured" dans `neuraforge provider status`
+
+La section `copilot` est absente ou mal formée dans `.neuraforge/neuraforge.config.yaml`. Vérifiez que `enabled: true` est présent et que l'indentation YAML est correcte.
+
+```bash
+$ neuraforge provider status
+$ cat .neuraforge/neuraforge.config.yaml
+```
+
+### Timeout ou réponse vide
+
+`gh copilot explain` peut être lent sur les prompts volumineux. Si NeuraForge retourne une erreur de timeout :
+
+- Réduisez la taille du contexte passé à l'agent
+- Passez en mode `flash` pour limiter le contexte
+- Vérifiez votre connexion internet et que `gh auth status` est valide
+
+```bash
+$ echo "test" | gh copilot explain -
+```
+
+Si cette commande échoue, le problème est au niveau de GitHub CLI, pas d'NeuraForge.
+
+### Abonnement Copilot inactif
+
+Si votre abonnement a expiré, `gh copilot explain` retournera une erreur d'autorisation. Vérifiez votre abonnement dans les paramètres GitHub : **Settings > Copilot**.
+
+## Prochaine etape
+
+Consultez la page [Providers](/fr/guides/providers) pour configurer le routage multi-provider et le budget tokens.

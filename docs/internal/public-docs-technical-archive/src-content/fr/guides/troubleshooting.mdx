@@ -1,0 +1,134 @@
+# Troubleshooting
+
+> Ca ne marche pas ? Pas de panique. 90% des problemes se resolvent en moins d'une minute. Trouvez le votre ci-dessous.
+
+---
+
+## Problemes courants
+
+### "command not found: neuraforge"
+
+**Symptome** : Le terminal ne reconnait pas la commande `neuraforge`.
+
+**Cause** : Le binaire n'est pas dans le PATH.
+
+**Solution** : Verifiez le chemin et ajoutez-le a votre PATH :
+```bash
+$ pnpm bin -g
+```
+
+---
+
+### "No NeuraForge config found"
+
+**Symptome** : NeuraForge refuse de demarrer et demande une configuration.
+
+**Cause** : Le projet n'a pas ete initialise.
+
+**Solution** : Lancez `neuraforge init` a la racine de votre projet.
+
+---
+
+### "No provider available"
+
+**Symptome** : NeuraForge ne trouve aucun provider pour executer la tache.
+
+**Cause** : Aucun provider CLI n'est installe ou accessible.
+
+**Solution** : Verifiez que le provider est installe et repond :
+```bash
+$ claude --version   # ou gemini --version
+$ neuraforge provider status
+```
+
+---
+
+### "Budget exceeded"
+
+**Symptome** : NeuraForge bloque l'execution et signale un depassement de budget.
+
+**Cause** : Le budget tokens de la feature est depasse.
+
+**Solution** : Deux options :
+- Augmenter le budget dans `neuraforge.config.yaml`
+- Passer en mode flash (budget plus petit mais suffisant)
+
+---
+
+### Circuit breaker declenche
+
+**Symptome** : Le message suivant apparait :
+```
+NeuraForge Lead > Circuit breaker OPEN for dev: escalating to human
+```
+
+**Cause** : Un agent a echoue 3 fois de suite. NeuraForge arrete et escalade.
+
+**Solution** : Verifiez l'erreur dans les logs, corrigez le contexte, puis relancez :
+```bash
+$ neuraforge resume <slug>
+```
+
+Pour un workflow enterprise lance sans pauses humaines, conservez le mode non-interactif pendant la reprise :
+```bash
+$ neuraforge resume <slug> --auto-approve
+```
+
+---
+
+### Feature bloquee
+
+**Symptome** : La feature apparait comme `blocked` dans le statut :
+```bash
+$ neuraforge status
+ma-feature [blocked] (standard) - ...
+```
+
+**Cause** : Un quality gate a echoue ou une approbation manque.
+
+**Solution** : Pour debloquer et reprendre :
+```bash
+$ neuraforge resume ma-feature
+Resuming feature: ma-feature
+```
+
+Si la feature dependait d'un agent profile / domain playbook, repassez-le explicitement :
+```bash
+$ neuraforge resume ma-feature --profile wildfly-to-spring-boot --auto-approve --trace
+```
+
+Pour abandonner definitivement :
+```bash
+$ neuraforge abort ma-feature
+Aborting feature: ma-feature
+```
+
+---
+
+### Les artefacts ne sont pas generes
+
+**Symptome** : Le workflow termine mais aucun fichier n'apparait.
+
+**Cause** : Le dossier de sortie n'existe pas ou le provider ne repond pas.
+
+**Solution** : Verifiez que le dossier `.neuraforge/features/` existe et que `neuraforge provider status` montre un provider actif.
+
+---
+
+## Logs et debug
+
+Quand les solutions rapides ne suffisent pas, les logs vous disent exactement ce qui s'est passe.
+
+Les decisions sont dans `.neuraforge/memory/decisions.jsonl` (JSONL, une ligne par decision).
+Les metriques sont dans `.neuraforge/memory/metrics.jsonl`.
+
+```bash
+$ neuraforge metrics
+export-csv: 3000 tokens, $0.0090, 2 operations
+```
+
+> **Danger** : Ne modifiez jamais `decisions.jsonl` manuellement. C'est un log append-only.
+
+## Prochaine etape
+
+Consultez la [reference CLI](/fr/reference/cli) pour la documentation complete.

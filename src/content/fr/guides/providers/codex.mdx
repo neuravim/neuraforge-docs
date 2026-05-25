@@ -1,122 +1,44 @@
-# Codex CLI
+# Codex
 
-> Vous preferez OpenAI Codex pour les edits de repository ? NeuraForge peut maintenant router analyse, generation de code, review et refinement vers le CLI `codex`, avec le bon sandbox selon l'operation.
+> Codex est utile pour la génération de code et les tâches d’ingénierie orientées dépôt.
 
-> **Ce que vous allez apprendre**
-> - Installer et verifier Codex CLI
-> - Configurer Codex comme provider NeuraForge
-> - Comprendre les modes sandbox utilises par NeuraForge
-> - Utiliser Codex dans une chaine de fallback
-> - Diagnostiquer les problemes courants
+## Quand l'utiliser
 
-Codex est un provider CLI natif NeuraForge. NeuraForge lance `codex exec` comme subprocess, envoie le prompt agent sur stdin, et l'execute depuis le dossier du projet pour donner au modele la meme vue workspace que le workflow.
+Utilisez OpenAI Codex CLI lorsqu'il correspond au modèle d'accès IA, à la politique sécurité et au budget de votre équipe. NeuraForge peut fonctionner avec plusieurs providers, ce qui permet d'adapter le choix à chaque environnement.
 
-## Prerequis
+## Vue d'installation
 
-- Codex CLI installe et authentifie (`codex --version` doit fonctionner)
-- NeuraForge initialise dans le projet (`neuraforge init`)
-- Un workspace ou Codex peut lire les fichiers et, pour generation/refinement, ecrire les changements
-
-## Verification installation
-
-Installez Codex CLI avec les instructions officielles de votre environnement, puis verifiez qu'il est disponible dans le PATH :
-
-```bash
-$ codex --version
-```
-
-Si cette commande echoue, NeuraForge marque le provider comme indisponible et continue via la chaine de fallback.
-
-## Configuration NeuraForge
-
-Codex est inclus dans la configuration providers par defaut :
+1. Installer l'outil provider ou configurer l'endpoint.
+2. S'authentifier avec la méthode officielle du provider.
+3. Sélectionner le provider dans la configuration NeuraForge.
+4. Lancer un petit workflow de test avant les travaux sensibles.
 
 ```yaml
 provider: codex
-providers:
-  codex:
-    enabled: true
-    command: codex
-    model: codex-cli
-    maxTokens: 200000
-    costPer1k: 0.003
 ```
 
-Parametres cles :
+## Guide enterprise
 
-| Parametre | Valeur | Description |
-|---|---|---|
-| `command` | `codex` | Binaire Codex CLI a executer |
-| `model` | `codex-cli` | Label interne utilise par les metriques NeuraForge |
-| `maxTokens` | `200000` | Budget contexte par defaut pour routage/estimation cout |
-| `costPer1k` | `0.003` | Estimation cout par 1 000 tokens |
+Pour les déploiements enterprise, privilégiez un accès approuvé :
 
-## Comportement sandbox
+- comptes organisation managés ;
+- gateways ou proxies IA internes ;
+- modèles locaux pour environnements restreints ;
+- règles de traitement des données documentées ;
+- suivi budget et usage.
 
-NeuraForge choisit un sandbox selon l'operation agent :
+Conservez les credentials, politiques de routing, comportement des adapters et détails spécifiques aux providers dans la documentation privée d'exploitation.
 
-| Operation | Commande Codex | Sandbox |
-|---|---|---|
-| Generation | `codex exec --sandbox workspace-write -` | Peut modifier les fichiers du workspace |
-| Review | `codex exec --sandbox read-only -` | Review en lecture seule, sans ecriture |
-| Refinement | `codex exec --sandbox workspace-write -` | Peut mettre a jour l'artefact/code selon le feedback |
+## Dépannage
 
-La generation a un timeout de 10 minutes. Review/refinement ont un timeout de 5 minutes.
+Si un provider ne fonctionne pas :
 
-## Utiliser Codex en fallback
+- vérifiez l'outil CLI ou l'endpoint indépendamment ;
+- confirmez l'authentification ;
+- vérifiez réseau et proxy ;
+- essayez une demande NeuraForge plus petite ;
+- basculez vers un autre provider approuvé si le blocage persiste.
 
-La chaine de fallback par defaut inclut maintenant Codex avant Copilot :
+## Frontière public/privé
 
-```yaml
-routing:
-  strategy: prefer
-  fallback: [claude-code, gemini, opencode, codex, copilot]
-```
-
-C'est pratique quand Claude Code ou Gemini reste le provider principal, mais que vous voulez Codex disponible pour generation multi-fichier et review avant de tomber sur Copilot.
-
-## Premiere utilisation
-
-```bash
-$ neuraforge config set provider codex
-$ neuraforge flash "Add input validation to the signup endpoint"
-```
-
-Puis verifiez la detection :
-
-```bash
-$ neuraforge provider status
-```
-
-## Forces et cas d'usage
-
-| Cas d'usage | Pertinence |
-|---|---|
-| Generation de code multi-fichier | Excellente |
-| Refactoring conscient du repository | Excellente |
-| Review avec garde-fou read-only | Bonne |
-| Fallback apres Claude/Gemini/OpenCode | Excellente |
-| Environnements sans auth Codex | Non adapte |
-
-## Troubleshooting
-
-### "codex: command not found"
-
-Codex CLI n'est pas installe ou pas dans le PATH. Installez-le, redemarrez le shell, puis verifiez :
-
-```bash
-$ which codex
-$ codex --version
-```
-
-### Provider indisponible dans `neuraforge provider status`
-
-NeuraForge teste la disponibilite avec `codex --version`. Si cette commande demande un login interactif ou echoue en CI, authentifiez Codex d'abord ou utilisez un autre provider dans la chaine de fallback.
-
-### Les modifications ne s'appliquent pas
-
-Les reviews tournent volontairement avec `--sandbox read-only`. Generation et refinement utilisent `--sandbox workspace-write`; verifiez que le dossier projet est writable et pas bloque par les permissions OS.
-
-## Prochaine etape
-
-Ajoutez Codex a votre setup multi-provider, puis ajustez le [routage](/fr/guides/providers) pour donner a chaque agent le meilleur modele pour sa tache.
+Ce guide public explique comment choisir et activer le provider. Le comportement interne des adapters, le transport des prompts, la logique de fallback et le routing ne font pas partie de la documentation publique.

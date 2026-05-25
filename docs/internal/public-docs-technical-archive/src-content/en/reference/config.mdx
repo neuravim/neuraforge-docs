@@ -1,0 +1,319 @@
+# Configuration Reference
+
+The neuraforge.config.yaml file has an option for nearly everything. Here's the complete schema, annotated with default values.
+
+---
+
+## Full schema
+
+```yaml
+# .neuraforge/neuraforge.config.yaml
+project: my-project              # (required) Project name
+provider: claude-code            # Default provider
+mode: standard                   # flash | standard | enterprise
+lang: en                         # Artifact language
+activeProfile: wildfly-to-spring-boot  # Optional agent profile / domain playbook
+
+agentProfiles:                   # Optional custom personas for built-in agents
+  wildfly-to-spring-boot:
+    description: "Legacy Java EE migration profile"
+    recommendedMode: enterprise
+    workflowPreset: migration
+    artefacts: [migration-inventory, risk-matrix, migration-plan]
+    agents:
+      analyst:
+        role: "Legacy Java EE Migration Analyst"
+        expertise: [WildFly, Java EE, Spring Boot]
+      dev:
+        role: "Spring Boot Migration Engineer"
+
+providers:                       # Per-provider configuration
+  claude-code:
+    enabled: true
+    command: claude
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+  gemini:
+    enabled: true
+    command: gemini
+    model: gemini-2.5-pro
+    maxTokens: 1000000
+    costPer1k: 0.001
+  opencode:
+    enabled: true
+    command: opencode
+    model: opencode
+    maxTokens: 200000
+    costPer1k: 0.002
+  codex:
+    enabled: true
+    command: codex
+    model: codex-cli
+    maxTokens: 200000
+    costPer1k: 0.003
+  copilot:
+    enabled: true
+    command: gh
+    model: copilot
+    maxTokens: 50000
+    costPer1k: 0
+  # Custom API provider (LLM proxy)
+  litellm:
+    enabled: true
+    baseUrl: http://localhost:4000/v1   # OpenAI-compatible endpoint
+    # apiKey: sk-xxx                    # optional
+    model: claude-sonnet-4-6
+    maxTokens: 100000
+    costPer1k: 0.003
+    command: ""                         # no subprocess
+
+routing:                         # Routing strategy
+  strategy: prefer               # auto | prefer | fixed | cost-optimized
+  fallback: [claude-code, gemini, opencode, codex, copilot]
+
+budget:                          # Token budget
+  monthlyLimit: 500000
+  alertAt: 80                    # Percentage
+  perFeature:
+    flash: 5000
+    standard: 20000
+    enterprise: 100000
+
+hooks: {}                        # Event hooks
+rules: []                        # Rule files
+
+pipeline:                        # Inter-agent pipeline configuration
+  maxOutputCharsPerAgent: 8000   # Output truncation (default: 8000)
+
+
+learning:                        # Retex -> candidates learning
+  enabled: true
+  mode: quiet
+  retex:
+    enabled: true
+    maxPerIteration: 3
+    ttlIterations: 20
+  review:
+    everyIterations: 10
+    maxItems: 10
+    minPromotionScore: 7
+  promotion:
+    allowAutoKnowledge: true
+    allowAutoRules: false
+    allowAutoSkills: false
+    requireHumanApprovalFor: [rule, skill, security]
+
+sanitize: true                   # Sensitive data filtering (default: true)
+
+memory:                          # Scoped memory governance
+  enabled: true
+  scopePrecedence: [task, session, project, user]
+  scopes:
+    user:
+      enabled: true
+      maxSize: small
+      lifecycle: persistent
+      writePolicy: suggested
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: on_limit
+    project:
+      enabled: true
+      maxSize: medium
+      lifecycle: persistent
+      writePolicy: suggested
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: periodic
+      revalidateBeforeUse: true
+    session:
+      enabled: true
+      maxSize: large
+      lifecycle: session
+      writePolicy: automatic
+      readPolicy: contextual
+      sensitivity: medium
+      summarization: on_close
+    task:
+      enabled: true
+      maxSize: small
+      lifecycle: ephemeral
+      writePolicy: automatic
+      readPolicy: always
+      sensitivity: low
+      summarization: none
+```
+
+---
+
+## Option details
+
+### Provider options
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `providers.<name>.enabled` | boolean | — | Enable/disable the provider |
+| `providers.<name>.command` | string | — | CLI command to spawn |
+| `providers.<name>.model` | string | — | Model to use |
+| `providers.<name>.maxTokens` | number | — | Token limit per request |
+| `providers.<name>.costPer1k` | number | — | Cost per 1000 tokens |
+| `providers.<name>.baseUrl` | string | — | OpenAI-compatible API endpoint (activates the HTTP adapter) |
+| `providers.<name>.apiKey` | string | — | API key for Bearer authentication |
+
+When `baseUrl` is set, NeuraForge uses the API adapter (`fetch`) instead of the CLI subprocess. The `command` is ignored.
+
+### Agent profile options
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `activeProfile` | string | — | Activates a named agent profile for the workflow. Can also be set with `--profile`. |
+| `agentProfiles.<name>.description` | string | — | Human-readable profile purpose. |
+| `agentProfiles.<name>.recommendedMode` | string | — | Suggested mode for this profile, usually `enterprise` for migrations. |
+| `agentProfiles.<name>.workflowPreset` | string | — | Optional workflow intent label, for example `migration`. |
+| `agentProfiles.<name>.instructions` | string | — | Profile-level instructions injected with skill instructions. |
+| `agentProfiles.<name>.artefacts` | string[] | — | Expected domain artefacts. |
+| `agentProfiles.<name>.agents.<role>` | object or `false` | — | Persona override for a built-in role, or `false` to disable persona injection for that role. |
+
+See [Agent Profiles & Domain Playbooks](/en/guides/agent-profiles) for the complete WildFly to Spring Boot example.
+
+### Pipeline options
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `pipeline.maxOutputCharsPerAgent` | number | 8000 | Max characters per agent output injected into the next agent's prompt. |
+
+### Routing options
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `routing.strategy` | string | `prefer` | Strategy: `fixed`, `prefer`, `auto`, `cost-optimized`. In `auto` mode, each agent receives the optimal provider. |
+| `routing.fallback` | string[] | `[claude-code, gemini, opencode, codex, copilot]` | Fallback chain if the preferred provider is unavailable. |
+
+
+### Memory governance options
+
+NeuraForge injects an explicit `--- Memory Governance ---` section into agent prompts when memory is enabled. Agents are instructed to treat memory as contextual hints, not as source of truth.
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `memory.enabled` | boolean | `true` | Enables scoped memory governance prompt injection. |
+| `memory.scopePrecedence` | MemoryScope[] | `[task, session, project, user]` | Order used when scopes conflict. |
+| `memory.scopes.<scope>.enabled` | boolean | `true` | Enables a scope. |
+| `memory.scopes.<scope>.maxSize` | `small`/`medium`/`large`/number | scope-dependent | Size budget for the scope. |
+| `memory.scopes.<scope>.lifecycle` | `ephemeral`/`session`/`ttl`/`persistent` | scope-dependent | Retention lifecycle. |
+| `memory.scopes.<scope>.writePolicy` | `never`/`manual`/`suggested`/`automatic` | scope-dependent | Whether agents may write or suggest writes. |
+| `memory.scopes.<scope>.readPolicy` | `never`/`explicit`/`contextual`/`always` | scope-dependent | How aggressively the scope is read. |
+| `memory.scopes.<scope>.sensitivity` | `low`/`medium`/`high` | scope-dependent | Sensitivity classification. |
+| `memory.scopes.<scope>.summarization` | `none`/`periodic`/`on_limit`/`on_close` | scope-dependent | When memory should be summarized. |
+| `memory.scopes.<scope>.revalidateBeforeUse` | boolean | `false` | Forces verification before using that scope as context. |
+| `memory.scopes.<scope>.retention.ttlMs` | number | — | Optional TTL for `ttl` lifecycle. |
+| `memory.scopes.<scope>.retention.maxEntries` | number | — | Optional max entries for the scope. |
+
+Default scopes are `task`, `session`, `project`, and `user`. The default `project` scope sets `revalidateBeforeUse: true` so project memory is checked before it influences agent behavior.
+
+
+### Learning options
+
+`learning` turns Retex into reviewable candidates. Defaults favor quiet operation and human approval for prescriptive artifacts.
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `learning.enabled` | boolean | `true` | Enables Retex capture/scoring. |
+| `learning.mode` | `quiet`/`suggest`/`active` | `quiet` | Proactivity level. |
+| `learning.retex.maxPerIteration` | number | `3` | Maximum Retex captured per iteration. |
+| `learning.retex.ttlIterations` | number | `20` | Expiration for unpromoted temporary Retex. |
+| `learning.review.everyIterations` | number | `10` | Periodic review frequency. |
+| `learning.review.minPromotionScore` | number | `7` | Minimum score to create a durable candidate. |
+| `learning.promotion.allowAutoKnowledge` | boolean | `true` | Allows automatic Knowledge candidates. |
+| `learning.promotion.allowAutoRules` | boolean | `false` | Keeps rules as candidates unless explicitly approved. |
+| `learning.promotion.allowAutoSkills` | boolean | `false` | Keeps skills as candidates unless explicitly approved. |
+| `learning.promotion.requireHumanApprovalFor` | string[] | `[rule, skill, security]` | Types that require human review. |
+
+### Security options
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `sanitize` | boolean | `true` | Enables sensitive data filtering (tokens, API keys, passwords, private keys, connection strings) before sending to providers. |
+
+---
+
+## Project schema (context.yaml)
+
+The `neuraforge init` scan generates `.neuraforge/memory/context.yaml` with this schema:
+
+| Key | Type | Description |
+|---|---|---|
+| `project.name` | string | Project name (from directory) |
+| `project.techStack` | string[] | Detected technologies (node, typescript, react, nestjs, prisma, python...) |
+| `project.architecture` | string[] | Infrastructure (docker, docker-compose, kubernetes) |
+| `project.ci` | string[] | CI/CD systems (github-actions, gitlab-ci, jenkins, circleci) |
+| `project.packageManager` | string? | Package manager (pnpm, yarn, npm, bun) |
+| `project.databases` | string[]? | Databases (postgres, mysql, redis, mongodb) |
+| `project.monorepo` | string? | Monorepo tool (turborepo, nx, lerna, pnpm-workspaces) |
+
+This data is injected into every agent's prompt via the `--- Project Context ---` section.
+
+---
+
+## `skill.yaml` schema
+
+Each skill in `.neuraforge/skills/<name>/` contains a `skill.yaml` file:
+
+```yaml
+name: my-skill                 # (required) Unique identifier
+version: 1.0.0                 # Semver version (default: 1.0.0)
+description: ""                # Human-readable description
+author: platform-team          # Author (optional)
+agents:                        # Target agents (default: all)
+  - dev
+  - qa
+modes:                         # Active modes (default: all)
+  - standard
+  - enterprise
+hooks:                         # Declared hooks
+  on_feature_created:
+    - command: ./hooks/notify.sh
+      onFailure: warn
+config:                        # Custom configuration
+  jira_url: https://company.atlassian.net
+priority: 10                   # Priority (default: 0, higher = first)
+enabled: true                  # Active (default: true)
+```
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `name` | string | (required) | Unique identifier, validated by Zod |
+| `version` | string | `1.0.0` | Semver version |
+| `description` | string | `""` | Description |
+| `author` | string | — | Author |
+| `agents` | AgentRole[] | all | `lead`, `analyst`, `planner`, `dev`, `qa`, `docops` |
+| `modes` | CTAMode[] | all | `flash`, `standard`, `enterprise` |
+| `hooks` | Record | — | Hooks per event (same format as `neuraforge.config.yaml`) |
+| `config` | Record | — | Free key-value pairs |
+| `priority` | integer | `0` | Descending sort |
+| `enabled` | boolean | `true` | Disable without removing |
+
+See the [skills guide](/en/guides/skills) for full usage.
+
+---
+
+## Override levels
+
+Configuration follows a five-level cascade — each level overrides the previous:
+
+| Level | File | Scope |
+|---|---|---|
+| 1. Defaults | (built-in) | Global |
+| 2. Enterprise | `~/.neuraforge/enterprise.config.yaml` | All projects |
+| 3. Project | `.neuraforge/neuraforge.config.yaml` | This project |
+| 4. Feature | `.neuraforge/features/<slug>/.override.yaml` | This feature |
+| 5. CLI | `--mode`, `--provider` | This command |
+
+Each level overrides the values from the previous one. Objects are deep-merged, arrays are replaced.
+
+---
+
+## Next step
+
+See the [artifacts reference](/en/reference/artefacts).
