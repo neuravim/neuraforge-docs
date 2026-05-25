@@ -14,7 +14,7 @@ Ce guide va vous montrer comment choisir le bon mode, et surtout comment NeuraFo
 | Agents | Lead, Dev | +Analyst, Planner, QA | +DocOps |
 | Brief | Non | Oui | Oui |
 | Spec | Non | Oui | Oui + ADR |
-| Review | Non | Oui | Oui + rapport qualite |
+| Review | Non | Oui | Oui + rapport qualite + gate production |
 | Approbation humaine | Non | Non | Oui |
 
 Voyons chaque mode en detail.
@@ -61,6 +61,16 @@ C'est le bon choix quand :
 - Plus de 15 fichiers
 - Nouvelle architecture
 - Compliance requise (RGPD, securite)
+
+Enterprise n'est plus un simple mode demo avec plus d'agents. Le workflow se termine par un **gate de readiness production** bloquant. Une feature enterprise ne passe en `completed` que si elle ressemble a une vraie application livrable :
+
+- Le Dev a modifie au moins un fichier reel (`FILES_CHANGED`) et genere au moins un test (`TESTS_GENERATED`).
+- Le Security Reviewer n'a pas bloque le workflow (`status != blocked`).
+- Le QA passe avec un score minimum de 9/10.
+- Le QA renvoie des resultats explicites pour les criteres d'acceptation (`CRITERIA_RESULTS`) et tous doivent etre `PASS`.
+- DocOps produit les artefacts d'exploitation obligatoires : runbook, rollback et guide/procedure de deploiement.
+
+Si un de ces points manque, NeuraForge marque la feature `blocked` avec le message `Enterprise production readiness failed`. Cela evite de confondre une maquette ou une reponse textuelle avec une application prete a etre livree.
 
 ### Approbation humaine : le filet de securite
 

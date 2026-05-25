@@ -14,7 +14,7 @@ This guide will show you how to choose the right mode, and more importantly, how
 | Agents | Lead, Dev | +Analyst, Planner, QA | +DocOps |
 | Brief | No | Yes | Yes |
 | Spec | No | Yes | Yes + ADR |
-| Review | No | Yes | Yes + quality report |
+| Review | No | Yes | Yes + quality report + production gate |
 | Human approval | No | No | Yes |
 
 Let's look at each mode in detail.
@@ -61,6 +61,16 @@ It's the right choice when:
 - More than 15 files
 - New architecture
 - Compliance required (GDPR, security)
+
+Enterprise is no longer just a demo mode with more agents. The workflow ends with a blocking **production readiness gate**. An enterprise feature reaches `completed` only when it looks like a real deliverable application:
+
+- Dev changed at least one real file (`FILES_CHANGED`) and generated at least one test (`TESTS_GENERATED`).
+- Security Reviewer did not block the workflow (`status != blocked`).
+- QA passed with a minimum score of 9/10.
+- QA returned explicit acceptance-criteria results (`CRITERIA_RESULTS`) and every criterion is `PASS`.
+- DocOps produced the required operations artefacts: runbook, rollback, and deployment guide/procedure.
+
+If any of these points is missing, NeuraForge marks the feature as `blocked` with `Enterprise production readiness failed`. This prevents a mockup or textual response from being mistaken for an application ready to ship.
 
 ### Human approval: the safety net
 

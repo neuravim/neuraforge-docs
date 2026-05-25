@@ -108,7 +108,7 @@ Each agent returns typed data in `output.structured`:
 | Agent | Structured fields |
 |-------|------------------|
 | Analyst | `complexity` (1-5), `risks` (string[]), `questions` (string[]) |
-| Planner | `stories` (array of id/title/description), `estimatedTokens` (number) |
+| Planner | `stories` (array of id/title/description/acceptanceCriteria), `estimatedTokens` (number) |
 | Dev | `filesChanged` (string[]), `testsGenerated` (string[]) |
 | Security Reviewer | `status` (`approved`/`warning`/`blocked`), `passed` (boolean), `findings` (array), `requiredSecurityTests` (string[]) |
 | QA | `passed` (boolean), `score` (1-10), `issues` (array of severity/message), `criteriaResults` (array of story/criterion/passed/reason) |
@@ -158,6 +158,8 @@ If the QA fails (`structured.passed = false`), the orchestrator:
 After the **discovery** phase: the gate verifies that the Analyst's output contains content and a detected complexity. Otherwise, the feature is blocked.
 
 After the **planning** phase: the gate verifies that the spec contains content and at least one story. Otherwise, blocked.
+
+In **enterprise** mode, a final `enterprise_production_readiness` gate runs after Security, QA, and DocOps. It blocks the feature when the implementation has no changed files, no tests, a security review that is not approved or still has findings, a QA score below 9/10, missing/failing acceptance criteria, or incomplete DocOps artefacts (`runbook`, `rollback`, `deployment`).
 
 ## Manual invocation
 

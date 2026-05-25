@@ -107,7 +107,7 @@ Chaque agent retourne des donnees typees dans `output.structured` :
 | Agent | Champs structures |
 |-------|------------------|
 | Analyst | `complexity` (1-5), `risks` (string[]), `questions` (string[]) |
-| Planner | `stories` (array of id/title/description), `estimatedTokens` (number) |
+| Planner | `stories` (array of id/title/description/acceptanceCriteria), `estimatedTokens` (number) |
 | Dev | `filesChanged` (string[]), `testsGenerated` (string[]) |
 | Security Reviewer | `status` (`approved`/`warning`/`blocked`), `passed` (boolean), `findings` (array), `requiredSecurityTests` (string[]) |
 | QA | `passed` (boolean), `score` (1-10), `issues` (array of severity/message), `criteriaResults` (array of story/criterion/passed/reason) |
@@ -157,6 +157,8 @@ Si le QA echoue (`structured.passed = false`), l'orchestrateur :
 Apres la phase **discovery** : le gate verifie que l'output de l'Analyst contient du contenu et une complexite detectee. Sinon, la feature est bloquee.
 
 Apres la phase **planning** : le gate verifie que la spec contient du contenu et au moins une story. Sinon, blocage.
+
+En mode **enterprise**, un dernier gate `enterprise_production_readiness` s'execute apres Security, QA et DocOps. Il bloque la feature si l'implementation n'a pas de fichiers modifies, pas de tests, une review securite non approuvee ou avec findings, un QA score inferieur a 9/10, des criteres d'acceptation manquants/en echec, ou des artefacts DocOps incomplets (`runbook`, `rollback`, `deployment`).
 
 ## Invocation manuelle
 
