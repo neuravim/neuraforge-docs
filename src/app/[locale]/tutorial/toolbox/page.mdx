@@ -53,6 +53,17 @@ Re-running standard workflow from in_progress...
 
 NeuraForge debloque la feature et relance le workflow depuis l'etat actuel. Pas besoin de tout recommencer. Les artefacts deja produits (brief, spec, stories) sont conserves.
 
+Si la feature bloquee etait un workflow enterprise lance avec un playbook ou en mode non-interactif, repassez les memes options a la reprise :
+
+```bash
+$ neuraforge resume migration-wildfly \
+  --profile wildfly-to-spring-boot \
+  --auto-approve \
+  --trace
+```
+
+`--profile` recharge le domain playbook, `--auto-approve` evite de recréer des prompts d'approbation apres une interruption, et `--trace` garde l'audit trail complet.
+
 ### Abandonner proprement
 
 Parfois, on change d'avis. Et c'est OK.

@@ -69,6 +69,11 @@ NeuraForge Lead > Circuit breaker OPEN for dev: escalating to human
 $ neuraforge resume <slug>
 ```
 
+Pour un workflow enterprise lance sans pauses humaines, conservez le mode non-interactif pendant la reprise :
+```bash
+$ neuraforge resume <slug> --auto-approve
+```
+
 ---
 
 ### Feature bloquee
@@ -85,6 +90,11 @@ ma-feature [blocked] (standard) - ...
 ```bash
 $ neuraforge resume ma-feature
 Resuming feature: ma-feature
+```
+
+Si la feature dependait d'un agent profile / domain playbook, repassez-le explicitement :
+```bash
+$ neuraforge resume ma-feature --profile wildfly-to-spring-boot --auto-approve --trace
 ```
 
 Pour abandonner definitivement :

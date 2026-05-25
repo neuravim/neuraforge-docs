@@ -187,6 +187,21 @@ $ neuraforge enterprise "Ma feature" --auto-approve
 
 L'enterprise complet tourne sans interruption. Vous gardez le DocOps, les regles, l'ADR, le scan securite — mais sans les pauses. Le meilleur des deux mondes.
 
+Si le process est interrompu, reprenez avec le meme mode non-interactif :
+
+```bash
+$ neuraforge resume ma-feature-enterprise --auto-approve
+```
+
+Et si l'execution utilisait un agent profile / domain playbook, gardez aussi le profil :
+
+```bash
+$ neuraforge resume migration-wildfly \
+  --profile wildfly-to-spring-boot \
+  --auto-approve \
+  --trace
+```
+
 ---
 
 ## Ce que l'enterprise a produit

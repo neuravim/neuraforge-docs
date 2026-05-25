@@ -290,6 +290,15 @@ neuraforge enterprise "Migrer cette app WildFly vers Spring Boot 3 en preservant
   --trace
 ```
 
+Si l'execution enterprise est interrompue, reprenez avec les memes options de contexte :
+
+```bash
+neuraforge resume migration-wildfly \
+  --profile wildfly-to-spring-boot \
+  --auto-approve \
+  --trace
+```
+
 ## Outputs attendus
 
 Avec ce profil :

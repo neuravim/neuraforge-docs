@@ -292,6 +292,15 @@ neuraforge enterprise "Migrate this WildFly app to Spring Boot 3 while preservin
   --trace
 ```
 
+If the enterprise run is interrupted, resume with the same context options:
+
+```bash
+neuraforge resume migration-wildfly \
+  --profile wildfly-to-spring-boot \
+  --auto-approve \
+  --trace
+```
+
 ## Expected outputs
 
 For this migration profile, expect the workflow to produce:

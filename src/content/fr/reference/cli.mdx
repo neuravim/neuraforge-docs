@@ -21,7 +21,7 @@ neuraforge init [--enterprise]
 Lance un workflow flash (rapide). Lead + Dev, sans spec ni review — ideal pour les corrections urgentes.
 
 ```bash
-neuraforge flash "Fix bug #123" [--dry-run] [--provider <name>]
+neuraforge flash "Fix bug #123" [--dry-run] [--provider <name>] [--profile <name>] [--trace] [--verbose [level]]
 ```
 
 ### `neuraforge standard <description>`
@@ -29,7 +29,7 @@ neuraforge flash "Fix bug #123" [--dry-run] [--provider <name>]
 Lance un workflow standard. Analyse, planification, developpement et review automatique.
 
 ```bash
-neuraforge standard "Nouvelle API users" [--dry-run] [--provider <name>]
+neuraforge standard "Nouvelle API users" [--dry-run] [--provider <name>] [--profile <name>] [--trace] [--verbose [level]]
 ```
 
 ### `neuraforge enterprise <description>`
@@ -37,12 +37,17 @@ neuraforge standard "Nouvelle API users" [--dry-run] [--provider <name>]
 Lance un workflow enterprise avec approbation humaine entre chaque phase. Documentation et conformite incluses.
 
 ```bash
-neuraforge enterprise "Migration auth" [--dry-run] [--provider <name>] [--auto-approve]
+neuraforge enterprise "Migration auth" [--dry-run] [--provider <name>] [--profile <name>] [--auto-approve] [--trace] [--verbose [level]]
 ```
 
 Options communes aux trois modes :
 - `--dry-run` : affiche ce qui serait fait sans executer
 - `--provider <name>` : force un provider specifique
+- `--profile <name>` : active un agent profile / domain playbook pour cette execution
+- `--trace` : enregistre une trace detaillee du workflow
+- `--verbose [level]` : affiche la trace en live (`normal` ou `full`)
+
+Option enterprise :
 - `--auto-approve` : bypasse les gates d'approbation humaine (utile en CI/CD)
 
 ---
@@ -63,8 +68,14 @@ neuraforge status export-csv         # Une feature specifique
 Reprend une feature en pause ou bloquee. L'orchestrateur redetermine la prochaine etape automatiquement.
 
 ```bash
-neuraforge resume export-csv
+neuraforge resume export-csv [--provider <name>] [--profile <name>] [--auto-approve] [--trace] [--verbose [level]]
 ```
+
+Options utiles :
+- `--provider <name>` : reprend avec un provider specifique
+- `--profile <name>` : recharge le meme agent profile / domain playbook qu'au lancement initial
+- `--auto-approve` : reprend un workflow enterprise sans reprompt entre phases
+- `--trace` / `--verbose [level]` : garde ou affiche la trace pendant la reprise
 
 ### `neuraforge abort <feature-slug>`
 
