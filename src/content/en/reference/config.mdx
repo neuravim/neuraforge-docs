@@ -86,6 +86,24 @@ rules: []                        # Rule files
 pipeline:                        # Inter-agent pipeline configuration
   maxOutputCharsPerAgent: 8000   # Output truncation (default: 8000)
 
+
+learning:                        # Retex -> candidates learning
+  enabled: true
+  mode: quiet
+  retex:
+    enabled: true
+    maxPerIteration: 3
+    ttlIterations: 20
+  review:
+    everyIterations: 10
+    maxItems: 10
+    minPromotionScore: 7
+  promotion:
+    allowAutoKnowledge: true
+    allowAutoRules: false
+    allowAutoSkills: false
+    requireHumanApprovalFor: [rule, skill, security]
+
 sanitize: true                   # Sensitive data filtering (default: true)
 
 memory:                          # Scoped memory governance
@@ -193,6 +211,24 @@ NeuraForge injects an explicit `--- Memory Governance ---` section into agent pr
 | `memory.scopes.<scope>.retention.maxEntries` | number | — | Optional max entries for the scope. |
 
 Default scopes are `task`, `session`, `project`, and `user`. The default `project` scope sets `revalidateBeforeUse: true` so project memory is checked before it influences agent behavior.
+
+
+### Learning options
+
+`learning` turns Retex into reviewable candidates. Defaults favor quiet operation and human approval for prescriptive artifacts.
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `learning.enabled` | boolean | `true` | Enables Retex capture/scoring. |
+| `learning.mode` | `quiet`/`suggest`/`active` | `quiet` | Proactivity level. |
+| `learning.retex.maxPerIteration` | number | `3` | Maximum Retex captured per iteration. |
+| `learning.retex.ttlIterations` | number | `20` | Expiration for unpromoted temporary Retex. |
+| `learning.review.everyIterations` | number | `10` | Periodic review frequency. |
+| `learning.review.minPromotionScore` | number | `7` | Minimum score to create a durable candidate. |
+| `learning.promotion.allowAutoKnowledge` | boolean | `true` | Allows automatic Knowledge candidates. |
+| `learning.promotion.allowAutoRules` | boolean | `false` | Keeps rules as candidates unless explicitly approved. |
+| `learning.promotion.allowAutoSkills` | boolean | `false` | Keeps skills as candidates unless explicitly approved. |
+| `learning.promotion.requireHumanApprovalFor` | string[] | `[rule, skill, security]` | Types that require human review. |
 
 ### Security options
 

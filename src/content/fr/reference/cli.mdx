@@ -176,6 +176,18 @@ neuraforge retex remove <id>                              # Supprimer un retex
 
 Les retex sont stockes dans `.neuraforge/retex/` en Markdown. Les retex pertinents sont injectes dans les prompts agents sous `--- Lessons Learned ---`.
 
+
+### `neuraforge learning`
+
+Inspecte le moteur Learning Retex -> Knowledge/Rules/Skills candidates.
+
+```bash
+neuraforge learning status
+neuraforge learning review --iteration 10
+```
+
+`status` affiche le nombre de Retex et candidates. `review` indique si la revue périodique est due et liste les candidates prêtes à valider.
+
 ### `neuraforge template`
 
 Gere les templates d'artefacts.

@@ -176,6 +176,18 @@ neuraforge retex remove <id>                              # Remove a retex entry
 
 Retex entries are stored in `.neuraforge/retex/` as Markdown. Relevant entries are injected into agent prompts under `--- Lessons Learned ---`.
 
+
+### `neuraforge learning`
+
+Inspects the Retex -> Knowledge/Rules/Skills candidate learning engine.
+
+```bash
+neuraforge learning status
+neuraforge learning review --iteration 10
+```
+
+`status` prints Retex and candidate counts. `review` tells whether periodic review is due and lists candidates ready for validation.
+
 ### `neuraforge template`
 
 Manages artifact templates.

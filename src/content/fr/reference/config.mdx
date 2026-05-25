@@ -86,6 +86,24 @@ rules: []                        # Fichiers de regles
 pipeline:                        # Configuration du pipeline inter-agents
   maxOutputCharsPerAgent: 8000   # Troncature outputs (defaut: 8000)
 
+
+learning:                        # Learning Retex -> candidates
+  enabled: true
+  mode: quiet
+  retex:
+    enabled: true
+    maxPerIteration: 3
+    ttlIterations: 20
+  review:
+    everyIterations: 10
+    maxItems: 10
+    minPromotionScore: 7
+  promotion:
+    allowAutoKnowledge: true
+    allowAutoRules: false
+    allowAutoSkills: false
+    requireHumanApprovalFor: [rule, skill, security]
+
 sanitize: true                   # Filtrage donnees sensibles (defaut: true)
 
 memory:                          # Gouvernance memoire par scopes
@@ -193,6 +211,24 @@ Quand la memoire est active, NeuraForge injecte une section explicite `--- Memor
 | `memory.scopes.<scope>.retention.maxEntries` | number | — | Nombre max optionnel d'entrees du scope. |
 
 Les scopes par defaut sont `task`, `session`, `project` et `user`. Le scope `project` definit `revalidateBeforeUse: true` pour verifier la memoire projet avant qu'elle influence le comportement agent.
+
+
+### Options Learning
+
+`learning` transforme les Retex en candidates révisables. Les defaults privilégient le mode silencieux et la validation humaine pour les artefacts prescriptifs.
+
+| Cle | Type | Defaut | Description |
+|---|---|---|---|
+| `learning.enabled` | boolean | `true` | Active le moteur de capture/scoring Retex. |
+| `learning.mode` | `quiet`/`suggest`/`active` | `quiet` | Niveau de proactivité. |
+| `learning.retex.maxPerIteration` | number | `3` | Nombre maximum de Retex capturés par itération. |
+| `learning.retex.ttlIterations` | number | `20` | Expiration des Retex temporaires non promus. |
+| `learning.review.everyIterations` | number | `10` | Fréquence de revue périodique. |
+| `learning.review.minPromotionScore` | number | `7` | Score minimal pour créer une candidate durable. |
+| `learning.promotion.allowAutoKnowledge` | boolean | `true` | Autorise les Knowledge candidates automatiques. |
+| `learning.promotion.allowAutoRules` | boolean | `false` | Garde les rules en candidates sauf validation explicite. |
+| `learning.promotion.allowAutoSkills` | boolean | `false` | Garde les skills en candidates sauf validation explicite. |
+| `learning.promotion.requireHumanApprovalFor` | string[] | `[rule, skill, security]` | Types nécessitant revue humaine. |
 
 ### Options securite
 

@@ -175,6 +175,53 @@ memory:
         maxEntries: 200
 ```
 
+## Learning: Retex -> Knowledge -> Rules/Skills
+
+The `learning` module complements scoped memory. It captures a bounded number of Retex items, scores them, and prepares promotion candidates without silently creating rules or skills.
+
+Default flow:
+
+```text
+Raw Retex -> scoring -> temporary | knowledge | rule candidate | skill candidate -> human review
+```
+
+Anti-BMAD guardrails:
+
+- `maxPerIteration: 3` limits capture per iteration.
+- Low-score Retex items stay temporary or are discarded.
+- Knowledge candidates may be created automatically when `allowAutoKnowledge` is enabled.
+- Rules and Skills remain candidates when `requireHumanApprovalFor` includes `rule` or `skill`.
+- Periodic review (`everyIterations`) prevents every micro-observation from becoming durable process.
+
+Minimal configuration:
+
+```yaml
+learning:
+  enabled: true
+  mode: quiet
+  retex:
+    enabled: true
+    maxPerIteration: 3
+    ttlIterations: 20
+  review:
+    everyIterations: 10
+    minPromotionScore: 7
+  promotion:
+    allowAutoKnowledge: true
+    allowAutoRules: false
+    allowAutoSkills: false
+    requireHumanApprovalFor: [rule, skill, security]
+```
+
+Useful CLI:
+
+```bash
+neuraforge learning status
+neuraforge learning review --iteration 10
+```
+
+Use `learning` for gradual project evolution; write `rules` or `skills` only after reviewing a durable candidate.
+
 ## Next step
 
 See the [configuration reference](/en/reference/config) for the complete schema, or review [agents](/en/guides/agents) to understand how memory governance flows through the pipeline.
