@@ -22,10 +22,12 @@ export async function generateMetadata({
 }
 
 const cardHrefs = [
+  'why-neuraforge',
   'modes',
   'agents',
   'providers',
   'configuration',
+  'memory',
   'rules-and-templates',
   'skills',
   'troubleshooting',

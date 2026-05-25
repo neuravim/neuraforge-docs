@@ -30,6 +30,10 @@ export function getNavigation(locale: string): NavSection[] {
       title: dict.nav.guides,
       icon: 'book',
       items: [
+        {
+          title: locale === 'fr' ? 'Pourquoi NeuraForge' : 'Why NeuraForge',
+          href: `${l}/guides/why-neuraforge`,
+        },
         { title: dict.nav.modes, href: `${l}/guides/modes` },
         { title: dict.nav.agents, href: `${l}/guides/agents` },
         { title: dict.nav.agent_profiles, href: `${l}/guides/agent-profiles` },
