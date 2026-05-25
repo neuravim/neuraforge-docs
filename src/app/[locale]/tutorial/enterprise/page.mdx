@@ -5,7 +5,7 @@ export const metadata = {
 
 # Chapitre 4 — Quand la securite compte : le mode enterprise
 
-> On ne deploie pas un systeme d'authentification comme on ajoute un health check. Quand la securite est en jeu, chaque decision merite un regard humain. Le mode enterprise, c'est exactement ca : la puissance de 6 agents, avec vous aux commandes entre chaque phase.
+> On ne deploie pas un systeme d'authentification comme on ajoute un health check. Quand la securite est en jeu, chaque decision merite un regard humain. Le mode enterprise, c'est exactement ca : la puissance de 7 agents, avec vous aux commandes entre chaque phase.
 
 Notre todo-api a un CRUD complet. Mais sans authentification, c'est une porte ouverte. N'importe qui peut supprimer toutes les taches. On va corriger ca avec du JWT — et on va le faire proprement.
 
@@ -256,7 +256,7 @@ Apres 3 chapitres, vous avez vu les 3 modes en action. Voici la synthese :
 ## Ce qu'on a appris
 
 Le mode enterprise, c'est :
-- **6 agents** dont DocOps pour la documentation
+- **7 agents** dont Security Reviewer pour le gate appsec et DocOps pour la documentation
 - **Approbation humaine** entre chaque phase (desactivable avec `--auto-approve`)
 - **ADR** pour les decisions d'architecture
 - **Scan securite OWASP** dans le QA

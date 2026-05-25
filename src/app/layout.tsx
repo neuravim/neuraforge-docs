@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     template: '%s | NeuraForge Docs',
   },
   description:
-    'Orchestrate 6 specialized AI agents (Analyst, Planner, Dev, QA...) via CLI. 3 adaptive modes, multi-provider (Claude, Gemini, Copilot), enterprise integration. Open source.',
+    'Orchestrate 7 specialized AI agents (Analyst, Planner, Dev, Security Reviewer, QA...) via CLI. 3 adaptive modes, multi-provider (Claude, Gemini, Copilot), enterprise integration. Open source.',
   keywords: [
     'NeuraForge',
     'AI development',
@@ -35,13 +35,13 @@ export const metadata: Metadata = {
     siteName: 'NeuraForge Documentation',
     title: 'NeuraForge — AI-Driven Engineering CLI Framework',
     description:
-      'Orchestrate 6 specialized AI agents via CLI. From bug fix in 30s to enterprise architecture. Open source, multi-provider.',
+      'Orchestrate 7 specialized AI agents via CLI. From bug fix in 30s to enterprise architecture. Open source, multi-provider.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'NeuraForge — AI-Driven Engineering CLI',
     description:
-      'Orchestrate 6 specialized AI agents via CLI. From bug fix in 30s to enterprise architecture.',
+      'Orchestrate 7 specialized AI agents via CLI. From bug fix in 30s to enterprise architecture.',
   },
   robots: {
     index: true,

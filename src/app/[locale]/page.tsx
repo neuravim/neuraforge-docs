@@ -22,8 +22,8 @@ export async function generateMetadata({
       ? 'NeuraForge — Your AI Agents Code, Analyze and Review For You'
       : 'NeuraForge — Vos agents IA codent, analysent et reviewent a votre place',
     description: isEn
-      ? 'Open source CLI framework orchestrating 6 AI agents (Analyst, Planner, Dev, QA, DocOps). Multi-provider: Claude, Gemini, Copilot. From bug fix in 30s to enterprise project.'
-      : 'Framework CLI open source orchestrant 6 agents IA. Multi-provider : Claude, Gemini, Copilot. Du bug fix en 30s au projet enterprise.',
+      ? 'Open source CLI framework orchestrating 7 AI agents (Analyst, Planner, Dev, Security Reviewer, QA, DocOps). Multi-provider: Claude, Gemini, Copilot. From bug fix in 30s to enterprise project.'
+      : 'Framework CLI open source orchestrant 7 agents IA, dont Security Reviewer. Multi-provider : Claude, Gemini, Copilot. Du bug fix en 30s au projet enterprise.',
   };
 }
 
@@ -95,7 +95,7 @@ NeuraForge  Feature completed in 28s`}
       {/* Stats */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
         {[
-          { value: '6', label: t.stats.agents },
+          { value: '7', label: t.stats.agents },
           { value: '3', label: t.stats.modes },
           { value: '5+', label: t.stats.providers },
           { value: '~8K', label: t.stats.tokens },

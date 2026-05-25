@@ -9,7 +9,7 @@ export function generateStaticParams() {
 export const metadata: Metadata = {
   title: 'Tutorial — Construire une todo-app avec NeuraForge de A a Z',
   description:
-    'Apprenez NeuraForge en construisant une vraie API todo-app. Du setup au deploiement, decouvrez les 3 modes, 6 agents IA, et tous les outils en 5 chapitres pratiques.',
+    'Apprenez NeuraForge en construisant une vraie API todo-app. Du setup au deploiement, decouvrez les 3 modes, 7 agents IA, et tous les outils en 5 chapitres pratiques.',
   keywords: [
     'NeuraForge tutorial',
     'AI development tutorial',
@@ -35,7 +35,7 @@ export default async function TutorialPage({
         Oubliez la theorie. Dans ce tutorial, vous allez <strong>construire une vraie API</strong> —
         un gestionnaire de taches — en utilisant NeuraForge du premier <code>init</code> jusqu&apos;aux
         metriques finales. Chaque chapitre ajoute une couche, chaque commande est executable.
-        A la fin, vous maitriserez les 3 modes, les 6 agents, et tous les outils du quotidien.
+        A la fin, vous maitriserez les 3 modes, les 7 agents, et tous les outils du quotidien.
       </p>
       <p style={{ color: 'var(--neuraforge-text-muted)', marginTop: '0.5rem' }}>
         Temps total estime : 30-45 minutes de lecture active. Zero prerequis NeuraForge.

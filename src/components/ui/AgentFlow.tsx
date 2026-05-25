@@ -16,6 +16,7 @@ const agents: Agent[] = [
   { name: 'analyst', label: 'Analyst', color: '#004a9c', modes: ['standard', 'enterprise'] },
   { name: 'planner', label: 'Planner', color: '#2563eb', modes: ['standard', 'enterprise'] },
   { name: 'dev', label: 'Dev', color: '#059669', modes: ['flash', 'standard', 'enterprise'] },
+  { name: 'security', label: 'Security', color: '#7c2d12', modes: ['standard', 'enterprise'] },
   { name: 'qa', label: 'QA', color: '#dc2626', modes: ['standard', 'enterprise'] },
   { name: 'docops', label: 'DocOps', color: '#6b7280', modes: ['enterprise'] },
 ];

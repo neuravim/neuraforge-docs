@@ -42,7 +42,7 @@ const dictionaries = {
     home: {
       badge: 'v0.12.1 — Multi-Provider & Retex',
       title_line1: 'Stop coding alone.',
-      title_line2: 'Your 6 AI agents take over.',
+      title_line2: 'Your 7 AI agents take over.',
       description:
         'NeuraForge orchestrates specialized AI agents — analysis, planning, code, tests, review — in a single CLI command.',
       description_bold: 'From a bug fix in 30 seconds to an enterprise project in one week.',
@@ -61,7 +61,7 @@ const dictionaries = {
       standard_desc: 'New API, integration, refactoring. Analysis, plan, code, automatic review.',
       enterprise_title: 'Enterprise — the armor',
       enterprise_desc: 'Critical migration, GDPR compliance. Documentation, human approval, audit trail.',
-      agents_title: '6 agents, each expert in their field',
+      agents_title: '7 agents, each expert in their field',
       agents_subtitle:
         'Like a full dev team, but running in your CLI. The Lead orchestrates, the others execute.',
       why_title: 'What actually changes',
@@ -96,7 +96,7 @@ const dictionaries = {
         description: 'You know how to install NeuraForge. Now learn to get the most out of it. Each guide answers a specific question.',
         cards: [
           { title: 'Modes', description: 'Flash, Standard or Enterprise? How to choose — and how to switch mid-flight without losing anything.', icon: '\u{1F504}' },
-          { title: 'Agents', description: '6 specialized AI agents collaborating like a dev team. Who does what, and how they pass the baton.', icon: '\u{1F916}' },
+          { title: 'Agents', description: '7 specialized AI agents collaborating like a dev team, including a Security Reviewer gate. Who does what, and how they pass the baton.', icon: '\u{1F916}' },
           { title: 'Providers', description: 'Claude, Gemini, Copilot, local Ollama... Connect your favorite LLM and let NeuraForge route intelligently.', icon: '\u{1F50C}' },
           { title: 'Configuration', description: '5 config levels, from global defaults to CLI flags. 4 lines to start, 50 to control everything.', icon: '\u{2699}\u{FE0F}' },
           { title: 'Memory', description: 'Scoped task, session, project and user memory with precedence, lifecycle and safe read/write policies.', icon: '\u{1F9E0}' },
@@ -170,7 +170,7 @@ const dictionaries = {
     home: {
       badge: 'v0.12.1 — Multi-Provider & Retex',
       title_line1: 'Arretez de coder seul.',
-      title_line2: 'Vos 6 agents IA prennent le relais.',
+      title_line2: 'Vos 7 agents IA prennent le relais.',
       description:
         "NeuraForge orchestre des agents IA specialises — analyse, planification, code, tests, review — dans une seule commande CLI.",
       description_bold: 'Du bug fix en 30 secondes au projet enterprise en une semaine.',
@@ -189,7 +189,7 @@ const dictionaries = {
       standard_desc: 'Nouvelle API, integration, refactoring. Analyse, plan, code, review automatique.',
       enterprise_title: 'Enterprise — le blindage',
       enterprise_desc: 'Migration critique, compliance RGPD. Documentation, approbation humaine, audit trail.',
-      agents_title: '6 agents, chacun expert dans son domaine',
+      agents_title: '7 agents, chacun expert dans son domaine',
       agents_subtitle:
         'Comme une equipe dev complete, mais qui tourne en CLI. Le Lead orchestre, les autres executent.',
       why_title: 'Ce qui change concretement',
@@ -224,7 +224,7 @@ const dictionaries = {
         description: "Vous savez installer NeuraForge. Maintenant, apprenez a en tirer le maximum. Chaque guide repond a une question concrete.",
         cards: [
           { title: 'Modes', description: "Flash, Standard ou Enterprise ? Comment choisir — et comment changer en cours de route sans rien perdre.", icon: '\u{1F504}' },
-          { title: 'Agents', description: "6 agents IA specialises qui collaborent comme une equipe dev. Qui fait quoi, et comment ils se passent le relais.", icon: '\u{1F916}' },
+          { title: 'Agents', description: "7 agents IA specialises qui collaborent comme une equipe dev, dont un gate Security Reviewer. Qui fait quoi, et comment ils se passent le relais.", icon: '\u{1F916}' },
           { title: 'Providers', description: "Claude, Gemini, Copilot, Ollama local... Connectez votre LLM prefere et laissez NeuraForge router intelligemment.", icon: '\u{1F50C}' },
           { title: 'Configuration', description: "5 niveaux de config, du defaut global au flag CLI. 4 lignes pour demarrer, 50 pour tout controller.", icon: '\u{2699}\u{FE0F}' },
           { title: 'Mémoire', description: "Mémoire par scopes task, session, project et user avec précédence, lifecycle et politiques read/write sûres.", icon: '\u{1F9E0}' },
