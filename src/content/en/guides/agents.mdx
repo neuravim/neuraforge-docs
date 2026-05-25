@@ -1,12 +1,12 @@
-# The 6 NeuraForge agents
+# The 7 NeuraForge agents
 
-> Imagine a team of 6 specialized developers, available 24/7, passing work along like a perfectly oiled assembly line. That's exactly what NeuraForge does.
+> Imagine a team of 7 specialized developers, available 24/7, passing work along like a perfectly oiled assembly line. That's exactly what NeuraForge does.
 >
 > Each agent has a precise role, a personality, and most importantly: they communicate with each other automatically.
 
 ## Meet the team
 
-Think of NeuraForge as an engineering firm. The **Lead** is the project manager, the **Analyst** is the detective, the **Planner** is the architect, the **Dev** is the builder, the **QA** is the inspector, and the **DocOps** is the notary. Each excels in their specialty, and together they deliver a result that no one could produce alone.
+Think of NeuraForge as an engineering firm. The **Lead** is the project manager, the **Analyst** is the detective, the **Planner** is the architect, the **Dev** is the builder, the **Security Reviewer** is the adversarial appsec gate, the **QA** is the inspector, and the **DocOps** is the notary. Each excels in their specialty, and together they deliver a result that no one could produce alone.
 
 ### Lead (the project manager)
 
@@ -32,6 +32,12 @@ The Dev is the one who lays the bricks. It receives the Planner's blueprints, im
 
 Always active. Implements code, writes tests, does a self-review. Guardrails: objective reminder every 5 steps, max 10 files, circuit breaker.
 
+### Security Reviewer (the appsec gate)
+
+The Security Reviewer assumes authenticated users can be malicious. It reviews the plan and implementation for concrete exploit paths: BOLA/IDOR, missing resource-level authorization, tenant isolation failures, client-controlled `userId` / `tenantId` values, data exposure, injection, XSS, command execution, hardcoded secrets, and unsafe workflow decisions.
+
+Active in standard and enterprise. Runs after Dev and before QA. Returns `approved`, `warning`, or `blocked`, records findings with severity/evidence/recommendations, and lists required security tests. Critical authorization or data-exposure risks block the workflow.
+
 ### QA (the inspector)
 
 The inspector lets nothing slip through. It doesn't do a generic review — it verifies each acceptance criterion defined by the Planner, line by line. Basic OWASP security scan included. If the Dev's work doesn't pass, they go again (up to 2 times).
@@ -54,6 +60,7 @@ Need domain-specific behavior without creating new runtime roles? Use [Agent Pro
 | Analyst | — | Yes | Yes |
 | Planner | — | Yes | Yes |
 | Dev | Yes | Yes | Yes |
+| Security Reviewer | — | Yes | Yes |
 | QA | — | Yes | Yes |
 | DocOps | — | — | Yes |
 
@@ -76,7 +83,9 @@ Planner receives [ANALYST]: in its prompt → output.content + structured.storie
     ↓
 Dev receives [ANALYST]: + [PLANNER]: → implements according to stories
     ↓
-QA receives [ANALYST]: + [PLANNER]: + [DEV]: → reviews the Dev's code
+Security receives [PLANNER]: + [DEV]: → runs the application security gate
+    ↓
+QA receives [ANALYST]: + [PLANNER]: + [DEV]: + [SECURITY]: → reviews the Dev's code
 ```
 
 
@@ -101,6 +110,7 @@ Each agent returns typed data in `output.structured`:
 | Analyst | `complexity` (1-5), `risks` (string[]), `questions` (string[]) |
 | Planner | `stories` (array of id/title/description), `estimatedTokens` (number) |
 | Dev | `filesChanged` (string[]), `testsGenerated` (string[]) |
+| Security Reviewer | `status` (`approved`/`warning`/`blocked`), `passed` (boolean), `findings` (array), `requiredSecurityTests` (string[]) |
 | QA | `passed` (boolean), `score` (1-10), `issues` (array of severity/message), `criteriaResults` (array of story/criterion/passed/reason) |
 | DocOps | `docsGenerated` (string[]) |
 
@@ -130,6 +140,7 @@ Each agent receives the optimal provider for its task via the router:
 | Analyst | analysis | claude-code |
 | Planner | planning | claude-code |
 | Dev | code_gen | gemini |
+| Security Reviewer | security_review | claude-code |
 | QA | code_review | claude-code |
 | DocOps | documentation | claude-code |
 
@@ -165,4 +176,4 @@ $ neuraforge agent qa "Review the changes from the last commit"
 
 ## Next step
 
-You now know the 6 agents and how they collaborate. But a team, no matter how talented, needs the right tools. Discover how to connect and configure your [AI providers](/en/guides/providers) to give each agent the engine it deserves.
+You now know the 7 agents and how they collaborate. But a team, no matter how talented, needs the right tools. Discover how to connect and configure your [AI providers](/en/guides/providers) to give each agent the engine it deserves.

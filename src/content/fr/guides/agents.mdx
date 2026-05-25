@@ -1,12 +1,12 @@
-# Les 6 agents NeuraForge
+# Les 7 agents NeuraForge
 
-> Imaginez une equipe de 6 developpeurs specialises, disponibles 24h/24, qui se passent le travail comme une chaine de montage parfaitement huilee. C'est exactement ce que fait NeuraForge.
+> Imaginez une equipe de 7 developpeurs specialises, disponibles 24h/24, qui se passent le travail comme une chaine de montage parfaitement huilee. C'est exactement ce que fait NeuraForge.
 >
 > Chaque agent a un role precis, une personnalite, et surtout : ils communiquent entre eux automatiquement.
 
 ## Faites connaissance avec l'equipe
 
-Pensez a NeuraForge comme a un cabinet d'ingenierie. Le **Lead** est le chef de projet, l'**Analyst** est le detective, le **Planner** est l'architecte, le **Dev** est le macon, le **QA** est l'inspecteur, et le **DocOps** est le notaire. Chacun excelle dans sa specialite, et ensemble ils livrent un resultat que personne ne pourrait produire seul.
+Pensez a NeuraForge comme a un cabinet d'ingenierie. Le **Lead** est le chef de projet, l'**Analyst** est le detective, le **Planner** est l'architecte, le **Dev** est le macon, le **Security Reviewer** est le gate applicatif adversarial, le **QA** est l'inspecteur, et le **DocOps** est le notaire. Chacun excelle dans sa specialite, et ensemble ils livrent un resultat que personne ne pourrait produire seul.
 
 ### Lead (le chef de projet)
 
@@ -32,6 +32,12 @@ Le Dev, c'est celui qui pose les briques. Il recoit les plans du Planner, implem
 
 Toujours actif. Implemente le code, ecrit les tests, fait un self-review. Guardrails : rappel objectif toutes les 5 etapes, max 10 fichiers, circuit breaker.
 
+### Security Reviewer (le gate appsec)
+
+Le Security Reviewer part du principe que les utilisateurs authentifies peuvent etre malveillants. Il relit le plan et l'implementation pour chercher des chemins d'exploitation concrets : BOLA/IDOR, absence d'autorisation au niveau ressource, fuite d'isolation multi-tenant, `userId` / `tenantId` controles par le client, exposition de donnees, injection, XSS, execution de commandes, secrets hardcodes et decisions de workflow dangereuses.
+
+Actif en standard et enterprise. Il passe apres Dev et avant QA. Il retourne `approved`, `warning` ou `blocked`, journalise les findings avec severite/evidence/recommandation, et liste les tests securite requis. Les risques critiques d'autorisation ou d'exposition de donnees bloquent le workflow.
+
 ### QA (l'inspecteur)
 
 L'inspecteur ne laisse rien passer. Il ne fait pas une review generique — il verifie chaque critere d'acceptation defini par le Planner, ligne par ligne. Scan securite OWASP inclus. Si le travail du Dev ne passe pas, on recommence (jusqu'a 2 fois).
@@ -54,6 +60,7 @@ Besoin d'un comportement domaine sans creer de nouveaux roles runtime ? Utilisez
 | Analyst | — | Oui | Oui |
 | Planner | — | Oui | Oui |
 | Dev | Oui | Oui | Oui |
+| Security Reviewer | — | Oui | Oui |
 | QA | — | Oui | Oui |
 | DocOps | — | — | Oui |
 
@@ -75,7 +82,9 @@ Planner recoit [ANALYST]: dans son prompt → output.content + structured.storie
     ↓
 Dev recoit [ANALYST]: + [PLANNER]: → implemente selon les stories
     ↓
-QA recoit [ANALYST]: + [PLANNER]: + [DEV]: → review le code du Dev
+Security recoit [PLANNER]: + [DEV]: → execute le gate de securite applicative
+    ↓
+QA recoit [ANALYST]: + [PLANNER]: + [DEV]: + [SECURITY]: → review le code du Dev
 ```
 
 
@@ -100,6 +109,7 @@ Chaque agent retourne des donnees typees dans `output.structured` :
 | Analyst | `complexity` (1-5), `risks` (string[]), `questions` (string[]) |
 | Planner | `stories` (array of id/title/description), `estimatedTokens` (number) |
 | Dev | `filesChanged` (string[]), `testsGenerated` (string[]) |
+| Security Reviewer | `status` (`approved`/`warning`/`blocked`), `passed` (boolean), `findings` (array), `requiredSecurityTests` (string[]) |
 | QA | `passed` (boolean), `score` (1-10), `issues` (array of severity/message), `criteriaResults` (array of story/criterion/passed/reason) |
 | DocOps | `docsGenerated` (string[]) |
 
@@ -129,6 +139,7 @@ Chaque agent recoit le provider optimal pour sa tache via le router :
 | Analyst | analysis | claude-code |
 | Planner | planning | claude-code |
 | Dev | code_gen | gemini |
+| Security Reviewer | security_review | claude-code |
 | QA | code_review | claude-code |
 | DocOps | documentation | claude-code |
 
@@ -164,4 +175,4 @@ $ neuraforge agent qa "Reviewer les changements du dernier commit"
 
 ## Prochaine etape
 
-Vous connaissez maintenant les 6 agents et leur facon de collaborer. Mais une equipe, aussi talentueuse soit-elle, a besoin des bons outils. Decouvrez comment connecter et configurer vos [providers IA](/fr/guides/providers) pour donner a chaque agent le moteur qu'il merite.
+Vous connaissez maintenant les 7 agents et leur facon de collaborer. Mais une equipe, aussi talentueuse soit-elle, a besoin des bons outils. Decouvrez comment connecter et configurer vos [providers IA](/fr/guides/providers) pour donner a chaque agent le moteur qu'il merite.
