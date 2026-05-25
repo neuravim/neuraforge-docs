@@ -49,7 +49,7 @@ export function Sidebar({ locale }: { locale: string }) {
                 NeuraForge
               </span>
               <span className="ml-1.5 text-xs" style={{ color: 'var(--neuraforge-text-muted)' }}>
-                v0.7.0
+                v0.12.1
               </span>
             </div>
           </Link>

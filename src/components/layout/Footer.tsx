@@ -58,7 +58,7 @@ export function Footer() {
         )}
       </div>
       <p className="mt-8 mb-4 text-xs text-center" style={{ color: 'var(--neuraforge-text-muted)' }}>
-        NeuraForge — AI-Driven Engineering v0.7.0
+        NeuraForge — AI-Driven Engineering v0.12.1
       </p>
     </footer>
   );

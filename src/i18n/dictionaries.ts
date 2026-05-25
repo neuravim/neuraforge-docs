@@ -40,7 +40,7 @@ const dictionaries = {
       next_step: 'Next step',
     },
     home: {
-      badge: 'v0.7.0 — Multi-Provider & Retex',
+      badge: 'v0.12.1 — Multi-Provider & Retex',
       title_line1: 'Stop coding alone.',
       title_line2: 'Your 6 AI agents take over.',
       description:
@@ -168,7 +168,7 @@ const dictionaries = {
       next_step: 'Prochaine etape',
     },
     home: {
-      badge: 'v0.7.0 — Multi-Provider & Retex',
+      badge: 'v0.12.1 — Multi-Provider & Retex',
       title_line1: 'Arretez de coder seul.',
       title_line2: 'Vos 6 agents IA prennent le relais.',
       description:
