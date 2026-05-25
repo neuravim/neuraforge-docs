@@ -26,7 +26,7 @@ export default async function LocaleLayout({
       <div className="md:ml-64">
         <Header locale={locale} />
         <div className="flex">
-          <main className="flex-1 max-w-3xl mx-auto px-6 py-8 prose-aiden">
+          <main className="flex-1 max-w-3xl mx-auto px-6 py-8 prose-neuraforge">
             {children}
             <Footer />
           </main>

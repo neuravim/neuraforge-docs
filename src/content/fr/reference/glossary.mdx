@@ -10,13 +10,13 @@ Agent, Retex, Quality gate... NeuraForge a son vocabulaire. Voici le dictionnair
 
 **Agent** — Composant IA specialise dans un role (Lead, Analyst, Planner, Dev, QA, DocOps). Chaque agent herite de `BaseAgent` et recoit un provider par le routeur.
 
-**Artefact** — Fichier Markdown avec frontmatter YAML genere par un agent (brief, spec, story, review, etc.). Stocke dans `.aiden/features/<slug>/`.
+**Artefact** — Fichier Markdown avec frontmatter YAML genere par un agent (brief, spec, story, review, etc.). Stocke dans `.neuraforge/features/<slug>/`.
 
 ## B
 
 **Brief** — Document de decouverte cree par l'Analyst. Resume la demande, le contexte, les risques et les contraintes.
 
-**Bus de contexte** — Memoire partagee entre tous les agents (`.aiden/memory/context.yaml`). Contient la stack technique, l'architecture et le CI detectes.
+**Bus de contexte** — Memoire partagee entre tous les agents (`.neuraforge/memory/context.yaml`). Contient la stack technique, l'architecture et le CI detectes.
 
 ## C
 
@@ -60,7 +60,7 @@ Agent, Retex, Quality gate... NeuraForge a son vocabulaire. Voici le dictionnair
 
 ## R
 
-**Retex** — Retour d'experience structure (lessons learned). Stocke dans `.aiden/retex/` avec contexte, lecon et recommandation. Injecte dans les prompts agents sous `--- Lessons Learned ---`.
+**Retex** — Retour d'experience structure (lessons learned). Stocke dans `.neuraforge/retex/` avec contexte, lecon et recommandation. Injecte dans les prompts agents sous `--- Lessons Learned ---`.
 
 **Routage** — Selection automatique du provider optimal selon la tache. Quatre strategies : `fixed`, `prefer`, `auto`, `cost-optimized`.
 
@@ -68,7 +68,7 @@ Agent, Retex, Quality gate... NeuraForge a son vocabulaire. Voici le dictionnair
 
 **Sanitizer** — Mecanisme de filtrage qui masque les donnees sensibles (tokens, cles API, mots de passe, connection strings) dans les prompts avant envoi aux providers.
 
-**Skill** — Package declaratif (YAML + Markdown) dans `.aiden/skills/` qui injecte instructions, regles et hooks dans le pipeline NeuraForge. Mecanisme d'extensibilite principal pour les entreprises.
+**Skill** — Package declaratif (YAML + Markdown) dans `.neuraforge/skills/` qui injecte instructions, regles et hooks dans le pipeline NeuraForge. Mecanisme d'extensibilite principal pour les entreprises.
 
 **Spec** — Specification technique allegee creee par le Planner. Contient les exigences et les criteres d'acceptation.
 

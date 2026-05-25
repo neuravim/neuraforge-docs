@@ -14,9 +14,9 @@ A **skill** is a declarative package (YAML + Markdown) that bundles instructions
 
 ## When to use a skill vs a simple rule?
 
-Before creating a skill, ask yourself: would a simple rule in `.aiden/rules/` suffice?
+Before creating a skill, ask yourself: would a simple rule in `.neuraforge/rules/` suffice?
 
-| | **Simple rule** (`.aiden/rules/`) | **Skill** (`.aiden/skills/`) |
+| | **Simple rule** (`.neuraforge/rules/`) | **Skill** (`.neuraforge/skills/`) |
 |---|---|---|
 | **Use case** | Single, cross-cutting convention | Complete concern (compliance, integration, workflow) |
 | **Agent targeting** | Sent to all agents | Targets specific agents |
@@ -31,7 +31,7 @@ Before creating a skill, ask yourself: would a simple rule in `.aiden/rules/` su
 ## Structure of a skill
 
 ```
-.aiden/skills/
+.neuraforge/skills/
   my-skill/
     skill.yaml            # Manifest: metadata, target agents, hooks
     instructions.md       # Instructions injected into agent prompts
@@ -97,7 +97,7 @@ This file's content is injected into each target agent's prompt under the `--- S
 
 ### `rules/` -- Additional rules
 
-The `.md` files in this folder are merged with the project rules (`.aiden/rules/`) and injected into the `--- Enterprise Rules ---` section of the prompt.
+The `.md` files in this folder are merged with the project rules (`.neuraforge/rules/`) and injected into the `--- Enterprise Rules ---` section of the prompt.
 
 ## Full `skill.yaml` schema
 
@@ -119,7 +119,7 @@ The `.md` files in this folder are merged with the project rules (`.aiden/rules/
 
 ```yaml
 compatibility:
-  aiden: ">=0.9.0"              # Min NeuraForge version (semver range)
+  neuraforge: ">=0.9.0"              # Min NeuraForge version (semver range)
   skills:                        # Skill dependencies
     secret-scan: ">=1.0.0"
   conflicts:                     # Incompatible skills
@@ -198,11 +198,11 @@ $ neuraforge skills doctor
 ### Configuration
 
 ```yaml
-# aiden.config.yaml
+# neuraforge.config.yaml
 skills:
-  registryUrl: https://registry.aiden.dev/skills.json  # Custom registry
+  registryUrl: https://registry.neuraforge.dev/skills.json  # Custom registry
   autoUpdate: false
-  trustedAuthors: [aiden-team]
+  trustedAuthors: [neuraforge-team]
 ```
 
 ## Skill Packs (bundles)
@@ -225,7 +225,7 @@ $ neuraforge skills pack create my-team --skills "code-review-strict,owasp-check
 | `startup-fast` | code-review-strict, secret-scan, changelog-gen | Fast-moving startups |
 | `enterprise-standard` | 8 skills covering review, security, compliance, ADR, notifications | Enterprise teams |
 
-Custom packs are stored in `.aiden/skills/.packs.yaml` and can be committed to share with the team.
+Custom packs are stored in `.neuraforge/skills/.packs.yaml` and can be committed to share with the team.
 
 ## Official skill catalogue (19 skills)
 
@@ -280,7 +280,7 @@ Custom packs are stored in `.aiden/skills/.packs.yaml` and can be committed to s
 
 ## How skills are loaded
 
-1. At workflow start, the orchestrator loads all skills from `.aiden/skills/`
+1. At workflow start, the orchestrator loads all skills from `.neuraforge/skills/`
 2. Skills with `enabled: false` are filtered out
 3. Skills are sorted by `priority` (higher = injected first)
 4. For each agent, only skills targeting it (and matching the mode) are injected
@@ -292,7 +292,7 @@ Custom packs are stored in `.aiden/skills/.packs.yaml` and can be committed to s
 ### Git submodule
 
 ```bash
-$ git submodule add https://github.com/org/aiden-skills-common .aiden/skills/common
+$ git submodule add https://github.com/org/neuraforge-skills-common .neuraforge/skills/common
 ```
 
 ### Direct copy
@@ -311,7 +311,7 @@ shared-skills/
   compliance-gdpr/
 
 # In each package
-.aiden/skills/compliance-gdpr -> ../../../shared-skills/compliance-gdpr
+.neuraforge/skills/compliance-gdpr -> ../../../shared-skills/compliance-gdpr
 ```
 
 ## Best practices
@@ -321,7 +321,7 @@ shared-skills/
 3. **Target relevant agents**: don't target all agents if only the Dev is concerned
 4. **Use modes**: compliance skills don't need to be active in flash mode
 5. **Priority**: security/compliance skills should have high priority (>= 20)
-6. **Commit your skills**: `.aiden/skills/` should be versioned with the code
+6. **Commit your skills**: `.neuraforge/skills/` should be versioned with the code
 
 ## Next step
 

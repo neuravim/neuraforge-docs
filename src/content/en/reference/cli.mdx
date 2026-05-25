@@ -148,7 +148,7 @@ neuraforge skills enable my-skill     # Enable a skill
 neuraforge skills disable my-skill    # Disable a skill
 ```
 
-Skills are declarative packages (YAML + Markdown) in `.aiden/skills/` that inject instructions, rules, and hooks into the pipeline. See the [skills guide](/en/guides/skills) for more details.
+Skills are declarative packages (YAML + Markdown) in `.neuraforge/skills/` that inject instructions, rules, and hooks into the pipeline. See the [skills guide](/en/guides/skills) for more details.
 
 ### `neuraforge retex`
 
@@ -163,7 +163,7 @@ neuraforge retex search <tag>                             # Search by tag
 neuraforge retex remove <id>                              # Remove a retex entry
 ```
 
-Retex entries are stored in `.aiden/retex/` as Markdown. Relevant entries are injected into agent prompts under `--- Lessons Learned ---`.
+Retex entries are stored in `.neuraforge/retex/` as Markdown. Relevant entries are injected into agent prompts under `--- Lessons Learned ---`.
 
 ### `neuraforge template`
 
@@ -182,17 +182,17 @@ NeuraForge is also available as slash commands in Claude Code — zero installat
 
 | Slash command | CLI equivalent |
 |---|---|
-| `/aiden-help` | — |
-| `/aiden-init` | `neuraforge init` |
-| `/aiden-flash <desc>` | `neuraforge flash "<desc>"` |
-| `/aiden-standard <desc>` | `neuraforge standard "<desc>"` |
-| `/aiden-enterprise <desc>` | `neuraforge enterprise "<desc>"` |
-| `/aiden-status` | `neuraforge status` |
-| `/aiden-resume <slug>` | `neuraforge resume <slug>` |
-| `/aiden-agent <name> <prompt>` | `neuraforge agent <name> "<prompt>"` |
-| `/aiden-rules` | `neuraforge rules list` |
+| `/neuraforge-help` | — |
+| `/neuraforge-init` | `neuraforge init` |
+| `/neuraforge-flash <desc>` | `neuraforge flash "<desc>"` |
+| `/neuraforge-standard <desc>` | `neuraforge standard "<desc>"` |
+| `/neuraforge-enterprise <desc>` | `neuraforge enterprise "<desc>"` |
+| `/neuraforge-status` | `neuraforge status` |
+| `/neuraforge-resume <slug>` | `neuraforge resume <slug>` |
+| `/neuraforge-agent <name> <prompt>` | `neuraforge agent <name> "<prompt>"` |
+| `/neuraforge-rules` | `neuraforge rules list` |
 
-Both modes write to the same `.aiden/` files and are interchangeable.
+Both modes write to the same `.neuraforge/` files and are interchangeable.
 
 ---
 

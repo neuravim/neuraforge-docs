@@ -29,7 +29,7 @@ The Analyst delivers its verdict:
 - **Risks**: DB dependency not mocked in tests
 - **Questions**: response format? check DB connection or just the server?
 
-It files its report in `.aiden/features/add-a-get-health-endpoint/brief.md`:
+It files its report in `.neuraforge/features/add-a-get-health-endpoint/brief.md`:
 
 ```markdown
 ---
@@ -156,7 +156,7 @@ Feature: Add a GET /health endpoint with DB connection check
   Agents: analyst → planner → dev → qa
 ```
 
-All artifacts are organized in `.aiden/features/add-a-get-health-endpoint/`:
+All artifacts are organized in `.neuraforge/features/add-a-get-health-endpoint/`:
 
 ```
 brief.md              # Analyst's analysis
@@ -167,7 +167,7 @@ review.md             # QA report
 change-summary.md     # Change summary
 ```
 
-Every decision is tracked in `.aiden/memory/decisions.jsonl`:
+Every decision is tracked in `.neuraforge/memory/decisions.jsonl`:
 
 ```json
 {"ts":"2026-03-27T10:15:00Z","feature":"add-a-get-health-endpoint","agent":"analyst","type":"complexity","value":2}

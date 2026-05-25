@@ -1,13 +1,13 @@
 # Configuration Reference
 
-The aiden.config.yaml file has an option for nearly everything. Here's the complete schema, annotated with default values.
+The neuraforge.config.yaml file has an option for nearly everything. Here's the complete schema, annotated with default values.
 
 ---
 
 ## Full schema
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 project: my-project              # (required) Project name
 provider: claude-code            # Default provider
 mode: standard                   # flash | standard | enterprise
@@ -204,7 +204,7 @@ Default scopes are `task`, `session`, `project`, and `user`. The default `projec
 
 ## Project schema (context.yaml)
 
-The `neuraforge init` scan generates `.aiden/memory/context.yaml` with this schema:
+The `neuraforge init` scan generates `.neuraforge/memory/context.yaml` with this schema:
 
 | Key | Type | Description |
 |---|---|---|
@@ -222,7 +222,7 @@ This data is injected into every agent's prompt via the `--- Project Context ---
 
 ## `skill.yaml` schema
 
-Each skill in `.aiden/skills/<name>/` contains a `skill.yaml` file:
+Each skill in `.neuraforge/skills/<name>/` contains a `skill.yaml` file:
 
 ```yaml
 name: my-skill                 # (required) Unique identifier
@@ -253,7 +253,7 @@ enabled: true                  # Active (default: true)
 | `author` | string | — | Author |
 | `agents` | AgentRole[] | all | `lead`, `analyst`, `planner`, `dev`, `qa`, `docops` |
 | `modes` | CTAMode[] | all | `flash`, `standard`, `enterprise` |
-| `hooks` | Record | — | Hooks per event (same format as `aiden.config.yaml`) |
+| `hooks` | Record | — | Hooks per event (same format as `neuraforge.config.yaml`) |
 | `config` | Record | — | Free key-value pairs |
 | `priority` | integer | `0` | Descending sort |
 | `enabled` | boolean | `true` | Disable without removing |
@@ -269,9 +269,9 @@ Configuration follows a five-level cascade — each level overrides the previous
 | Level | File | Scope |
 |---|---|---|
 | 1. Defaults | (built-in) | Global |
-| 2. Enterprise | `~/.aiden/enterprise.config.yaml` | All projects |
-| 3. Project | `.aiden/aiden.config.yaml` | This project |
-| 4. Feature | `.aiden/features/<slug>/.override.yaml` | This feature |
+| 2. Enterprise | `~/.neuraforge/enterprise.config.yaml` | All projects |
+| 3. Project | `.neuraforge/neuraforge.config.yaml` | This project |
+| 4. Feature | `.neuraforge/features/<slug>/.override.yaml` | This feature |
 | 5. CLI | `--mode`, `--provider` | This command |
 
 Each level overrides the values from the previous one. Objects are deep-merged, arrays are replaced.

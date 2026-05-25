@@ -5,8 +5,8 @@ import Fr from '@/content/fr/reference/config.mdx';
 const page = createContentPage({
   content: { en: En, fr: Fr },
   metadata: {
-    en: { title: 'Configuration Reference — Full aiden.config.yaml Schema', description: 'Exhaustive schema: providers CLI and API, routing, token budget, pipeline, security.' },
-    fr: { title: 'Reference Configuration — Schema complet aiden.config.yaml', description: 'Schema exhaustif : providers CLI et API, routing, budget tokens, pipeline, securite.' },
+    en: { title: 'Configuration Reference — Full neuraforge.config.yaml Schema', description: 'Exhaustive schema: providers CLI and API, routing, token budget, pipeline, security.' },
+    fr: { title: 'Reference Configuration — Schema complet neuraforge.config.yaml', description: 'Schema exhaustif : providers CLI et API, routing, budget tokens, pipeline, securite.' },
   },
 });
 

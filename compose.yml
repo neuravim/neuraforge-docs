@@ -1,17 +1,17 @@
 services:
-  aiden-docs:
-    container_name: aiden-docs
+  neuraforge-docs:
+    container_name: neuraforge-docs
     build:
       context: .
       dockerfile: Dockerfile
-    image: aiden-docs:latest
+    image: neuraforge-docs:latest
     restart: unless-stopped
     expose:
       - "80"
     networks:
       reverse-proxy:
         aliases:
-          - aiden-docs
+          - neuraforge-docs
 
 networks:
   reverse-proxy:

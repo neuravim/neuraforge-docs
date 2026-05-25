@@ -12,9 +12,9 @@
 Pensez a des poupees russes : chaque niveau de configuration enveloppe le precedent. La plus petite poupee (les defauts NeuraForge) est toujours la. Chaque couche que vous ajoutez vient la surcharger, sans jamais casser ce qui est en dessous.
 
 1. **Defauts NeuraForge** (built-in) -- la base, toujours presente
-2. **Enterprise** (`~/.aiden/enterprise.config.yaml`) -- standards de votre organisation
-3. **Projet** (`.aiden/aiden.config.yaml`) -- specifique a ce repo
-4. **Feature** (`.aiden/features/<slug>/.override.yaml`) -- ajustements par feature
+2. **Enterprise** (`~/.neuraforge/enterprise.config.yaml`) -- standards de votre organisation
+3. **Projet** (`.neuraforge/neuraforge.config.yaml`) -- specifique a ce repo
+4. **Feature** (`.neuraforge/features/<slug>/.override.yaml`) -- ajustements par feature
 5. **CLI flags** (`--mode`, `--provider`, etc.) -- surcharge ponctuelle, priorite maximale
 
 Resultat : vous ne configurez que ce qui change. Tout le reste herite automatiquement du niveau au-dessus.
@@ -24,7 +24,7 @@ Resultat : vous ne configurez que ce qui change. Tout le reste herite automatiqu
 Vous n'avez pas besoin de tout comprendre pour demarrer. Creez un fichier, collez 4 lignes, et NeuraForge fonctionne :
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 project: mon-projet
 provider: claude-code
 mode: standard
@@ -78,7 +78,7 @@ La gouvernance memoire controle comment les agents traitent les memoires task, s
 Voici ou les choses deviennent interessantes pour les equipes. La config enterprise se place dans votre repertoire home et s'applique a **tous** vos projets NeuraForge, sur toute la machine. C'est le socle commun de votre organisation.
 
 ```yaml
-# ~/.aiden/enterprise.config.yaml
+# ~/.neuraforge/enterprise.config.yaml
 company: my-company
 defaults:
   mode: standard

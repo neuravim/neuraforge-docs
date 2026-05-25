@@ -3,8 +3,8 @@
 
 @layer base {
   body {
-    background-color: var(--aiden-bg-primary);
-    color: var(--aiden-text-primary);
+    background-color: var(--neuraforge-bg-primary);
+    color: var(--neuraforge-text-primary);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -18,7 +18,7 @@
   }
 
   ::selection {
-    background-color: var(--aiden-accent-primary);
+    background-color: var(--neuraforge-accent-primary);
     color: white;
   }
 
@@ -28,32 +28,32 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--aiden-bg-secondary);
+    background: var(--neuraforge-bg-secondary);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--aiden-border);
+    background: var(--neuraforge-border);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--aiden-text-muted);
+    background: var(--neuraforge-text-muted);
   }
 
   a {
-    color: var(--aiden-accent-primary);
+    color: var(--neuraforge-accent-primary);
     text-decoration: none;
     transition: color 0.15s ease;
   }
 
   a:hover {
-    color: var(--aiden-accent-primary-hover);
+    color: var(--neuraforge-accent-primary-hover);
   }
 }
 
 @layer components {
-  .prose-aiden h1 {
-    color: var(--aiden-text-primary);
+  .prose-neuraforge h1 {
+    color: var(--neuraforge-text-primary);
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.75rem;
@@ -61,122 +61,122 @@
     letter-spacing: -0.025em;
   }
 
-  .prose-aiden h2 {
-    color: var(--aiden-text-primary);
+  .prose-neuraforge h2 {
+    color: var(--neuraforge-text-primary);
     font-size: 1.5rem;
     font-weight: 600;
     margin-top: 2.5rem;
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--aiden-border);
+    border-bottom: 1px solid var(--neuraforge-border);
     letter-spacing: -0.02em;
   }
 
-  .prose-aiden h3 {
-    color: var(--aiden-text-primary);
+  .prose-neuraforge h3 {
+    color: var(--neuraforge-text-primary);
     font-size: 1.2rem;
     font-weight: 600;
     margin-top: 2rem;
     margin-bottom: 0.5rem;
   }
 
-  .prose-aiden p {
-    color: var(--aiden-text-secondary);
+  .prose-neuraforge p {
+    color: var(--neuraforge-text-secondary);
     line-height: 1.75;
     margin-bottom: 1rem;
   }
 
-  .prose-aiden code:not(pre code) {
-    background: var(--aiden-code-bg);
-    color: var(--aiden-code-text);
+  .prose-neuraforge code:not(pre code) {
+    background: var(--neuraforge-code-bg);
+    color: var(--neuraforge-code-text);
     padding: 0.15em 0.4em;
     border-radius: 5px;
     font-size: 0.875em;
     font-weight: 500;
   }
 
-  .prose-aiden ul,
-  .prose-aiden ol {
-    color: var(--aiden-text-secondary);
+  .prose-neuraforge ul,
+  .prose-neuraforge ol {
+    color: var(--neuraforge-text-secondary);
     padding-left: 1.5rem;
     margin-bottom: 1rem;
   }
 
-  .prose-aiden ul {
+  .prose-neuraforge ul {
     list-style-type: disc;
   }
 
-  .prose-aiden ol {
+  .prose-neuraforge ol {
     list-style-type: decimal;
   }
 
-  .prose-aiden li {
+  .prose-neuraforge li {
     margin-bottom: 0.35rem;
     line-height: 1.7;
   }
 
-  .prose-aiden table {
+  .prose-neuraforge table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 1.5rem;
-    border-radius: var(--aiden-radius);
+    border-radius: var(--neuraforge-radius);
     overflow: hidden;
-    border: 1px solid var(--aiden-border);
+    border: 1px solid var(--neuraforge-border);
   }
 
-  .prose-aiden th {
-    background: var(--aiden-bg-secondary);
-    color: var(--aiden-text-primary);
+  .prose-neuraforge th {
+    background: var(--neuraforge-bg-secondary);
+    color: var(--neuraforge-text-primary);
     padding: 0.75rem 1rem;
     text-align: left;
     font-weight: 600;
     font-size: 0.875rem;
-    border-bottom: 2px solid var(--aiden-border);
+    border-bottom: 2px solid var(--neuraforge-border);
   }
 
-  .prose-aiden td {
+  .prose-neuraforge td {
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--aiden-border);
-    color: var(--aiden-text-secondary);
+    border-bottom: 1px solid var(--neuraforge-border);
+    color: var(--neuraforge-text-secondary);
     font-size: 0.875rem;
   }
 
-  .prose-aiden tr:last-child td {
+  .prose-neuraforge tr:last-child td {
     border-bottom: none;
   }
 
-  .prose-aiden blockquote {
-    border-left: 3px solid var(--aiden-accent-primary);
+  .prose-neuraforge blockquote {
+    border-left: 3px solid var(--neuraforge-accent-primary);
     padding: 0.75rem 1rem;
     margin-left: 0;
     margin-bottom: 1rem;
-    background: var(--aiden-accent-primary-light);
-    border-radius: 0 var(--aiden-radius) var(--aiden-radius) 0;
-    color: var(--aiden-text-secondary);
+    background: var(--neuraforge-accent-primary-light);
+    border-radius: 0 var(--neuraforge-radius) var(--neuraforge-radius) 0;
+    color: var(--neuraforge-text-secondary);
     font-style: normal;
   }
 
-  .prose-aiden blockquote strong {
-    color: var(--aiden-text-primary);
+  .prose-neuraforge blockquote strong {
+    color: var(--neuraforge-text-primary);
   }
 
-  .prose-aiden hr {
+  .prose-neuraforge hr {
     border: none;
-    border-top: 1px solid var(--aiden-border);
+    border-top: 1px solid var(--neuraforge-border);
     margin: 2rem 0;
   }
 
-  .prose-aiden pre {
-    background: var(--aiden-terminal-bg);
-    border: 1px solid var(--aiden-border);
-    border-radius: var(--aiden-radius);
+  .prose-neuraforge pre {
+    background: var(--neuraforge-terminal-bg);
+    border: 1px solid var(--neuraforge-border);
+    border-radius: var(--neuraforge-radius);
     padding: 1rem;
     overflow-x: auto;
     margin-bottom: 1rem;
-    color: var(--aiden-terminal-text);
+    color: var(--neuraforge-terminal-text);
   }
 
-  .prose-aiden pre code {
+  .prose-neuraforge pre code {
     background: none;
     padding: 0;
     font-size: 0.85rem;

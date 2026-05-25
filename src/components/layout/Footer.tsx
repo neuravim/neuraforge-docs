@@ -18,21 +18,21 @@ export function Footer() {
   const nextLabel = locale === 'fr' ? 'Suivant' : 'Next';
 
   return (
-    <footer className="mt-16 pt-8" style={{ borderTop: '1px solid var(--aiden-border)' }}>
+    <footer className="mt-16 pt-8" style={{ borderTop: '1px solid var(--neuraforge-border)' }}>
       <div className="flex justify-between items-stretch gap-4">
         {prev ? (
           <Link
             href={prev.href}
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all no-underline flex-1"
             style={{
-              border: '1px solid var(--aiden-border)',
-              background: 'var(--aiden-bg-card)',
+              border: '1px solid var(--neuraforge-border)',
+              background: 'var(--neuraforge-bg-card)',
             }}
           >
-            <span style={{ color: 'var(--aiden-text-muted)' }}>&#8592;</span>
+            <span style={{ color: 'var(--neuraforge-text-muted)' }}>&#8592;</span>
             <div>
-              <div className="text-[11px]" style={{ color: 'var(--aiden-text-muted)' }}>{prevLabel}</div>
-              <div style={{ color: 'var(--aiden-text-primary)' }}>{prev.title}</div>
+              <div className="text-[11px]" style={{ color: 'var(--neuraforge-text-muted)' }}>{prevLabel}</div>
+              <div style={{ color: 'var(--neuraforge-text-primary)' }}>{prev.title}</div>
             </div>
           </Link>
         ) : (
@@ -43,21 +43,21 @@ export function Footer() {
             href={next.href}
             className="flex items-center justify-end gap-3 px-4 py-3 rounded-lg text-sm transition-all no-underline flex-1 text-right"
             style={{
-              border: '1px solid var(--aiden-border)',
-              background: 'var(--aiden-bg-card)',
+              border: '1px solid var(--neuraforge-border)',
+              background: 'var(--neuraforge-bg-card)',
             }}
           >
             <div>
-              <div className="text-[11px]" style={{ color: 'var(--aiden-text-muted)' }}>{nextLabel}</div>
-              <div style={{ color: 'var(--aiden-accent-primary)' }}>{next.title}</div>
+              <div className="text-[11px]" style={{ color: 'var(--neuraforge-text-muted)' }}>{nextLabel}</div>
+              <div style={{ color: 'var(--neuraforge-accent-primary)' }}>{next.title}</div>
             </div>
-            <span style={{ color: 'var(--aiden-accent-primary)' }}>&#8594;</span>
+            <span style={{ color: 'var(--neuraforge-accent-primary)' }}>&#8594;</span>
           </Link>
         ) : (
           <div className="flex-1" />
         )}
       </div>
-      <p className="mt-8 mb-4 text-xs text-center" style={{ color: 'var(--aiden-text-muted)' }}>
+      <p className="mt-8 mb-4 text-xs text-center" style={{ color: 'var(--neuraforge-text-muted)' }}>
         NeuraForge — AI-Driven Engineering v0.7.0
       </p>
     </footer>

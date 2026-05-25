@@ -31,10 +31,10 @@ Trois fichiers, une dependance. C'est tout ce qu'il faut. Maintenant, on branche
 
 ```bash
 $ neuraforge init
-NeuraForge initialized in .aiden/
-  Config: .aiden/aiden.config.yaml
-  Rules:  .aiden/rules/coding-standards.md
-  Memory: .aiden/memory/
+NeuraForge initialized in .neuraforge/
+  Config: .neuraforge/neuraforge.config.yaml
+  Rules:  .neuraforge/rules/coding-standards.md
+  Memory: .neuraforge/memory/
   Stack:  node, express
   PM:     npm
 ```
@@ -75,7 +75,7 @@ ajouter-un-endpoint-get-health [completed] (flash)
 La feature est marquee `completed`. Allons voir les artefacts :
 
 ```bash
-$ ls .aiden/features/ajouter-un-endpoint-get-health/
+$ ls .neuraforge/features/ajouter-un-endpoint-get-health/
 change-summary.md
 ```
 
@@ -118,7 +118,7 @@ OK, vous avez vu le resultat. Mais ce qui est vraiment interessant, c'est ce qui
 
 2. **Le Dev a lu votre code existant** — il n'a pas genere un fichier from scratch. Il a lu `index.js`, compris la structure, et ajoute la route au bon endroit. Il a aussi ecrit un test coherent avec votre stack.
 
-3. **Tout est trace** — la decision est logguee dans `.aiden/memory/decisions.jsonl`, le contexte projet est mis a jour dans `.aiden/memory/context.yaml`. La prochaine fois que vous lancerez NeuraForge, il saura ce qui a deja ete fait.
+3. **Tout est trace** — la decision est logguee dans `.neuraforge/memory/decisions.jsonl`, le contexte projet est mis a jour dans `.neuraforge/memory/context.yaml`. La prochaine fois que vous lancerez NeuraForge, il saura ce qui a deja ete fait.
 
 4. **Le budget est suivi** — chaque token utilise est comptabilise. En mode enterprise, vous pouvez definir des plafonds par feature, par sprint, par equipe.
 
@@ -132,7 +132,7 @@ Et ca, c'etait juste le mode flash. En mode standard, vous auriez eu un Analyst 
 
 Vous avez reussi si :
 
-- `.aiden/` existe avec la config et la memoire
+- `.neuraforge/` existe avec la config et la memoire
 - `neuraforge status` montre la feature completee
 - Un `change-summary.md` a ete genere
 - Le code contient la route `/health`
@@ -143,7 +143,7 @@ Tout est coche ? Bravo, vous venez de livrer votre premiere feature avec NeuraFo
 
 Pas de panique, voici les cas classiques :
 
-- **"NeuraForge not initialized"** — Lancez `neuraforge init` d'abord. NeuraForge a besoin du dossier `.aiden/` pour fonctionner.
+- **"NeuraForge not initialized"** — Lancez `neuraforge init` d'abord. NeuraForge a besoin du dossier `.neuraforge/` pour fonctionner.
 - **"No provider available"** — Verifiez que `claude --version` fonctionne dans votre terminal. NeuraForge a besoin d'au moins un provider IA accessible.
 - **Le provider timeout** — La premiere requete peut etre lente (cold start). Relancez simplement la commande.
 - **Le code n'est pas ce que vous attendiez** — Essayez `neuraforge standard` pour plus de controle. Vous aurez une phase d'analyse et de planning avant l'implementation, plus une review QA a la fin.

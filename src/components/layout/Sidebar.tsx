@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getNavigation, type NavSection } from '@/lib/navigation';
-import { AidenLogo } from '@/components/ui/AidenLogo';
+import { NeuraForgeLogo } from '@/components/ui/NeuraForgeLogo';
 
 const sectionIcons: Record<string, string> = {
   rocket: '🚀',
@@ -22,7 +22,7 @@ export function Sidebar({ locale }: { locale: string }) {
     <>
       <button
         className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg"
-        style={{ background: 'var(--aiden-bg-card)', border: '1px solid var(--aiden-border)' }}
+        style={{ background: 'var(--neuraforge-bg-card)', border: '1px solid var(--neuraforge-border)' }}
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle menu"
       >
@@ -36,19 +36,19 @@ export function Sidebar({ locale }: { locale: string }) {
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{
-          background: 'var(--aiden-bg-sidebar)',
-          borderRight: '1px solid var(--aiden-border)',
+          background: 'var(--neuraforge-bg-sidebar)',
+          borderRight: '1px solid var(--neuraforge-border)',
         }}
       >
         <div className="p-5">
           {/* Logo */}
           <Link href={`/${locale}`} className="flex items-center gap-2.5 mb-8 no-underline">
-            <AidenLogo size={32} />
+            <NeuraForgeLogo size={32} />
             <div>
-              <span className="font-bold text-sm" style={{ color: 'var(--aiden-text-primary)' }}>
+              <span className="font-bold text-sm" style={{ color: 'var(--neuraforge-text-primary)' }}>
                 NeuraForge
               </span>
-              <span className="ml-1.5 text-xs" style={{ color: 'var(--aiden-text-muted)' }}>
+              <span className="ml-1.5 text-xs" style={{ color: 'var(--neuraforge-text-muted)' }}>
                 v0.7.0
               </span>
             </div>
@@ -87,7 +87,7 @@ function SidebarSection({
     <div>
       <h3
         className="text-[11px] font-semibold uppercase tracking-wider mb-2 flex items-center gap-2"
-        style={{ color: 'var(--aiden-text-muted)' }}
+        style={{ color: 'var(--neuraforge-text-muted)' }}
       >
         <span>{sectionIcons[section.icon] ?? '📄'}</span>
         {section.title}
@@ -103,16 +103,16 @@ function SidebarSection({
                 className="block px-3 py-1.5 rounded-md text-[13px] transition-all no-underline"
                 style={{
                   color: isActive || isChildActive
-                    ? 'var(--aiden-accent-primary)'
-                    : 'var(--aiden-text-secondary)',
-                  background: isActive ? 'var(--aiden-accent-primary-light)' : 'transparent',
+                    ? 'var(--neuraforge-accent-primary)'
+                    : 'var(--neuraforge-text-secondary)',
+                  background: isActive ? 'var(--neuraforge-accent-primary-light)' : 'transparent',
                   fontWeight: isActive || isChildActive ? 500 : 400,
                 }}
               >
                 {item.title}
               </Link>
               {item.children && (isActive || isChildActive || pathname.startsWith(item.href + '/')) && (
-                <ul className="ml-3 mt-0.5 space-y-0.5 border-l border-[var(--aiden-border)] pl-2">
+                <ul className="ml-3 mt-0.5 space-y-0.5 border-l border-[var(--neuraforge-border)] pl-2">
                   {item.children.map((child) => {
                     const isSubActive = pathname === child.href;
                     return (
@@ -122,9 +122,9 @@ function SidebarSection({
                           className="block px-2 py-1 rounded-md text-[12px] transition-all no-underline"
                           style={{
                             color: isSubActive
-                              ? 'var(--aiden-accent-primary)'
-                              : 'var(--aiden-text-muted)',
-                            background: isSubActive ? 'var(--aiden-accent-primary-light)' : 'transparent',
+                              ? 'var(--neuraforge-accent-primary)'
+                              : 'var(--neuraforge-text-muted)',
+                            background: isSubActive ? 'var(--neuraforge-accent-primary-light)' : 'transparent',
                             fontWeight: isSubActive ? 500 : 400,
                           }}
                         >

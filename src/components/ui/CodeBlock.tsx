@@ -11,18 +11,18 @@ interface CodeBlockProps {
 
 // CSS variable references — resolved at render time per theme
 const V = {
-  text: 'var(--aiden-terminal-text)',
-  comment: 'var(--aiden-terminal-comment)',
-  keyword: 'var(--aiden-terminal-keyword)',
-  shell: 'var(--aiden-terminal-shell)',
-  cmd: 'var(--aiden-terminal-cmd)',
-  key: 'var(--aiden-terminal-key)',
-  value: 'var(--aiden-terminal-value)',
-  output: 'var(--aiden-terminal-output)',
-  aiden: 'var(--aiden-terminal-aiden)',
+  text: 'var(--neuraforge-terminal-text)',
+  comment: 'var(--neuraforge-terminal-comment)',
+  keyword: 'var(--neuraforge-terminal-keyword)',
+  shell: 'var(--neuraforge-terminal-shell)',
+  cmd: 'var(--neuraforge-terminal-cmd)',
+  key: 'var(--neuraforge-terminal-key)',
+  value: 'var(--neuraforge-terminal-value)',
+  output: 'var(--neuraforge-terminal-output)',
+  neuraforge: 'var(--neuraforge-terminal-neuraforge)',
 };
 
-const SHELL_CMDS = /^(aiden|pnpm|npm|npx|node|git|cd|mkdir|ls|cat|cp|mv|rm|echo|curl|chmod|export|pip|cargo|go|docker|kubectl|gh)\b/;
+const SHELL_CMDS = /^(neuraforge|pnpm|npm|npx|node|git|cd|mkdir|ls|cat|cp|mv|rm|echo|curl|chmod|export|pip|cargo|go|docker|kubectl|gh)\b/;
 
 function colorShellLine(line: string): React.ReactNode {
   if (line.startsWith('$ ')) {
@@ -37,7 +37,7 @@ function colorShellLine(line: string): React.ReactNode {
     return <span style={{ color: V.comment }}>{line}</span>;
   }
   if (/^NeuraForge\s/.test(line)) {
-    return <span style={{ color: V.aiden }}>{line}</span>;
+    return <span style={{ color: V.neuraforge }}>{line}</span>;
   }
   if (SHELL_CMDS.test(line.trimStart())) {
     return <span style={{ color: V.cmd }}>{line}</span>;
@@ -123,12 +123,12 @@ export function CodeBlock({ children, language, filename, highlight }: CodeBlock
   return (
     <div
       className="rounded-xl overflow-hidden my-4"
-      style={{ background: 'var(--aiden-terminal-bg)', border: '1px solid var(--aiden-border)' }}
+      style={{ background: 'var(--neuraforge-terminal-bg)', border: '1px solid var(--neuraforge-border)' }}
     >
       <div
         className="flex items-center justify-between px-4 py-2 text-xs"
         style={{
-          borderBottom: '1px solid var(--aiden-border)',
+          borderBottom: '1px solid var(--neuraforge-border)',
           color: V.comment,
         }}
       >
@@ -152,7 +152,7 @@ export function CodeBlock({ children, language, filename, highlight }: CodeBlock
                   ? 'rgba(232, 93, 4, 0.08)'
                   : 'transparent',
                 borderLeft: highlightLines.includes(i + 1)
-                  ? '2px solid var(--aiden-accent-primary)'
+                  ? '2px solid var(--neuraforge-accent-primary)'
                   : '2px solid transparent',
                 paddingLeft: '0.75rem',
               }}

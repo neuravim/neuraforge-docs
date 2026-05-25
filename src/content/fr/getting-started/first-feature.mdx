@@ -29,7 +29,7 @@ L'Analyst rend son verdict :
 - **Risques** : dependance DB non mockee dans les tests
 - **Questions** : format de reponse ? verifier la connexion DB ou juste le serveur ?
 
-Il depose son rapport dans `.aiden/features/ajouter-un-endpoint-get-health/brief.md` :
+Il depose son rapport dans `.neuraforge/features/ajouter-un-endpoint-get-health/brief.md` :
 
 ```markdown
 ---
@@ -156,7 +156,7 @@ Feature: Ajouter un endpoint GET /health avec verification connexion DB
   Agents: analyst → planner → dev → qa
 ```
 
-Tous les artefacts sont ranges dans `.aiden/features/ajouter-un-endpoint-get-health/` :
+Tous les artefacts sont ranges dans `.neuraforge/features/ajouter-un-endpoint-get-health/` :
 
 ```
 brief.md              # Analyse de l'Analyst
@@ -167,7 +167,7 @@ review.md             # Rapport du QA
 change-summary.md     # Résumé des changements
 ```
 
-Chaque decision est tracee dans `.aiden/memory/decisions.jsonl` :
+Chaque decision est tracee dans `.neuraforge/memory/decisions.jsonl` :
 
 ```json
 {"ts":"2026-03-27T10:15:00Z","feature":"ajouter-un-endpoint-get-health","agent":"analyst","type":"complexity","value":2}

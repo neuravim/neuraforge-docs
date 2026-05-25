@@ -53,10 +53,10 @@ This is the step where NeuraForge "gets acquainted" with your codebase. In your 
 
 ```bash
 $ neuraforge init
-NeuraForge initialized in .aiden/
-  Config: .aiden/aiden.config.yaml
-  Rules:  .aiden/rules/coding-standards.md
-  Memory: .aiden/memory/
+NeuraForge initialized in .neuraforge/
+  Config: .neuraforge/neuraforge.config.yaml
+  Rules:  .neuraforge/rules/coding-standards.md
+  Memory: .neuraforge/memory/
   Stack:  node, typescript, express
   Arch:   docker
   CI:     github-actions
@@ -77,8 +77,8 @@ This information is injected into every agent's context for more relevant result
 Here's the structure created in your project:
 
 ```
-.aiden/
-  aiden.config.yaml    # Project configuration
+.neuraforge/
+  neuraforge.config.yaml    # Project configuration
   memory/            # Context, decisions, metrics
   rules/             # Enterprise rules
   templates/         # Custom templates
@@ -132,12 +132,12 @@ If you see this output, congratulations: NeuraForge is installed, initialized, a
 
 If you already use Claude Code daily, there's an even more direct shortcut: slash commands. Zero extra installation, zero config — just commands in your Claude session:
 
-- `/aiden-init` — initialize NeuraForge
-- `/aiden-flash` — fast mode
-- `/aiden-standard` — full mode
-- `/aiden-enterprise` — enterprise mode
+- `/neuraforge-init` — initialize NeuraForge
+- `/neuraforge-flash` — fast mode
+- `/neuraforge-standard` — full mode
+- `/neuraforge-enterprise` — enterprise mode
 
-Both modes (CLI and slash) write to the same `.aiden/` files. You can freely switch between the two without losing your context.
+Both modes (CLI and slash) write to the same `.neuraforge/` files. You can freely switch between the two without losing your context.
 
 ---
 
@@ -145,13 +145,13 @@ Both modes (CLI and slash) write to the same `.aiden/` files. You can freely swi
 
 Things don't always go as planned. Here are the classic errors and how to fix them in 30 seconds:
 
-**`command not found: aiden`** — Make sure the pnpm global directory is in your PATH.
+**`command not found: neuraforge`** — Make sure the pnpm global directory is in your PATH.
 
 **`NeuraForge not initialized`** — Run `neuraforge init` in your project directory.
 
 **`No provider available`** — Install Claude Code (`npm install -g @anthropic-ai/claude-code`) or another provider.
 
-**Provider timeout** — The default timeout is 120s. If your LLM is slow, increase it in `.aiden/aiden.config.yaml`.
+**Provider timeout** — The default timeout is 120s. If your LLM is slow, increase it in `.neuraforge/neuraforge.config.yaml`.
 
 ---
 

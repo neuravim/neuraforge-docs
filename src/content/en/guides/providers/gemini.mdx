@@ -81,7 +81,7 @@ $ source ~/.zshrc
 
 ## NeuraForge Configuration
 
-Now that we have a working Gemini, let's plug it into NeuraForge. Add this to your `.aiden/aiden.config.yaml`:
+Now that we have a working Gemini, let's plug it into NeuraForge. Add this to your `.neuraforge/neuraforge.config.yaml`:
 
 ```yaml
 provider: gemini
@@ -249,7 +249,7 @@ providers:
 
 ### Timeout on Large Features
 
-NeuraForge's default timeout is 120 seconds. With the 1M token context window, very long prompts can exceed this limit. Increase the timeout in `.aiden/aiden.config.yaml`:
+NeuraForge's default timeout is 120 seconds. With the 1M token context window, very long prompts can exceed this limit. Increase the timeout in `.neuraforge/neuraforge.config.yaml`:
 
 ```yaml
 providers:

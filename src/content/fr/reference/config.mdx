@@ -1,13 +1,13 @@
 # Reference Configuration
 
-Le fichier aiden.config.yaml a une option pour presque tout. Voici le schema complet, commente et avec les valeurs par defaut.
+Le fichier neuraforge.config.yaml a une option pour presque tout. Voici le schema complet, commente et avec les valeurs par defaut.
 
 ---
 
 ## Schema complet
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 project: mon-projet              # (requis) Nom du projet
 provider: claude-code            # Provider par defaut
 mode: standard                   # flash | standard | enterprise
@@ -204,7 +204,7 @@ Les scopes par defaut sont `task`, `session`, `project` et `user`. Le scope `pro
 
 ## Schema projet (context.yaml)
 
-Le scan de `neuraforge init` genere `.aiden/memory/context.yaml` avec ce schema :
+Le scan de `neuraforge init` genere `.neuraforge/memory/context.yaml` avec ce schema :
 
 | Cle | Type | Description |
 |---|---|---|
@@ -222,7 +222,7 @@ Ces donnees sont injectees dans le prompt de chaque agent via la section `--- Pr
 
 ## Schema `skill.yaml`
 
-Chaque skill dans `.aiden/skills/<name>/` contient un fichier `skill.yaml` :
+Chaque skill dans `.neuraforge/skills/<name>/` contient un fichier `skill.yaml` :
 
 ```yaml
 name: mon-skill                # (requis) Identifiant unique
@@ -253,7 +253,7 @@ enabled: true                  # Actif (defaut: true)
 | `author` | string | — | Auteur |
 | `agents` | AgentRole[] | tous | `lead`, `analyst`, `planner`, `dev`, `qa`, `docops` |
 | `modes` | CTAMode[] | tous | `flash`, `standard`, `enterprise` |
-| `hooks` | Record | — | Hooks par evenement (meme format que `aiden.config.yaml`) |
+| `hooks` | Record | — | Hooks par evenement (meme format que `neuraforge.config.yaml`) |
 | `config` | Record | — | Paires cle-valeur libres |
 | `priority` | integer | `0` | Tri decroissant |
 | `enabled` | boolean | `true` | Desactiver sans supprimer |
@@ -269,9 +269,9 @@ La configuration suit une cascade a cinq niveaux — chaque niveau ecrase le pre
 | Niveau | Fichier | Portee |
 |---|---|---|
 | 1. Defauts | (built-in) | Global |
-| 2. Enterprise | `~/.aiden/enterprise.config.yaml` | Tous les projets |
-| 3. Projet | `.aiden/aiden.config.yaml` | Ce projet |
-| 4. Feature | `.aiden/features/<slug>/.override.yaml` | Cette feature |
+| 2. Enterprise | `~/.neuraforge/enterprise.config.yaml` | Tous les projets |
+| 3. Projet | `.neuraforge/neuraforge.config.yaml` | Ce projet |
+| 4. Feature | `.neuraforge/features/<slug>/.override.yaml` | Cette feature |
 | 5. CLI | `--mode`, `--provider` | Cette commande |
 
 Chaque niveau ecrase les valeurs du precedent. Les objets sont fusionnes en profondeur, les tableaux sont remplaces.

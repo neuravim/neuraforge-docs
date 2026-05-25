@@ -12,9 +12,9 @@
 Think of Russian nesting dolls: each configuration level wraps the previous one. The smallest doll (NeuraForge defaults) is always there. Each layer you add overrides it, without ever breaking what's underneath.
 
 1. **NeuraForge defaults** (built-in) -- the base, always present
-2. **Enterprise** (`~/.aiden/enterprise.config.yaml`) -- your organization's standards
-3. **Project** (`.aiden/aiden.config.yaml`) -- specific to this repo
-4. **Feature** (`.aiden/features/<slug>/.override.yaml`) -- per-feature adjustments
+2. **Enterprise** (`~/.neuraforge/enterprise.config.yaml`) -- your organization's standards
+3. **Project** (`.neuraforge/neuraforge.config.yaml`) -- specific to this repo
+4. **Feature** (`.neuraforge/features/<slug>/.override.yaml`) -- per-feature adjustments
 5. **CLI flags** (`--mode`, `--provider`, etc.) -- one-off override, highest priority
 
 Result: you only configure what changes. Everything else automatically inherits from the level above.
@@ -24,7 +24,7 @@ Result: you only configure what changes. Everything else automatically inherits 
 You don't need to understand everything to get started. Create a file, paste 4 lines, and NeuraForge works:
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 project: my-project
 provider: claude-code
 mode: standard
@@ -78,7 +78,7 @@ Memory governance controls how agents treat task, session, project and user memo
 Here's where things get interesting for teams. The enterprise config lives in your home directory and applies to **all** your NeuraForge projects on the entire machine. It's the common foundation for your organization.
 
 ```yaml
-# ~/.aiden/enterprise.config.yaml
+# ~/.neuraforge/enterprise.config.yaml
 company: my-company
 defaults:
   mode: standard

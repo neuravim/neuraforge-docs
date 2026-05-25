@@ -15,7 +15,7 @@ const isGhPages = process.env.GITHUB_PAGES === 'true';
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: isGhPages ? '/aiden-docs' : '',
+  basePath: isGhPages ? '/neuraforge-docs' : '',
   pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
   images: {
     unoptimized: true,

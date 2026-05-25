@@ -8,7 +8,7 @@ Avant de commencer, assurez-vous d'avoir :
 
 - Node.js 20+
 - Un compte Anthropic (plan gratuit, Claude Max, Team ou Enterprise)
-- NeuraForge installé (`npm install -g @anthropic-ai/aiden` ou depuis les sources)
+- NeuraForge installé (`npm install -g @anthropic-ai/neuraforge` ou depuis les sources)
 
 Tout est prêt ? Passons à l'installation.
 
@@ -60,7 +60,7 @@ Si vous voyez une réponse, vous êtes paré. Passons à la configuration NeuraF
 
 ## Configuration NeuraForge
 
-Ajoutez Claude Code dans `.aiden/aiden.config.yaml` — c'est le minimum pour démarrer :
+Ajoutez Claude Code dans `.neuraforge/neuraforge.config.yaml` — c'est le minimum pour démarrer :
 
 ```yaml
 provider: claude-code
@@ -104,7 +104,7 @@ La config est en place, il est temps de voir NeuraForge en action. Initialisez v
 
 ```bash
 $ neuraforge init
-# Scanne le projet, détecte la stack, crée .aiden/memory/context.yaml
+# Scanne le projet, détecte la stack, crée .neuraforge/memory/context.yaml
 
 $ neuraforge flash "Fix le bug #123 dans le module d'authentification"
 ```
@@ -123,10 +123,10 @@ Voici à quoi ressemble la sortie :
 
 ## Slash commands (mode intégré)
 
-NeuraForge a une particularité intéressante : il fonctionne en deux modes complémentaires qui partagent le même répertoire `.aiden/`. Cela signifie que vous pouvez alterner entre les deux sans perdre votre contexte.
+NeuraForge a une particularité intéressante : il fonctionne en deux modes complémentaires qui partagent le même répertoire `.neuraforge/`. Cela signifie que vous pouvez alterner entre les deux sans perdre votre contexte.
 
 - **CLI mode** : `neuraforge flash "..."` — NeuraForge orchestre en Node.js, appelle `claude` comme subprocess
-- **Slash mode** : `/aiden-flash ...` dans Claude Code — Claude lit les prompts `.claude/commands/` directement, sans installation Node.js requise
+- **Slash mode** : `/neuraforge-flash ...` dans Claude Code — Claude lit les prompts `.claude/commands/` directement, sans installation Node.js requise
 
 Le slash mode est particulièrement utile pour les équipes qui découvrent NeuraForge ou pour un usage ponctuel directement dans l'interface Claude Code.
 
@@ -134,22 +134,22 @@ Le slash mode est particulièrement utile pour les équipes qui découvrent Neur
 
 | Commande | Description |
 |---|---|
-| `/aiden-init` | Initialise le projet NeuraForge dans le répertoire courant |
-| `/aiden-flash` | Workflow rapide : Lead → Dev (2 agents) |
-| `/aiden-standard` | Workflow complet : Lead → Analyst → Planner → Dev → QA |
-| `/aiden-enterprise` | Workflow enterprise avec approbation humaine entre chaque phase |
-| `/aiden-status` | Affiche le statut des features en cours |
-| `/aiden-resume` | Reprend un workflow interrompu |
+| `/neuraforge-init` | Initialise le projet NeuraForge dans le répertoire courant |
+| `/neuraforge-flash` | Workflow rapide : Lead → Dev (2 agents) |
+| `/neuraforge-standard` | Workflow complet : Lead → Analyst → Planner → Dev → QA |
+| `/neuraforge-enterprise` | Workflow enterprise avec approbation humaine entre chaque phase |
+| `/neuraforge-status` | Affiche le statut des features en cours |
+| `/neuraforge-resume` | Reprend un workflow interrompu |
 
 ### Exemple en slash mode
 
 Dans l'interface Claude Code, tapez simplement :
 
 ```
-/aiden-flash Ajoute un endpoint REST GET /users/:id avec validation et tests
+/neuraforge-flash Ajoute un endpoint REST GET /users/:id avec validation et tests
 ```
 
-Claude lit le fichier `.claude/commands/aiden-flash.md`, charge le contexte `.aiden/memory/context.yaml`, et exécute le workflow guidé directement dans la conversation. Même résultat, approche différente.
+Claude lit le fichier `.claude/commands/neuraforge-flash.md`, charge le contexte `.neuraforge/memory/context.yaml`, et exécute le workflow guidé directement dans la conversation. Même résultat, approche différente.
 
 ## Forces et cas d'usage
 

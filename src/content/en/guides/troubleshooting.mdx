@@ -6,9 +6,9 @@
 
 ## Common problems
 
-### "command not found: aiden"
+### "command not found: neuraforge"
 
-**Symptom**: The terminal doesn't recognize the `aiden` command.
+**Symptom**: The terminal doesn't recognize the `neuraforge` command.
 
 **Cause**: The binary isn't in the PATH.
 
@@ -50,7 +50,7 @@ $ neuraforge provider status
 **Cause**: The feature's token budget has been exceeded.
 
 **Solution**: Two options:
-- Increase the budget in `aiden.config.yaml`
+- Increase the budget in `neuraforge.config.yaml`
 - Switch to flash mode (smaller but sufficient budget)
 
 ---
@@ -101,7 +101,7 @@ Aborting feature: my-feature
 
 **Cause**: The output directory doesn't exist or the provider isn't responding.
 
-**Solution**: Verify that `.aiden/features/` exists and that `neuraforge provider status` shows an active provider.
+**Solution**: Verify that `.neuraforge/features/` exists and that `neuraforge provider status` shows an active provider.
 
 ---
 
@@ -109,8 +109,8 @@ Aborting feature: my-feature
 
 When quick fixes aren't enough, the logs tell you exactly what happened.
 
-Decisions are in `.aiden/memory/decisions.jsonl` (JSONL, one line per decision).
-Metrics are in `.aiden/memory/metrics.jsonl`.
+Decisions are in `.neuraforge/memory/decisions.jsonl` (JSONL, one line per decision).
+Metrics are in `.neuraforge/memory/metrics.jsonl`.
 
 ```bash
 $ neuraforge metrics

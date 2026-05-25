@@ -31,13 +31,13 @@ export default async function TutorialPage({
   return (
     <div>
       <h1>Tutorial : construire une todo-app avec NeuraForge</h1>
-      <p style={{ color: 'var(--aiden-text-secondary)', fontSize: '1.1rem', lineHeight: 1.7 }}>
+      <p style={{ color: 'var(--neuraforge-text-secondary)', fontSize: '1.1rem', lineHeight: 1.7 }}>
         Oubliez la theorie. Dans ce tutorial, vous allez <strong>construire une vraie API</strong> —
         un gestionnaire de taches — en utilisant NeuraForge du premier <code>init</code> jusqu&apos;aux
         metriques finales. Chaque chapitre ajoute une couche, chaque commande est executable.
         A la fin, vous maitriserez les 3 modes, les 6 agents, et tous les outils du quotidien.
       </p>
-      <p style={{ color: 'var(--aiden-text-muted)', marginTop: '0.5rem' }}>
+      <p style={{ color: 'var(--neuraforge-text-muted)', marginTop: '0.5rem' }}>
         Temps total estime : 30-45 minutes de lecture active. Zero prerequis NeuraForge.
       </p>
 
@@ -77,11 +77,11 @@ export default async function TutorialPage({
       <div style={{
         marginTop: '2rem',
         padding: '1.25rem',
-        borderRadius: 'var(--aiden-radius-lg)',
-        background: 'var(--aiden-accent-primary-light)',
-        border: '1px solid var(--aiden-accent-primary)',
+        borderRadius: 'var(--neuraforge-radius-lg)',
+        background: 'var(--neuraforge-accent-primary-light)',
+        border: '1px solid var(--neuraforge-accent-primary)',
       }}>
-        <p style={{ margin: 0, color: 'var(--aiden-text-primary)' }}>
+        <p style={{ margin: 0, color: 'var(--neuraforge-text-primary)' }}>
           <strong>Le projet fil rouge</strong> — Tout au long de ce tutorial, on construit <code>todo-api</code>,
           une API REST Express + TypeScript. Chaque chapitre ajoute une feature. A la fin, vous aurez
           un projet complet <em>et</em> la maitrise d&apos;NeuraForge. Deux pour le prix d&apos;un.

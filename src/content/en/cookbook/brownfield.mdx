@@ -15,7 +15,7 @@ NeuraForge is designed for brownfield. Unlike frameworks that require a project 
 1. **`neuraforge init` scans your project** — detects the stack, architecture, CI/CD
 2. **No overhaul** — NeuraForge works feature by feature, without touching the rest
 3. **Standard mode by default** — the Analyst scans existing code before proposing changes
-4. **Rules capture your conventions** — codify what's implicit in `.aiden/rules/`
+4. **Rules capture your conventions** — codify what's implicit in `.neuraforge/rules/`
 
 ## Step 1: Initialize
 
@@ -182,16 +182,16 @@ Each package has its own config, its own rules and its own features. Recommended
 
 ```
 my-monorepo/
-  .aiden/                          # Root NeuraForge (if Option A)
+  .neuraforge/                          # Root NeuraForge (if Option A)
     rules/
       shared-standards.md        # Shared rules
   packages/
     api/
-      .aiden/
+      .neuraforge/
         rules/
           api-standards.md       # API-specific rules
     frontend/
-      .aiden/
+      .neuraforge/
         rules/
           front-standards.md     # Frontend-specific rules
 ```
@@ -201,7 +201,7 @@ my-monorepo/
 ### Do
 
 - **Start with isolated features** — not a cross-cutting overhaul
-- **Document your existing conventions** in `.aiden/rules/` before launching NeuraForge
+- **Document your existing conventions** in `.neuraforge/rules/` before launching NeuraForge
 - **Use standard, not flash** — the Analyst needs to scan existing code
 - **Commit the artifacts** — they document decisions for future devs
 - **Review the first result carefully** — adjust rules if needed

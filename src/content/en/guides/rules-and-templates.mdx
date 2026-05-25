@@ -9,7 +9,7 @@
 
 ## Enterprise rules
 
-Rules are `.md` files in `.aiden/rules/`. They are automatically injected into every agent's context. No API to configure, no plugin to install: Markdown, that's it.
+Rules are `.md` files in `.neuraforge/rules/`. They are automatically injected into every agent's context. No API to configure, no plugin to install: Markdown, that's it.
 
 ### Add a rule
 
@@ -41,8 +41,8 @@ Rule added: coding-standards.md
 
 ```bash
 $ neuraforge rules list
-  coding-standards (.aiden/rules/coding-standards.md)
-  security-policy (.aiden/rules/security-policy.md)
+  coding-standards (.neuraforge/rules/coding-standards.md)
+  security-policy (.neuraforge/rules/security-policy.md)
 ```
 
 ## Rule injection: before / after
@@ -69,7 +69,7 @@ NeuraForge provides 7 default templates (brief, spec, story, review, change-summ
 
 ```bash
 $ neuraforge template customize spec
-Template "spec" copied to .aiden/templates/ for customization.
+Template "spec" copied to .neuraforge/templates/ for customization.
 ```
 
 The copied template uses Handlebars. Available variables: `feature_name`, `provider`, `mode`, `date`, etc.

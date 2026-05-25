@@ -38,9 +38,9 @@ export function AgentFlow() {
             onClick={() => setMode(m)}
             className="px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer"
             style={{
-              background: mode === m ? modeColors[m] : 'var(--aiden-bg-secondary)',
-              color: mode === m ? 'white' : 'var(--aiden-text-muted)',
-              border: `1px solid ${mode === m ? modeColors[m] : 'var(--aiden-border)'}`,
+              background: mode === m ? modeColors[m] : 'var(--neuraforge-bg-secondary)',
+              color: mode === m ? 'white' : 'var(--neuraforge-text-muted)',
+              border: `1px solid ${mode === m ? modeColors[m] : 'var(--neuraforge-border)'}`,
             }}
           >
             {m.charAt(0).toUpperCase() + m.slice(1)}
@@ -55,9 +55,9 @@ export function AgentFlow() {
               <div
                 className="flex items-center justify-center w-16 h-16 rounded-full text-xs font-bold transition-all"
                 style={{
-                  background: active ? `${agent.color}15` : 'var(--aiden-bg-secondary)',
-                  border: `2px solid ${active ? agent.color : 'var(--aiden-border)'}`,
-                  color: active ? agent.color : 'var(--aiden-text-muted)',
+                  background: active ? `${agent.color}15` : 'var(--neuraforge-bg-secondary)',
+                  border: `2px solid ${active ? agent.color : 'var(--neuraforge-border)'}`,
+                  color: active ? agent.color : 'var(--neuraforge-text-muted)',
                   opacity: active ? 1 : 0.3,
                 }}
               >
@@ -67,7 +67,7 @@ export function AgentFlow() {
                 <svg width="24" height="12" viewBox="0 0 24 12" className="shrink-0">
                   <path
                     d="M0 6h18M14 1l6 5-6 5"
-                    stroke={active && agents[i + 1]?.modes.includes(mode) ? 'var(--aiden-text-muted)' : 'var(--aiden-border)'}
+                    stroke={active && agents[i + 1]?.modes.includes(mode) ? 'var(--neuraforge-text-muted)' : 'var(--neuraforge-border)'}
                     strokeWidth="1.5"
                     fill="none"
                   />

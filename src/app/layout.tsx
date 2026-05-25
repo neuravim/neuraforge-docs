@@ -87,7 +87,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                var t = localStorage.getItem('aiden-theme');
+                var t = localStorage.getItem('neuraforge-theme');
                 if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
               })();
             `,

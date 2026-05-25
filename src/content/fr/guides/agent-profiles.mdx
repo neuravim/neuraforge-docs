@@ -66,7 +66,7 @@ Exécution :
 neuraforge enterprise "Migrer cette application WildFly vers Spring Boot" --profile wildfly-to-spring-boot
 ```
 
-Ou activation permanente dans `.aiden/aiden.config.yaml` avec `activeProfile`.
+Ou activation permanente dans `.neuraforge/neuraforge.config.yaml` avec `activeProfile`.
 
 ### Domain playbook
 
@@ -75,7 +75,7 @@ Un domain playbook est une skill qui porte les instructions domaine, règles, te
 Structure recommandée :
 
 ```text
-.aiden/skills/wildfly-to-spring-boot/
+.neuraforge/skills/wildfly-to-spring-boot/
   skill.yaml
   instructions.md
   rules/
@@ -99,7 +99,7 @@ Structure recommandée :
 neuraforge skills init wildfly-to-spring-boot
 ```
 
-Modifier `.aiden/skills/wildfly-to-spring-boot/skill.yaml` :
+Modifier `.neuraforge/skills/wildfly-to-spring-boot/skill.yaml` :
 
 ```yaml
 name: wildfly-to-spring-boot
@@ -250,8 +250,8 @@ QA doit verifier :
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUT=".aiden/migration-inventory.txt"
-mkdir -p .aiden
+OUT=".neuraforge/migration-inventory.txt"
+mkdir -p .neuraforge
 {
   echo "# Java EE inventory"
   echo
@@ -271,7 +271,7 @@ echo "Wrote $OUT"
 Puis :
 
 ```bash
-chmod +x .aiden/skills/wildfly-to-spring-boot/hooks/scan-java-ee.sh
+chmod +x .neuraforge/skills/wildfly-to-spring-boot/hooks/scan-java-ee.sh
 ```
 
 ### 5. Activer et lancer

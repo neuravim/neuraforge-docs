@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Chapitre 1 — Installer NeuraForge et initialiser votre projet',
-  description: 'Installez NeuraForge en une commande, initialisez votre projet todo-app, et decouvrez la structure .aiden/ qui pilote tout. Guide pas a pas, zero prerequis.',
+  description: 'Installez NeuraForge en une commande, initialisez votre projet todo-app, et decouvrez la structure .neuraforge/ qui pilote tout. Guide pas a pas, zero prerequis.',
 };
 
 # Chapitre 1 — Le terrain de jeu
@@ -103,8 +103,8 @@ Voila ce qui a ete cree :
 
 ```
 todo-api/
-  .aiden/
-    aiden.config.yaml          ← La config de votre projet
+  .neuraforge/
+    neuraforge.config.yaml          ← La config de votre projet
     memory/
       context.yaml             ← L'etat du projet vu par les agents
       decisions.jsonl           ← Le journal de bord (vide pour l'instant)
@@ -117,14 +117,14 @@ todo-api/
 ```
 
 <Callout type="info">
-  Tout vit dans `.aiden/`. Pas de fichiers eparpilles, pas de config cachee. Si vous supprimez ce dossier, NeuraForge repart de zero. Simple et previsible.
+  Tout vit dans `.neuraforge/`. Pas de fichiers eparpilles, pas de config cachee. Si vous supprimez ce dossier, NeuraForge repart de zero. Simple et previsible.
 </Callout>
 
 ---
 
 ## Premier tour du proprietaire
 
-Ouvrez `.aiden/aiden.config.yaml`. C'est le coeur de la configuration :
+Ouvrez `.neuraforge/neuraforge.config.yaml`. C'est le coeur de la configuration :
 
 ```yaml
 project: todo-api
@@ -135,7 +135,7 @@ lang: fr
 
 Quatre lignes. C'est tout ce qu'NeuraForge a besoin pour fonctionner. Le reste — budget, routing, regles — a des valeurs par defaut sensibles. On les ajustera plus tard si besoin.
 
-Maintenant, regardez `.aiden/memory/context.yaml` :
+Maintenant, regardez `.neuraforge/memory/context.yaml` :
 
 ```yaml
 project:
@@ -184,7 +184,7 @@ En moins de 5 minutes, vous avez :
 1. Installe NeuraForge globalement
 2. Cree un projet Express + TypeScript
 3. Initialise NeuraForge qui a scanne votre stack
-4. Decouvert la structure `.aiden/` — config, memoire, regles
+4. Decouvert la structure `.neuraforge/` — config, memoire, regles
 5. Verifie que votre provider IA est pret
 
 Le terrain de jeu est pret. Les outils sont affutes. Et votre projet attend sa premiere feature.

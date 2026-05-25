@@ -151,7 +151,7 @@ Le plus beau : les retex correspondant a votre tech stack sont **injectes dans l
 
 ## Les regles : coder vos standards
 
-Les regles d'entreprise, c'est ce qui garantit que chaque agent respecte vos conventions. Elles vivent dans `.aiden/rules/`.
+Les regles d'entreprise, c'est ce qui garantit que chaque agent respecte vos conventions. Elles vivent dans `.neuraforge/rules/`.
 
 ### Voir les regles actives
 
@@ -181,7 +181,7 @@ Puis :
 
 ```bash
 $ neuraforge rules add api-guidelines.md
-Rule "api-guidelines" added to .aiden/rules/
+Rule "api-guidelines" added to .neuraforge/rules/
 ```
 
 Desormais, le Dev et le QA recevront ces regles dans chaque prompt. Le Dev ecrira du code conforme, le QA verifiera la conformite. Pas besoin de rappeler les conventions a chaque PR — NeuraForge s'en charge.
@@ -212,10 +212,10 @@ Le QA devient plus exigeant. Il ne se contente plus de "ca passe" — il verifie
 
 ### Creer un skill custom
 
-Chaque skill est un dossier dans `.aiden/skills/` :
+Chaque skill est un dossier dans `.neuraforge/skills/` :
 
 ```
-.aiden/skills/mon-skill/
+.neuraforge/skills/mon-skill/
   skill.yaml        ← Manifeste : nom, agents cibles, modes, priorite
   instructions.md   ← Instructions injectees dans les prompts
   rules/            ← Regles additionnelles (optionnel)
@@ -263,10 +263,10 @@ Available templates:
   prfaq
 
 $ neuraforge template customize brief
-Template "brief" copied to .aiden/templates/brief.md.hbs for customization.
+Template "brief" copied to .neuraforge/templates/brief.md.hbs for customization.
 ```
 
-Editez `.aiden/templates/brief.md.hbs` pour ajouter vos propres sections — contexte business, equipe impactee, deadline. Chaque brief genere suivra votre modele.
+Editez `.neuraforge/templates/brief.md.hbs` pour ajouter vos propres sections — contexte business, equipe impactee, deadline. Chaque brief genere suivra votre modele.
 
 ---
 
@@ -294,9 +294,9 @@ Set mode = flash
 Le systeme de config est en cascade :
 
 1. **Defauts NeuraForge** → valeurs sensibles de base
-2. **Enterprise global** (`~/.aiden/enterprise.config.yaml`) → regles d'entreprise
-3. **Projet** (`.aiden/aiden.config.yaml`) → specifique a ce repo
-4. **Feature** (`.aiden/features/<slug>/.override.yaml`) → override par feature
+2. **Enterprise global** (`~/.neuraforge/enterprise.config.yaml`) → regles d'entreprise
+3. **Projet** (`.neuraforge/neuraforge.config.yaml`) → specifique a ce repo
+4. **Feature** (`.neuraforge/features/<slug>/.override.yaml`) → override par feature
 5. **CLI flags** (`--provider gemini`) → priorite maximale
 
 Chaque niveau ecrase le precedent. Les objets sont fusionnes en profondeur, les scalaires sont remplaces.

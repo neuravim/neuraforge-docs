@@ -19,10 +19,10 @@ export function Header({ locale }: { locale: string }) {
     setIsDark(next);
     if (next) {
       document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('aiden-theme', 'dark');
+      localStorage.setItem('neuraforge-theme', 'dark');
     } else {
       document.documentElement.removeAttribute('data-theme');
-      localStorage.removeItem('aiden-theme');
+      localStorage.removeItem('neuraforge-theme');
     }
   };
 
@@ -36,8 +36,8 @@ export function Header({ locale }: { locale: string }) {
     <header
       className="sticky top-0 z-20 flex items-center justify-between h-14 px-6"
       style={{
-        background: 'var(--aiden-bg-primary)',
-        borderBottom: '1px solid var(--aiden-border)',
+        background: 'var(--neuraforge-bg-primary)',
+        borderBottom: '1px solid var(--neuraforge-border)',
         backdropFilter: 'blur(12px)',
       }}
     >
@@ -45,7 +45,7 @@ export function Header({ locale }: { locale: string }) {
         {breadcrumbs.map((crumb, i) => (
           <span key={crumb.href} className="flex items-center gap-1.5">
             {i > 0 && (
-              <span style={{ color: 'var(--aiden-text-muted)' }} className="text-xs">/</span>
+              <span style={{ color: 'var(--neuraforge-text-muted)' }} className="text-xs">/</span>
             )}
             <Link
               href={crumb.href}
@@ -53,8 +53,8 @@ export function Header({ locale }: { locale: string }) {
               style={{
                 color:
                   i === breadcrumbs.length - 1
-                    ? 'var(--aiden-text-primary)'
-                    : 'var(--aiden-text-muted)',
+                    ? 'var(--neuraforge-text-primary)'
+                    : 'var(--neuraforge-text-muted)',
                 fontSize: '0.875rem',
               }}
             >
@@ -68,9 +68,9 @@ export function Header({ locale }: { locale: string }) {
         <kbd
           className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md"
           style={{
-            background: 'var(--aiden-bg-secondary)',
-            color: 'var(--aiden-text-muted)',
-            border: '1px solid var(--aiden-border)',
+            background: 'var(--neuraforge-bg-secondary)',
+            color: 'var(--neuraforge-text-muted)',
+            border: '1px solid var(--neuraforge-border)',
           }}
         >
           Ctrl+K
@@ -80,7 +80,7 @@ export function Header({ locale }: { locale: string }) {
           onClick={switchLocale}
           className="p-1.5 rounded-md transition-colors cursor-pointer text-xs font-semibold"
           style={{
-            color: 'var(--aiden-text-muted)',
+            color: 'var(--neuraforge-text-muted)',
             background: 'transparent',
             border: 'none',
           }}
@@ -93,7 +93,7 @@ export function Header({ locale }: { locale: string }) {
           onClick={toggleTheme}
           className="p-1.5 rounded-md transition-colors cursor-pointer"
           style={{
-            color: 'var(--aiden-text-muted)',
+            color: 'var(--neuraforge-text-muted)',
             background: 'transparent',
             border: 'none',
           }}
@@ -112,11 +112,11 @@ export function Header({ locale }: { locale: string }) {
         </button>
 
         <a
-          href="https://github.com/neuravim/aiden-docs"
+          href="https://github.com/neuravim/neuraforge-docs"
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm no-underline transition-colors"
-          style={{ color: 'var(--aiden-text-muted)' }}
+          style={{ color: 'var(--neuraforge-text-muted)' }}
         >
           GitHub
         </a>

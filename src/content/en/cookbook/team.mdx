@@ -12,10 +12,10 @@
 
 ### Shared Rules in Git
 
-Commit `.aiden/rules/` in your repo. The entire team uses the same standards automatically.
+Commit `.neuraforge/rules/` in your repo. The entire team uses the same standards automatically.
 
 ```
-.aiden/
+.neuraforge/
   rules/
     coding-standards.md         # Common code standards
     security-policy.md          # Security policy
@@ -30,7 +30,7 @@ Each rule is a Markdown file automatically injected into agent prompts.
 For rules that apply to **all projects** in the organization, use the global config:
 
 ```yaml
-# ~/.aiden/enterprise.config.yaml (on each workstation)
+# ~/.neuraforge/enterprise.config.yaml (on each workstation)
 company: MyCompany
 defaults:
   mode: standard
@@ -60,7 +60,7 @@ Distribute this file via your developer workstation provisioning script.
 If your organization has multiple teams with different stacks:
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 profiles:
   backend:
     rules: [coding-standards.md, api-guidelines.md, database-rules.md]
@@ -85,11 +85,11 @@ profiles:
 ```
 1. Create a branch       git checkout -b feature/export-csv
 2. Launch NeuraForge           neuraforge standard "Add CSV export for reports"
-3. NeuraForge generates        code + tests + artifacts in .aiden/features/
+3. NeuraForge generates        code + tests + artifacts in .neuraforge/features/
 4. Human review          Reviewer reads review.md + spec.md + the diff
 5. Commit                git add -A && git commit -m "feat: CSV export"
 6. Push + PR             Artifacts help the reviewer
-7. Merge + clean         The feature stays archived in .aiden/features/
+7. Merge + clean         The feature stays archived in .neuraforge/features/
 ```
 
 ### Branch Naming Convention
@@ -106,19 +106,19 @@ profiles:
 
 | Directory | Commit? | Reason |
 |-----------|------------|--------|
-| `.aiden/aiden.config.yaml` | **Yes** | Shared configuration |
-| `.aiden/rules/` | **Yes** | Team standards |
-| `.aiden/templates/` | **Yes** | Custom templates |
-| `.aiden/features/` | **Yes** | Artifacts = living documentation |
-| `.aiden/memory/context.yaml` | **Optional** | Current state (useful for resuming) |
-| `.aiden/memory/decisions.jsonl` | **Yes** | Audit trail |
-| `.aiden/memory/metrics.jsonl` | **Optional** | Metrics (useful for tracking) |
+| `.neuraforge/neuraforge.config.yaml` | **Yes** | Shared configuration |
+| `.neuraforge/rules/` | **Yes** | Team standards |
+| `.neuraforge/templates/` | **Yes** | Custom templates |
+| `.neuraforge/features/` | **Yes** | Artifacts = living documentation |
+| `.neuraforge/memory/context.yaml` | **Optional** | Current state (useful for resuming) |
+| `.neuraforge/memory/decisions.jsonl` | **Yes** | Audit trail |
+| `.neuraforge/memory/metrics.jsonl` | **Optional** | Metrics (useful for tracking) |
 
 ### Recommended .gitignore
 
 ```gitignore
 # NeuraForge — keep artifacts, ignore temporary files
-.aiden/memory/*.lock
+.neuraforge/memory/*.lock
 ```
 
 ## Review Policy with NeuraForge
@@ -152,17 +152,17 @@ The human reviewer focuses on **business coherence** and **architecture choices*
 ```
 5 min   Install Node 20+ and pnpm
 2 min   pnpm add -g @neuravim/neuraforge
-1 min   Copy ~/.aiden/enterprise.config.yaml (via provisioning)
-2 min   Clone the repo (rules are included in .aiden/rules/)
+1 min   Copy ~/.neuraforge/enterprise.config.yaml (via provisioning)
+2 min   Clone the repo (rules are included in .neuraforge/rules/)
 1 min   neuraforge provider status  — verify the provider
 5 min   neuraforge flash "Add an info log at startup"  — first flash
 5 min   neuraforge status + explore the generated artifacts
-10 min  Read artifacts from an existing feature in .aiden/features/
+10 min  Read artifacts from an existing feature in .neuraforge/features/
 ```
 
 ### Onboarding Value of Artifacts
 
-NeuraForge artifacts in `.aiden/features/` are **living onboarding documents**. A new member can read:
+NeuraForge artifacts in `.neuraforge/features/` are **living onboarding documents**. A new member can read:
 
 - The `brief.md` to understand **why** a feature exists
 - The `spec.md` to understand **how** it was designed
@@ -223,7 +223,7 @@ $ neuraforge metrics --export csv > team-metrics-march.csv
 |-------------|---------------------------|----------|
 | Force NeuraForge on the entire team at once | Rejection and frustration | Adopt progressively: pilot -> teams -> company-wide |
 | Use enterprise for everything | Over-engineering, slowness | Flash for fixes, standard for features, enterprise for critical projects |
-| Don't commit artifacts | Loss of traceability and onboarding | Always commit `.aiden/features/` with the code |
+| Don't commit artifacts | Loss of traceability and onboarding | Always commit `.neuraforge/features/` with the code |
 | Ignore review.md | Lose the value of automatic QA | The human reviewer must read review.md first |
 | Rules too strict at the start | Friction, workarounds | Start with lightweight rules, tighten progressively |
 

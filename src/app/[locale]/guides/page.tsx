@@ -44,11 +44,11 @@ export default async function GuidesHub({
     <div>
       <h1
         className="text-3xl font-bold mb-3"
-        style={{ color: 'var(--aiden-text-primary)' }}
+        style={{ color: 'var(--neuraforge-text-primary)' }}
       >
         {hub.title}
       </h1>
-      <p className="text-sm mb-8" style={{ color: 'var(--aiden-text-muted)' }}>
+      <p className="text-sm mb-8" style={{ color: 'var(--neuraforge-text-muted)' }}>
         {hub.description}
       </p>
       <div className="grid md:grid-cols-2 gap-4">

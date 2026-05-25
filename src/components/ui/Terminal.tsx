@@ -12,9 +12,9 @@ export function Terminal({ children, title }: TerminalProps) {
     <div
       className="rounded-xl overflow-hidden my-4 font-mono"
       style={{
-        background: 'var(--aiden-terminal-bg)',
-        border: '1px solid var(--aiden-border)',
-        boxShadow: 'var(--aiden-shadow)',
+        background: 'var(--neuraforge-terminal-bg)',
+        border: '1px solid var(--neuraforge-border)',
+        boxShadow: 'var(--neuraforge-shadow)',
       }}
     >
       <div
@@ -35,15 +35,15 @@ export function Terminal({ children, title }: TerminalProps) {
           <div key={i}>
             {line.startsWith('$ ') ? (
               <>
-                <span style={{ color: 'var(--aiden-terminal-shell)' }}>$ </span>
-                <span style={{ color: 'var(--aiden-terminal-cmd)' }}>
+                <span style={{ color: 'var(--neuraforge-terminal-shell)' }}>$ </span>
+                <span style={{ color: 'var(--neuraforge-terminal-cmd)' }}>
                   {line.slice(2)}
                 </span>
               </>
             ) : line.startsWith('NeuraForge ') ? (
-              <span style={{ color: 'var(--aiden-terminal-aiden)' }}>{line}</span>
+              <span style={{ color: 'var(--neuraforge-terminal-neuraforge)' }}>{line}</span>
             ) : (
-              <span style={{ color: 'var(--aiden-terminal-output)' }}>{line || ' '}</span>
+              <span style={{ color: 'var(--neuraforge-terminal-output)' }}>{line || ' '}</span>
             )}
           </div>
         ))}

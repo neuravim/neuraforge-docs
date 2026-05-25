@@ -4,7 +4,7 @@ import { getDictionary } from '@/i18n/dictionaries';
 import { Card } from '@/components/ui/Card';
 import { Terminal } from '@/components/ui/Terminal';
 import { AgentFlow } from '@/components/ui/AgentFlow';
-import { AidenLogo } from '@/components/ui/AidenLogo';
+import { NeuraForgeLogo } from '@/components/ui/NeuraForgeLogo';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -41,35 +41,35 @@ export default async function HomePage({
       {/* Hero */}
       <section className="text-center pt-8">
         <div className="flex justify-center mb-6">
-          <AidenLogo size={64} />
+          <NeuraForgeLogo size={64} />
         </div>
         <span
           className="inline-block px-3 py-1 rounded-full text-xs font-medium mb-6"
           style={{
-            background: 'var(--aiden-bg-secondary)',
-            color: 'var(--aiden-accent-primary)',
-            border: '1px solid var(--aiden-border)',
+            background: 'var(--neuraforge-bg-secondary)',
+            color: 'var(--neuraforge-accent-primary)',
+            border: '1px solid var(--neuraforge-border)',
           }}
         >
           {t.badge}
         </span>
         <h1
           className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4"
-          style={{ color: 'var(--aiden-text-primary)' }}
+          style={{ color: 'var(--neuraforge-text-primary)' }}
         >
           {t.title_line1}
           <br />
-          <span style={{ color: 'var(--aiden-accent-primary)' }}>{t.title_line2}</span>
+          <span style={{ color: 'var(--neuraforge-accent-primary)' }}>{t.title_line2}</span>
         </h1>
         <p
           className="text-lg max-w-2xl mx-auto mb-2"
-          style={{ color: 'var(--aiden-text-muted)' }}
+          style={{ color: 'var(--neuraforge-text-muted)' }}
         >
           {t.description}
         </p>
         <p
           className="text-lg font-semibold max-w-2xl mx-auto"
-          style={{ color: 'var(--aiden-text-primary)' }}
+          style={{ color: 'var(--neuraforge-text-primary)' }}
         >
           {t.description_bold}
         </p>
@@ -81,7 +81,7 @@ export default async function HomePage({
           {`$ npm install -g @neuravim/neuraforge
 $ cd my-project && neuraforge init
 NeuraForge  Project scanned: node, typescript, react, vitest
-NeuraForge  Config created: .aiden/aiden.config.yaml
+NeuraForge  Config created: .neuraforge/neuraforge.config.yaml
 $ neuraforge flash "Add a GET /health endpoint that returns { status: ok }"
 NeuraForge  Mode: flash (2 agents)
 NeuraForge  Lead analyzing request...
@@ -104,17 +104,17 @@ NeuraForge  Feature completed in 28s`}
             key={stat.label}
             className="p-4 rounded-xl"
             style={{
-              background: 'var(--aiden-bg-card)',
-              border: '1px solid var(--aiden-border)',
+              background: 'var(--neuraforge-bg-card)',
+              border: '1px solid var(--neuraforge-border)',
             }}
           >
             <div
               className="text-2xl font-bold"
-              style={{ color: 'var(--aiden-accent-primary)' }}
+              style={{ color: 'var(--neuraforge-accent-primary)' }}
             >
               {stat.value}
             </div>
-            <div className="text-xs mt-1" style={{ color: 'var(--aiden-text-muted)' }}>
+            <div className="text-xs mt-1" style={{ color: 'var(--neuraforge-text-muted)' }}>
               {stat.label}
             </div>
           </div>
@@ -125,13 +125,13 @@ NeuraForge  Feature completed in 28s`}
       <section>
         <h2
           className="text-2xl font-bold text-center mb-2"
-          style={{ color: 'var(--aiden-text-primary)' }}
+          style={{ color: 'var(--neuraforge-text-primary)' }}
         >
           {t.modes_title}
         </h2>
         <p
           className="text-center text-sm mb-8"
-          style={{ color: 'var(--aiden-text-muted)' }}
+          style={{ color: 'var(--neuraforge-text-muted)' }}
         >
           {t.modes_subtitle}
         </p>
@@ -157,18 +157,18 @@ NeuraForge  Feature completed in 28s`}
               key={mode.title}
               className="p-5 rounded-xl"
               style={{
-                background: 'var(--aiden-bg-card)',
-                border: '1px solid var(--aiden-border)',
+                background: 'var(--neuraforge-bg-card)',
+                border: '1px solid var(--neuraforge-border)',
                 borderTop: `3px solid ${mode.color}`,
               }}
             >
               <h3
                 className="font-semibold text-sm mb-2"
-                style={{ color: 'var(--aiden-text-primary)' }}
+                style={{ color: 'var(--neuraforge-text-primary)' }}
               >
                 {mode.title}
               </h3>
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--aiden-text-muted)' }}>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--neuraforge-text-muted)' }}>
                 {mode.desc}
               </p>
             </div>
@@ -180,13 +180,13 @@ NeuraForge  Feature completed in 28s`}
       <section>
         <h2
           className="text-2xl font-bold text-center mb-2"
-          style={{ color: 'var(--aiden-text-primary)' }}
+          style={{ color: 'var(--neuraforge-text-primary)' }}
         >
           {t.agents_title}
         </h2>
         <p
           className="text-center text-sm mb-6"
-          style={{ color: 'var(--aiden-text-muted)' }}
+          style={{ color: 'var(--neuraforge-text-muted)' }}
         >
           {t.agents_subtitle}
         </p>
@@ -197,13 +197,13 @@ NeuraForge  Feature completed in 28s`}
       <section>
         <h2
           className="text-2xl font-bold text-center mb-2"
-          style={{ color: 'var(--aiden-text-primary)' }}
+          style={{ color: 'var(--neuraforge-text-primary)' }}
         >
           {t.why_title}
         </h2>
         <p
           className="text-center text-sm mb-8"
-          style={{ color: 'var(--aiden-text-muted)' }}
+          style={{ color: 'var(--neuraforge-text-muted)' }}
         >
           {t.why_subtitle}
         </p>
@@ -213,17 +213,17 @@ NeuraForge  Feature completed in 28s`}
               key={item.title}
               className="p-5 rounded-xl"
               style={{
-                background: 'var(--aiden-bg-card)',
-                border: '1px solid var(--aiden-border)',
+                background: 'var(--neuraforge-bg-card)',
+                border: '1px solid var(--neuraforge-border)',
               }}
             >
               <h3
                 className="font-semibold text-sm mb-1"
-                style={{ color: 'var(--aiden-text-primary)' }}
+                style={{ color: 'var(--neuraforge-text-primary)' }}
               >
                 {item.title}
               </h3>
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--aiden-text-muted)' }}>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--neuraforge-text-muted)' }}>
                 {item.desc}
               </p>
             </div>
@@ -235,11 +235,11 @@ NeuraForge  Feature completed in 28s`}
       <section className="text-center">
         <h2
           className="text-2xl font-bold mb-2"
-          style={{ color: 'var(--aiden-text-primary)' }}
+          style={{ color: 'var(--neuraforge-text-primary)' }}
         >
           {t.cta_title}
         </h2>
-        <p className="text-sm mb-8" style={{ color: 'var(--aiden-text-muted)' }}>
+        <p className="text-sm mb-8" style={{ color: 'var(--neuraforge-text-muted)' }}>
           {t.cta_subtitle}
         </p>
         <div className="grid md:grid-cols-3 gap-4">

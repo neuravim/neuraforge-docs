@@ -9,10 +9,10 @@ interface CalloutProps {
 }
 
 const calloutStyles: Record<CalloutType, { color: string; bg: string; icon: string }> = {
-  info: { color: 'var(--aiden-accent-blue)', bg: 'var(--aiden-accent-blue-light)', icon: 'ℹ️' },
-  tip: { color: 'var(--aiden-accent-green)', bg: 'var(--aiden-accent-green-light)', icon: '💡' },
-  warning: { color: 'var(--aiden-accent-yellow)', bg: 'var(--aiden-accent-yellow-light)', icon: '⚠️' },
-  danger: { color: 'var(--aiden-accent-red)', bg: 'var(--aiden-accent-red-light)', icon: '🚨' },
+  info: { color: 'var(--neuraforge-accent-blue)', bg: 'var(--neuraforge-accent-blue-light)', icon: 'ℹ️' },
+  tip: { color: 'var(--neuraforge-accent-green)', bg: 'var(--neuraforge-accent-green-light)', icon: '💡' },
+  warning: { color: 'var(--neuraforge-accent-yellow)', bg: 'var(--neuraforge-accent-yellow-light)', icon: '⚠️' },
+  danger: { color: 'var(--neuraforge-accent-red)', bg: 'var(--neuraforge-accent-red-light)', icon: '🚨' },
 };
 
 const defaultTitles: Record<CalloutType, string> = {
@@ -37,7 +37,7 @@ export function Callout({ type = 'info', title, children }: CalloutProps) {
         <span>{style.icon}</span>
         <span>{title ?? defaultTitles[type]}</span>
       </div>
-      <div className="text-sm" style={{ color: 'var(--aiden-text-secondary)' }}>
+      <div className="text-sm" style={{ color: 'var(--neuraforge-text-secondary)' }}>
         {children}
       </div>
     </div>

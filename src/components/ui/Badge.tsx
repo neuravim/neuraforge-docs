@@ -9,18 +9,18 @@ interface BadgeProps {
 }
 
 const badgeColors: Record<BadgeVariant, { bg: string; color: string }> = {
-  flash: { bg: 'var(--aiden-accent-yellow-light)', color: 'var(--aiden-accent-yellow)' },
-  standard: { bg: 'var(--aiden-accent-blue-light)', color: 'var(--aiden-accent-blue)' },
-  enterprise: { bg: 'var(--aiden-accent-purple-light)', color: 'var(--aiden-accent-purple)' },
-  lead: { bg: 'var(--aiden-accent-yellow-light)', color: 'var(--aiden-accent-yellow)' },
-  analyst: { bg: 'var(--aiden-accent-blue-light)', color: 'var(--aiden-accent-blue)' },
-  planner: { bg: 'var(--aiden-accent-blue-light)', color: 'var(--aiden-accent-blue)' },
-  dev: { bg: 'var(--aiden-accent-green-light)', color: 'var(--aiden-accent-green)' },
-  qa: { bg: 'var(--aiden-accent-red-light)', color: 'var(--aiden-accent-red)' },
-  docops: { bg: 'var(--aiden-bg-secondary)', color: 'var(--aiden-text-muted)' },
-  claude: { bg: 'var(--aiden-accent-primary-light)', color: 'var(--aiden-accent-primary)' },
-  gemini: { bg: 'var(--aiden-accent-blue-light)', color: 'var(--aiden-accent-blue)' },
-  copilot: { bg: 'var(--aiden-bg-secondary)', color: 'var(--aiden-text-muted)' },
+  flash: { bg: 'var(--neuraforge-accent-yellow-light)', color: 'var(--neuraforge-accent-yellow)' },
+  standard: { bg: 'var(--neuraforge-accent-blue-light)', color: 'var(--neuraforge-accent-blue)' },
+  enterprise: { bg: 'var(--neuraforge-accent-purple-light)', color: 'var(--neuraforge-accent-purple)' },
+  lead: { bg: 'var(--neuraforge-accent-yellow-light)', color: 'var(--neuraforge-accent-yellow)' },
+  analyst: { bg: 'var(--neuraforge-accent-blue-light)', color: 'var(--neuraforge-accent-blue)' },
+  planner: { bg: 'var(--neuraforge-accent-blue-light)', color: 'var(--neuraforge-accent-blue)' },
+  dev: { bg: 'var(--neuraforge-accent-green-light)', color: 'var(--neuraforge-accent-green)' },
+  qa: { bg: 'var(--neuraforge-accent-red-light)', color: 'var(--neuraforge-accent-red)' },
+  docops: { bg: 'var(--neuraforge-bg-secondary)', color: 'var(--neuraforge-text-muted)' },
+  claude: { bg: 'var(--neuraforge-accent-primary-light)', color: 'var(--neuraforge-accent-primary)' },
+  gemini: { bg: 'var(--neuraforge-accent-blue-light)', color: 'var(--neuraforge-accent-blue)' },
+  copilot: { bg: 'var(--neuraforge-bg-secondary)', color: 'var(--neuraforge-text-muted)' },
 };
 
 const defaultLabels: Record<BadgeVariant, string> = {

@@ -50,7 +50,7 @@ $ litellm --config litellm_config.yaml
 ### Configuration NeuraForge
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 provider: litellm
 
 providers:
@@ -147,7 +147,7 @@ providers:
     command: ""
 ```
 
-> **Attention** : Ne committez jamais votre `apiKey` dans le dépôt Git. Utilisez une variable d'environnement ou le fichier `.aiden/aiden.config.yaml` dans le `.gitignore`.
+> **Attention** : Ne committez jamais votre `apiKey` dans le dépôt Git. Utilisez une variable d'environnement ou le fichier `.neuraforge/neuraforge.config.yaml` dans le `.gitignore`.
 
 Pour injecter la clé via variable d'environnement, la plupart des proxies LLM (LiteLLM, Cloudflare AI Gateway) acceptent `OPENAI_API_KEY` directement. Côté NeuraForge, vous pouvez omettre la clé de la config et la passer via env.
 
@@ -218,7 +218,7 @@ NeuraForge (fetch)    ─────►   ai-proxy.corp/v1   ─────►
 ### Configuration NeuraForge
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 provider: proxy-interne
 
 providers:
@@ -339,14 +339,14 @@ $ neuraforge flash "Ecris une fonction TypeScript qui retourne le reverse d'une 
     --provider litellm
 ```
 
-NeuraForge doit compléter le workflow et écrire les artefacts dans `.aiden/features/`.
+NeuraForge doit compléter le workflow et écrire les artefacts dans `.neuraforge/features/`.
 
 ## Multi-provider avec API et CLI
 
 Vous pouvez mélanger des providers CLI et API dans la même configuration. Le routage `auto` sélectionne le meilleur provider selon la tâche :
 
 ```yaml
-# .aiden/aiden.config.yaml
+# .neuraforge/neuraforge.config.yaml
 provider: claude-code
 
 routing:

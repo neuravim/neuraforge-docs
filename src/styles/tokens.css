@@ -4,106 +4,106 @@
 
 :root {
   /* Backgrounds */
-  --aiden-bg-primary: #ffffff;
-  --aiden-bg-secondary: #f8f9fb;
-  --aiden-bg-card: #ffffff;
-  --aiden-bg-hover: #f1f3f7;
-  --aiden-bg-sidebar: #f8f9fb;
+  --neuraforge-bg-primary: #ffffff;
+  --neuraforge-bg-secondary: #f8f9fb;
+  --neuraforge-bg-card: #ffffff;
+  --neuraforge-bg-hover: #f1f3f7;
+  --neuraforge-bg-sidebar: #f8f9fb;
 
   /* Accent colors */
-  --aiden-accent-primary: #e85d04;
-  --aiden-accent-primary-light: #fff3eb;
-  --aiden-accent-primary-hover: #d35400;
-  --aiden-accent-blue: #004a9c;
-  --aiden-accent-blue-light: #eef4fb;
-  --aiden-accent-green: #059669;
-  --aiden-accent-green-light: #ecfdf5;
-  --aiden-accent-yellow: #d97706;
-  --aiden-accent-yellow-light: #fffbeb;
-  --aiden-accent-red: #dc2626;
-  --aiden-accent-red-light: #fef2f2;
-  --aiden-accent-purple: #7c3aed;
-  --aiden-accent-purple-light: #f5f3ff;
+  --neuraforge-accent-primary: #e85d04;
+  --neuraforge-accent-primary-light: #fff3eb;
+  --neuraforge-accent-primary-hover: #d35400;
+  --neuraforge-accent-blue: #004a9c;
+  --neuraforge-accent-blue-light: #eef4fb;
+  --neuraforge-accent-green: #059669;
+  --neuraforge-accent-green-light: #ecfdf5;
+  --neuraforge-accent-yellow: #d97706;
+  --neuraforge-accent-yellow-light: #fffbeb;
+  --neuraforge-accent-red: #dc2626;
+  --neuraforge-accent-red-light: #fef2f2;
+  --neuraforge-accent-purple: #7c3aed;
+  --neuraforge-accent-purple-light: #f5f3ff;
 
   /* Text */
-  --aiden-text-primary: #111827;
-  --aiden-text-secondary: #4b5563;
-  --aiden-text-muted: #9ca3af;
+  --neuraforge-text-primary: #111827;
+  --neuraforge-text-secondary: #4b5563;
+  --neuraforge-text-muted: #9ca3af;
 
   /* Borders & shadows */
-  --aiden-border: #e5e7eb;
-  --aiden-border-hover: #d1d5db;
-  --aiden-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
-  --aiden-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --neuraforge-border: #e5e7eb;
+  --neuraforge-border-hover: #d1d5db;
+  --neuraforge-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --neuraforge-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
 
   /* Code */
-  --aiden-code-bg: #f4f5f7;
-  --aiden-code-text: #e85d04;
-  --aiden-terminal-bg: #f4f5f7;
-  --aiden-terminal-green: #059669;
-  --aiden-terminal-text: #1e293b;
-  --aiden-terminal-comment: #9ca3af;
-  --aiden-terminal-string: #059669;
-  --aiden-terminal-keyword: #7c3aed;
-  --aiden-terminal-cmd: #004a9c;
-  --aiden-terminal-key: #b45309;
-  --aiden-terminal-value: #047857;
-  --aiden-terminal-output: #6b7280;
-  --aiden-terminal-aiden: #e85d04;
-  --aiden-terminal-shell: #0284c7;
+  --neuraforge-code-bg: #f4f5f7;
+  --neuraforge-code-text: #e85d04;
+  --neuraforge-terminal-bg: #f4f5f7;
+  --neuraforge-terminal-green: #059669;
+  --neuraforge-terminal-text: #1e293b;
+  --neuraforge-terminal-comment: #9ca3af;
+  --neuraforge-terminal-string: #059669;
+  --neuraforge-terminal-keyword: #7c3aed;
+  --neuraforge-terminal-cmd: #004a9c;
+  --neuraforge-terminal-key: #b45309;
+  --neuraforge-terminal-value: #047857;
+  --neuraforge-terminal-output: #6b7280;
+  --neuraforge-terminal-neuraforge: #e85d04;
+  --neuraforge-terminal-shell: #0284c7;
 
   /* Radius */
-  --aiden-radius: 8px;
-  --aiden-radius-lg: 12px;
+  --neuraforge-radius: 8px;
+  --neuraforge-radius-lg: 12px;
 }
 
 [data-theme="dark"] {
   /* Backgrounds */
-  --aiden-bg-primary: #0f1117;
-  --aiden-bg-secondary: #161821;
-  --aiden-bg-card: #1c1e2a;
-  --aiden-bg-hover: #252736;
-  --aiden-bg-sidebar: #161821;
+  --neuraforge-bg-primary: #0f1117;
+  --neuraforge-bg-secondary: #161821;
+  --neuraforge-bg-card: #1c1e2a;
+  --neuraforge-bg-hover: #252736;
+  --neuraforge-bg-sidebar: #161821;
 
   /* Accent colors */
-  --aiden-accent-primary: #ff7b29;
-  --aiden-accent-primary-light: rgba(255, 123, 41, 0.1);
-  --aiden-accent-primary-hover: #ff9654;
-  --aiden-accent-blue: #5b9cf6;
-  --aiden-accent-blue-light: rgba(91, 156, 246, 0.1);
-  --aiden-accent-green: #34d399;
-  --aiden-accent-green-light: rgba(52, 211, 153, 0.1);
-  --aiden-accent-yellow: #fbbf24;
-  --aiden-accent-yellow-light: rgba(251, 191, 36, 0.1);
-  --aiden-accent-red: #f87171;
-  --aiden-accent-red-light: rgba(248, 113, 113, 0.1);
-  --aiden-accent-purple: #a78bfa;
-  --aiden-accent-purple-light: rgba(167, 139, 250, 0.1);
+  --neuraforge-accent-primary: #ff7b29;
+  --neuraforge-accent-primary-light: rgba(255, 123, 41, 0.1);
+  --neuraforge-accent-primary-hover: #ff9654;
+  --neuraforge-accent-blue: #5b9cf6;
+  --neuraforge-accent-blue-light: rgba(91, 156, 246, 0.1);
+  --neuraforge-accent-green: #34d399;
+  --neuraforge-accent-green-light: rgba(52, 211, 153, 0.1);
+  --neuraforge-accent-yellow: #fbbf24;
+  --neuraforge-accent-yellow-light: rgba(251, 191, 36, 0.1);
+  --neuraforge-accent-red: #f87171;
+  --neuraforge-accent-red-light: rgba(248, 113, 113, 0.1);
+  --neuraforge-accent-purple: #a78bfa;
+  --neuraforge-accent-purple-light: rgba(167, 139, 250, 0.1);
 
   /* Text */
-  --aiden-text-primary: #f1f5f9;
-  --aiden-text-secondary: #94a3b8;
-  --aiden-text-muted: #64748b;
+  --neuraforge-text-primary: #f1f5f9;
+  --neuraforge-text-secondary: #94a3b8;
+  --neuraforge-text-muted: #64748b;
 
   /* Borders & shadows */
-  --aiden-border: #2a2d3d;
-  --aiden-border-hover: #3a3d4d;
-  --aiden-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-  --aiden-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --neuraforge-border: #2a2d3d;
+  --neuraforge-border-hover: #3a3d4d;
+  --neuraforge-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --neuraforge-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
 
   /* Code */
-  --aiden-code-bg: #1c1e2a;
-  --aiden-code-text: #ff7b29;
-  --aiden-terminal-bg: #1a1b26;
-  --aiden-terminal-green: #34d399;
-  --aiden-terminal-text: #e2e8f0;
-  --aiden-terminal-comment: #636e7b;
-  --aiden-terminal-string: #a5d6a7;
-  --aiden-terminal-keyword: #c792ea;
-  --aiden-terminal-cmd: #82aaff;
-  --aiden-terminal-key: #ffcb6b;
-  --aiden-terminal-value: #c3e88d;
-  --aiden-terminal-output: #94a3b8;
-  --aiden-terminal-aiden: #ff7b29;
-  --aiden-terminal-shell: #89ddff;
+  --neuraforge-code-bg: #1c1e2a;
+  --neuraforge-code-text: #ff7b29;
+  --neuraforge-terminal-bg: #1a1b26;
+  --neuraforge-terminal-green: #34d399;
+  --neuraforge-terminal-text: #e2e8f0;
+  --neuraforge-terminal-comment: #636e7b;
+  --neuraforge-terminal-string: #a5d6a7;
+  --neuraforge-terminal-keyword: #c792ea;
+  --neuraforge-terminal-cmd: #82aaff;
+  --neuraforge-terminal-key: #ffcb6b;
+  --neuraforge-terminal-value: #c3e88d;
+  --neuraforge-terminal-output: #94a3b8;
+  --neuraforge-terminal-neuraforge: #ff7b29;
+  --neuraforge-terminal-shell: #89ddff;
 }

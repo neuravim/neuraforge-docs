@@ -82,7 +82,7 @@ $ echo "Explique ce qu'est un closure en JavaScript" | gh copilot explain -
 
 ## Configuration NeuraForge
 
-Ajoutez la section `copilot` dans `.aiden/aiden.config.yaml` :
+Ajoutez la section `copilot` dans `.neuraforge/neuraforge.config.yaml` :
 
 ```yaml
 provider: copilot
@@ -226,11 +226,11 @@ $ gh auth login
 
 ### "copilot: not configured" dans `neuraforge provider status`
 
-La section `copilot` est absente ou mal formée dans `.aiden/aiden.config.yaml`. Vérifiez que `enabled: true` est présent et que l'indentation YAML est correcte.
+La section `copilot` est absente ou mal formée dans `.neuraforge/neuraforge.config.yaml`. Vérifiez que `enabled: true` est présent et que l'indentation YAML est correcte.
 
 ```bash
 $ neuraforge provider status
-$ cat .aiden/aiden.config.yaml
+$ cat .neuraforge/neuraforge.config.yaml
 ```
 
 ### Timeout ou réponse vide

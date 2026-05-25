@@ -20,7 +20,7 @@ NeuraForge runs **on the developer's workstation**, not in CI. But CI can:
 ### Verify NeuraForge Artifacts on a PR
 
 ```yaml
-# .github/workflows/aiden-check.yml
+# .github/workflows/neuraforge-check.yml
 name: NeuraForge Artefacts Check
 
 on:
@@ -28,22 +28,22 @@ on:
     branches: [main, develop]
 
 jobs:
-  aiden-check:
+  neuraforge-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Check NeuraForge initialized
         run: |
-          if [ ! -f .aiden/aiden.config.yaml ]; then
+          if [ ! -f .neuraforge/neuraforge.config.yaml ]; then
             echo "::warning::NeuraForge not initialized in this project"
             exit 0
           fi
 
       - name: Check feature artefacts
         run: |
-          if [ -d .aiden/features ]; then
-            for feature_dir in .aiden/features/*/; do
+          if [ -d .neuraforge/features ]; then
+            for feature_dir in .neuraforge/features/*/; do
               if [ -d "$feature_dir" ]; then
                 feature=$(basename "$feature_dir")
                 echo "Checking feature: $feature"
@@ -58,8 +58,8 @@ jobs:
 
       - name: Check decisions trail
         run: |
-          if [ -f .aiden/memory/decisions.jsonl ]; then
-            echo "Decisions logged: $(wc -l < .aiden/memory/decisions.jsonl)"
+          if [ -f .neuraforge/memory/decisions.jsonl ]; then
+            echo "Decisions logged: $(wc -l < .neuraforge/memory/decisions.jsonl)"
           else
             echo "::warning::No decisions log found"
           fi
@@ -68,7 +68,7 @@ jobs:
 ### Collect NeuraForge Metrics
 
 ```yaml
-# .github/workflows/aiden-metrics.yml
+# .github/workflows/neuraforge-metrics.yml
 name: NeuraForge Metrics
 
 on:
@@ -83,14 +83,14 @@ jobs:
 
       - name: Extract NeuraForge metrics
         run: |
-          if [ -f .aiden/memory/metrics.jsonl ]; then
+          if [ -f .neuraforge/memory/metrics.jsonl ]; then
             echo "## NeuraForge Metrics" >> $GITHUB_STEP_SUMMARY
 
-            total_tokens=$(cat .aiden/memory/metrics.jsonl | \
+            total_tokens=$(cat .neuraforge/memory/metrics.jsonl | \
               python3 -c "import sys,json; print(sum(json.loads(l)['tokensUsed'] for l in sys.stdin))")
-            total_cost=$(cat .aiden/memory/metrics.jsonl | \
+            total_cost=$(cat .neuraforge/memory/metrics.jsonl | \
               python3 -c "import sys,json; print(f'{sum(json.loads(l).get(\"cost\",0) for l in sys.stdin):.2f}')")
-            features=$(cat .aiden/memory/metrics.jsonl | \
+            features=$(cat .neuraforge/memory/metrics.jsonl | \
               python3 -c "import sys,json; print(len(set(json.loads(l)['feature'] for l in sys.stdin)))")
 
             echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
@@ -105,26 +105,26 @@ jobs:
 
 ```yaml
 # .gitlab-ci.yml
-aiden-check:
+neuraforge-check:
   stage: validate
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   script:
     - |
-      if [ ! -f .aiden/aiden.config.yaml ]; then
+      if [ ! -f .neuraforge/neuraforge.config.yaml ]; then
         echo "NeuraForge not initialized — skipping"
         exit 0
       fi
 
-      for dir in .aiden/features/*/; do
+      for dir in .neuraforge/features/*/; do
         [ -d "$dir" ] || continue
         feature=$(basename "$dir")
         echo "Feature: $feature"
         ls -la "$dir"
       done
 
-      if [ -f .aiden/memory/decisions.jsonl ]; then
-        echo "Decisions: $(wc -l < .aiden/memory/decisions.jsonl)"
+      if [ -f .neuraforge/memory/decisions.jsonl ]; then
+        echo "Decisions: $(wc -l < .neuraforge/memory/decisions.jsonl)"
       fi
 ```
 
@@ -148,7 +148,7 @@ Verify that artifacts are committed with the code:
 #!/bin/sh
 # .git/hooks/pre-commit
 
-if git diff --cached --name-only | grep -q "^\.aiden/features/"; then
+if git diff --cached --name-only | grep -q "^\.neuraforge/features/"; then
   if ! git diff --cached --name-only | grep -q "decisions.jsonl"; then
     echo "WARNING: Feature artifacts modified without decisions log."
     echo "Did you use NeuraForge to generate these artifacts?"
@@ -161,7 +161,7 @@ fi
 ### Export for Grafana / PowerBI
 
 ```bash
-$ neuraforge metrics --export csv > aiden-metrics.csv
+$ neuraforge metrics --export csv > neuraforge-metrics.csv
 # Columns: timestamp, feature, agent, provider, tokensUsed, durationMs, cost
 ```
 
